@@ -3,11 +3,15 @@ local KELAPADUI_ENTRIES = {
     SETTINGS = 2,
 }
 
+local KELAPADUI_TEXT_COLOR = "|cFFC64CFF"
+local KELAPADUI_ICON_COLOR = ZO_ColorDef:New("C64CFF")
+
 local KELAPADUI_MENU_ENTRY_DATA =
 {
     customTemplate = "ZO_GamepadMenuEntryTemplateWithArrow",
-    name = GetString(KELA_MAINMENU_TITLE),
-    --icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_settings.dds",
+    name = KELAPADUI_TEXT_COLOR .. GetString(KELA_MAINMENU_TITLE) .. "|r",
+    icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_champion.dds",
+    iconColor = KELAPADUI_ICON_COLOR,
     subMenu =
     {
         [KELAPADUI_ENTRIES.SETS] =
@@ -37,6 +41,9 @@ local function CreateEntry(data)
 
     local entry = ZO_GamepadEntryData:New(name, data.icon, nil, nil, data.isNewCallback)
     entry:SetIconTintOnSelection(true)
+    if data.iconColor then
+        entry:SetIconTint(data.iconColor, data.iconColor)
+    end
     entry:SetIconDisabledTintOnSelection(true)
 
     local header = data.header
