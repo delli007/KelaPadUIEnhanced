@@ -109,9 +109,10 @@ Run these checks after a change:
 python _tools\audit_addon.py
 ```
 
-The audit checks manifest entries, Lua file presence, XML references, removed
-feature references, and undefined/duplicated KELA strings. It is a static check,
-not an in-game test.
+The audit checks manifest entries, Lua syntax, XML well-formedness, removed
+feature references, and undefined/unused KELA strings. It counts any KELA token
+in Lua/XML as a reference, so localization IDs passed indirectly are not
+reported as unused. It is a static check, not an in-game test.
 
 To parse-check every Lua file, use `luaparse` through Node:
 
@@ -166,7 +167,6 @@ Python, build, editor, and OS artifacts.
 - replacing copied trading-house XML/templates with core hooks;
 - reducing the full tooltip-style override to additive custom styles;
 - replacing hardcoded set metadata with LibSets data where practical;
-- cleaning the remaining unused `KELA_*` localization strings;
 - reviewing trading ATT numeric fallbacks and display edge cases.
 
 ## Documentation map

@@ -16,6 +16,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Branded the KELAPADUI main-menu entry with a champion icon and purple text/icon tint.
 - [x] Removed the retired pause-menu travel-notes feature; documented restoration notes.
 - [x] Added `docs/MAINTENANCE.md`, `docs/SETTINGS.md`, and `docs/TRADING_HOUSE.md`.
+- [x] Removed 47 dead KELA localization strings and tightened the audit's dynamic/unused detection.
 
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.

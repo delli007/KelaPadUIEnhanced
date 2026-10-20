@@ -36,7 +36,7 @@ REMOVED_IDENTIFIERS = [
 ]
 KELA_STRING = re.compile(r"\b(KELA_[A-Z0-9_]+)\b")
 LOCALIZATION_USE = re.compile(
-    r"(?:GetString\(\s*[\"']?|(?:text|tooltipText|header|name)\s*=\s*[\"']?)(KELA_[A-Z0-9_]+)"
+    r"(?:GetString\(\s*[\"']?|(?:text|tooltipText|header|name|stringId)\s*=\s*[\"']?)(KELA_[A-Z0-9_]+)"
 )
 DYNAMIC_STRING_PREFIXES = (
     "KELA_RESEARCH_TYPE",  # GetString("KELA_RESEARCH_TYPE", index)
@@ -151,14 +151,21 @@ def debug_line_report():
 def string_report():
     defined = set()
     used = set()
+    identifiers = set()
     for path in iter_files({".lua", ".xml"}):
         text = read_text(path)
         if path.name in ("en.lua", "ru.lua"):
             defined.update(re.findall(r"Add\(\"(KELA_[A-Z0-9_]+)\"", text))
             continue
         used.update(LOCALIZATION_USE.findall(text))
-    used = {name for name in used if not name.startswith(DYNAMIC_STRING_PREFIXES)}
-    return sorted(used - defined), sorted(defined - used)
+        identifiers.update(KELA_STRING.findall(text))
+    dynamic_defined = {name for name in defined if name.startswith(DYNAMIC_STRING_PREFIXES)}
+    undefined = {
+        name
+        for name in used - defined
+        if not name.startswith(DYNAMIC_STRING_PREFIXES)
+    }
+    return sorted(undefined), sorted(defined - identifiers - dynamic_defined)
 
 
 def main():
