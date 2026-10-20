@@ -1,5 +1,3 @@
-local SETTING_PANEL_GAMEPAD_CATEGORIES_ROOT = -1
-
 -- kela saved variables
 kpuiSVSettingsDefault = {}
 kpuiSVSettingsSaved = {}
@@ -50,7 +48,6 @@ KELA_SETTINGS_DATA =
             panel = KELA_SETTING_PANEL_FEATURES,
             system = SETTING_TYPE_KELA,
             settingId = KELA_SETTING_PANEL_FEATURES_COMPANION,
-            header = KELA_SETTINGS_FEATURES_HEADER,
         },
         {
             panel = KELA_SETTING_PANEL_FEATURES,
@@ -732,88 +729,34 @@ function Kela_GamepadOptions:New(...)
 end
 function Kela_GamepadOptions:Initialize(control)	
 	ZO_SharedOptions.Initialize(self)
-    local DONT_ACTIVATE_ON_SHOW = false
-    ZO_Gamepad_ParametricList_Screen.Initialize(self, control, ZO_GAMEPAD_HEADER_TABBAR_DONT_CREATE, DONT_ACTIVATE_ON_SHOW)
+    local ACTIVATE_ON_SHOW = true
+    ZO_Gamepad_ParametricList_Screen.Initialize(self, control, ZO_GAMEPAD_HEADER_TABBAR_DONT_CREATE, ACTIVATE_ON_SHOW)
     KELA_OPTIONS_FRAGMENT = ZO_SimpleSceneFragment:New(control)
     self.isGamepadOptions = true
-    self.currentCategory = SETTING_PANEL_GAMEPAD_CATEGORIES_ROOT
 	self:InitializeScenes()
 	self:InitializeSaveReloadDialog()	
 end
 
 function Kela_GamepadOptions:InitializeScenes()
     KELA_OPTIONS_ROOT_SCENE = ZO_Scene:New("kela_options_root", SCENE_MANAGER)
+    self:SetScene(KELA_OPTIONS_ROOT_SCENE)
     KELA_OPTIONS_ROOT_SCENE:RegisterCallback("StateChange", function(oldState, newState)
         if newState == SCENE_SHOWING then
-            self.currentCategory = SETTING_PANEL_GAMEPAD_CATEGORIES_ROOT
-            self:RefreshCategoryList()
-            self:RefreshHeader()
-            self:SetCurrentList(self.categoryList)
-            KEYBIND_STRIP:AddKeybindButtonGroup(self.rootKeybindDescriptor)
-        elseif newState == SCENE_HIDDEN then
-            self:DisableCurrentList()
-            KEYBIND_STRIP:RemoveKeybindButtonGroup(self.rootKeybindDescriptor)
-        end
-    end)
-	-- KELA_OPTIONS_ROOT_SCENE:RemoveFragment(OPTIONS_MENU_INFO_PANEL_FRAGMENT)
-	-- KELA_OPTIONS_ROOT_SCENE:RemoveFragment(GAMEPAD_NAV_QUADRANT_2_3_4_BACKGROUND_FRAGMENT)
-    KELA_OPTIONS_PANEL_SCENE = ZO_Scene:New("kela_options_panel", SCENE_MANAGER)
-    KELA_OPTIONS_PANEL_SCENE:RegisterCallback("StateChange", function(oldState, newState)
-        if newState == SCENE_SHOWING then
-			if ZO_SharedOptions.DoesPanelDisableShareFeatures(self.currentCategory) and DoesPlatformSupportDisablingShareFeatures() then
-                DisableShareFeatures()
-            end
-            local isDeferredLoading = self:RequestLoadDeferredSettingsForPanel(self.currentCategory)
-            if isDeferredLoading then
-                ZO_Dialogs_ShowGamepadDialog("REQUESTING_ACCOUNT_DATA")
-            end
+            RefreshSettings()
             self:RefreshOptionsList()
             self:RefreshHeader()
             self:SetCurrentList(self.optionsList)
-            KEYBIND_STRIP:AddKeybindButtonGroup(self.panelKeybindDescriptor)
+            KEYBIND_STRIP:AddKeybindButtonGroup(self.optionsKeybindDescriptor)
         elseif newState == SCENE_HIDDEN then
-			if ZO_SharedOptions.DoesPanelDisableShareFeatures(self.currentCategory) and DoesPlatformSupportDisablingShareFeatures() then
-                EnableShareFeatures()
-            end
-            self:DisableCurrentList()
             self:DeactivateSelectedControl()
+            KEYBIND_STRIP:RemoveKeybindButtonGroup(self.optionsKeybindDescriptor)
+            KEYBIND_STRIP:RemoveKeybindButtonGroup(self.primaryActionDescriptor)
             self:SaveCachedSettings()
             ZO_SavePlayerConsoleProfile()
             SetCameraOptionsPreviewModeEnabled(false, CAMERA_OPTIONS_PREVIEW_NONE)
-            KEYBIND_STRIP:RemoveKeybindButtonGroup(self.panelKeybindDescriptor)
-            KEYBIND_STRIP:RemoveKeybindButtonGroup(self.primaryActionDescriptor)
+            SaveSettings(KELA_SAVE_CURRENT)
         end
     end)
-    -- local function OnScreenResize()
-        -- self:RefreshOptionsList()
-    -- end
-    -- local function RegisterForScreenResizeComplete()
-        -- -- make sure to handle both start and end of screen resize (start only matters for resetting to defautlt)
-        -- self.control:RegisterForEvent(EVENT_SCREEN_RESIZED, OnScreenResize)
-        -- self.control:RegisterForEvent(EVENT_ALL_GUI_SCREENS_RESIZED, OnScreenResize)
-    -- end
-    -- local function UnregisterForScreenResizeComplete()
-        -- self.control:UnregisterForEvent(EVENT_SCREEN_RESIZED)
-        -- self.control:UnregisterForEvent(EVENT_ALL_GUI_SCREENS_RESIZED)
-    -- end
-    local KELA_OPTIONS_SCENE_GROUP = ZO_SceneGroup:New("kela_options_root", "kela_options_panel")
-    self:SetSceneGroup(KELA_OPTIONS_SCENE_GROUP)
-    KELA_OPTIONS_SCENE_GROUP:RegisterCallback("StateChange", function(oldState, newState)
-        if newState == SCENE_GROUP_SHOWING then
-            RefreshSettings()
-            -- RegisterForScreenResizeComplete()
-        elseif newState == SCENE_GROUP_HIDDEN then
-			SaveSettings(KELA_SAVE_CURRENT)
-            -- UnregisterForScreenResizeComplete()
-        end
-    end)
-end
-
-function Kela_GamepadOptions:RefreshOptionsList()
-    if not self:IsAtRoot() then
-        self.optionsList:RefreshVisible()
-        self:OnSelectionChanged(self.optionsList)
-    end
 end
 
 function Kela_GamepadOptions:PerformUpdate()
@@ -848,16 +791,9 @@ function Kela_GamepadOptions:InitializeHeader()
 end
 
 function Kela_GamepadOptions:RefreshHeader()
-    local headerText
-    if self:IsAtRoot() then
-        headerText = GetString(SI_GAMEPAD_OPTIONS_MENU)
-    else
-        headerText = GetString("KELA_SETTINGSYSTEMPANEL", self.currentCategory)
-    end
-
     local headerData =
     {
-        titleText = headerText,
+        titleText = GetString(SI_GAMEPAD_OPTIONS_MENU),
     }
     ZO_GamepadGenericHeader_RefreshData(self.header, headerData)
 end
@@ -893,25 +829,10 @@ do
         }
         ZO_Gamepad_AddBackNavigationKeybindDescriptors(self.keybindStripDescriptor, GAME_NAVIGATION_TYPE_BUTTON, function() SCENE_MANAGER:HideCurrentScene() end)
     
-        self.rootKeybindDescriptor = 
-        {
-            {
-                alignment = KEYBIND_STRIP_ALIGN_LEFT,
-                name = GetString(SI_GAMEPAD_SELECT_OPTION),
-                keybind = "UI_SHORTCUT_PRIMARY",
-                callback = function()
-                    local data = self.categoryList:GetTargetData()
-                    self.currentCategory = data.panelId
-                    SCENE_MANAGER:Push("kela_options_panel")
-                end,
-            },
-        }
-        ZO_Gamepad_AddListTriggerKeybindDescriptors(self.rootKeybindDescriptor, self.categoryList)
-
-        self.panelKeybindDescriptor =
+        self.optionsKeybindDescriptor =
         {
         }
-        ZO_Gamepad_AddListTriggerKeybindDescriptors(self.panelKeybindDescriptor, self.optionsList)
+        ZO_Gamepad_AddListTriggerKeybindDescriptors(self.optionsKeybindDescriptor, self.optionsList)
 
         self.primaryActionDescriptor = 
         {
@@ -935,10 +856,6 @@ do
     end
 end
 
-
-function Kela_GamepadOptions:IsAtRoot()
-    return self.currentCategory == SETTING_PANEL_GAMEPAD_CATEGORIES_ROOT
-end
 
 function Kela_GamepadOptions_OptionsHorizontalListSetup(control, data, selected, reselectingDuringRebuild, enabled, selectedFromParent)
     if data.parentControl.data.enabled ~= false then
@@ -1006,9 +923,8 @@ function Kela_GamepadOptions:SetupOptionsList(list)
 end
 
 function Kela_GamepadOptions:InitializeOptionsLists()
-    self.categoryList = self:GetMainList()
-    self.optionsList = self:AddList("options", function(list) self:SetupOptionsList(list) end)
-    self.optionsLoadingControl = self.control:GetNamedChild("LoadingContainer")
+    self.optionsList = self:GetMainList()
+    self:SetupOptionsList(self.optionsList)
 end
 
 do
@@ -1069,11 +985,6 @@ do
     end
 
     function Kela_GamepadOptions:OnSelectionChanged(list)
-        -- if self:IsAtRoot() then
-            -- return
-        -- end
-
-
         local control = list:GetSelectedControl()
         if control == nil or control.data == nil then
         
@@ -1182,7 +1093,7 @@ end
 
 
 function Kela_GamepadOptions:KelaOnOptionWithDependenciesChanged()
-    if SCENE_MANAGER:IsShowing("kela_options_panel") then
+    if SCENE_MANAGER:IsShowing("kela_options_root") then
         KELA_OPTIONS:RefreshOptionsList()
     end
 end
@@ -1366,134 +1277,42 @@ local TEMPLATE_NAMES =
     [OPTIONS_CHAT_COLOR] = "ZO_GamepadOptionsColorRow",
 }
 
-function Kela_GamepadOptions:RefreshCategoryList()
-
-
-
-    self.categoryList:Clear()
-    self:AddCategory(KELA_SETTING_PANEL_FEATURES)
-    self:AddCategory(KELA_SETTING_PANEL_SETS)
-    self:AddCategory(KELA_SETTING_PANEL_TRADE)
-	self.categoryList:Commit()
-end
-
-do
-    local CATEGORY_ICONS =
-    {
-        [KELA_SETTING_PANEL_FEATURES] = "EsoUI/Art/Journal/Gamepad/gp_journalCheck.dds",
-        [KELA_SETTING_PANEL_SETS] = "esoui/art/treeicons/gamepad/gp_collectionicon_weapona+armor.dds",
-        [KELA_SETTING_PANEL_TRADE] = "esoui/art/guild/gamepad/gp_guild_menuIcon_trader.dds",
-    }
-    function Kela_GamepadOptions:AddCategory(panelId)
-		local entryData = ZO_GamepadEntryData:New(GetString("KELA_SETTINGSYSTEMPANEL", panelId), CATEGORY_ICONS[panelId])
-		entryData:SetIconTintOnSelection(true)
-		entryData.panelId = panelId
-		entryData.tooltipText = GetString("KELA_SETTINGSYSTEMPANELTOOLTIP", panelId)
-		self.categoryList:AddEntry("ZO_GamepadMenuEntryTemplate", entryData)
-    end
-end
-
-function Kela_GamepadOptions:PanelRequiresDeferredLoading(panelId)
-    local settings = KELA_SETTINGS_DATA [panelId]
-    if settings then
-        for i, setting in ipairs(settings) do
-            if IsSettingDeferred(setting.system, setting.settingId) then
-                return true
-            end
-        end
-    end
-
-    return false
-end
-
-function Kela_GamepadOptions:AreDeferredSettingsForPanelLoading(panelId)
-    local settings = KELA_SETTINGS_DATA [panelId]
-    if settings then
-        for i, setting in ipairs(settings) do
-            if IsSettingDeferred(setting.system, setting.settingId) and IsDeferredSettingLoading(setting.system, setting.settingId) then
-                return true
-            end
-        end
-    end
-
-    return false
-end
-
-function Kela_GamepadOptions:AreDeferredSettingsForPanelLoaded(panelId)
-    local settings = KELA_SETTINGS_DATA [panelId]
-    if settings then
-        for i, setting in ipairs(settings) do
-            if IsSettingDeferred(setting.system, setting.settingId) and IsDeferredSettingLoaded(setting.system, setting.settingId) then
-                return true
-            end
-        end
-    end
-
-    return false
-end
-
-function Kela_GamepadOptions:RequestLoadDeferredSettingsForPanel(panelId)
-    local isDeferredLoading = false
-    local settings = KELA_SETTINGS_DATA [panelId]
-    if settings then
-        for i, setting in ipairs(settings) do
-            if IsSettingDeferred(setting.system, setting.settingId) then
-                RequestLoadDeferredSetting(setting.system, setting.settingId)
-                isDeferredLoading = true
-            end
-        end
-    end
-    return isDeferredLoading
-end
+local KELA_SETTINGS_CATEGORY_ORDER =
+{
+    KELA_SETTING_PANEL_FEATURES,
+    KELA_SETTING_PANEL_SETS,
+    KELA_SETTING_PANEL_TRADE,
+}
 
 function Kela_GamepadOptions:RefreshOptionsList()
-
-
-
     self.optionsList:Clear()
-    local panelName = GetString("KELA_SETTINGSYSTEMPANEL", self.currentCategory)
-    self.optionsList:SetNoItemText(zo_strformat(SI_INTERFACE_OPTIONS_SETTINGS_PANEL_UNAVAILABLE, panelName))
-    local readyToRefresh = true
-    if self:PanelRequiresDeferredLoading(self.currentCategory) then
-        if self:AreDeferredSettingsForPanelLoading(self.currentCategory) then
-            readyToRefresh = false
-        end
+    for _, panelId in ipairs(KELA_SETTINGS_CATEGORY_ORDER) do
+        self:AddSettingGroup(panelId, GetString("KELA_SETTINGSYSTEMPANEL", panelId))
     end
-    if readyToRefresh then
-        self:AddSettingGroup(self.currentCategory)
-
-        if self.currentCategory ~= self.lastCategory then
-            self.optionsList:CommitWithoutReselect()
-        else
-            self.optionsList:Commit()
-        end
-        self.lastCategory = self.currentCategory
-    else
-        self.optionsList:Commit()
-    end
+    self.optionsList:Commit()
 end
 
 function Kela_GamepadOptions:KelaGetSettingsData(panel, system, settingId)
     return kela_SettingsData[panel][system][settingId]
 end
 
-function Kela_GamepadOptions:AddSettingGroup(panelId)
+function Kela_GamepadOptions:AddSettingGroup(panelId, categoryHeader)
     local settings = KELA_SETTINGS_DATA[panelId]
     if settings then
         local lastHeader = nil
+        local categoryHeaderPending = categoryHeader
         for i, setting in ipairs(settings) do
             local data = self:KelaGetSettingsData(setting.panel, setting.system, setting.settingId)
             local isVisible = data.visible == nil or data.visible
-
-            if IsSettingDeferred(data.system, data.settingId) and not IsDeferredSettingLoaded(data.system, data.settingId) then
-                -- If this is a deferred setting and it isn't loaded, then don't show it
-                isVisible = false
-            elseif type(isVisible) == "function" then
+            if type(isVisible) == "function" then
                 isVisible = isVisible()
             end
             if isVisible then
                 local header
-                if setting.header then
+                if categoryHeaderPending then
+                    header = categoryHeaderPending
+                    categoryHeaderPending = nil
+                elseif setting.header then
                     if type(setting.header) == "function" then
                         -- Clear header data when calling header function so the previous result of function is not retained
                         data.header = nil
