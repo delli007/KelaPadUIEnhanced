@@ -14,11 +14,6 @@ KELA_SETTINGS_DIRTY_DEFAULT = 2
 
 -- setting codes
 SETTING_TYPE_KELA = 7000
--- ROAD MAP
-KELA_SETTING_PANEL_MAINMENU 					= 7100
-KELA_SETTING_PANEL_MAININFO_ENABLED 			= 7101
-KELA_SETTING_PANEL_MAININFO_NOTES 				= 7102
-KELA_SETTING_PANEL_MAININFO_QUEST 				= 7104
 -- SETS
 KELA_SETTING_PANEL_SETS 						= 7300 
 KELA_SETTING_PANEL_SETS_ENABLED 				= 7301
@@ -49,26 +44,6 @@ KELA_SETTING_PANEL_TRADE_TOOLTIP_COMPONENTS		= 7513
 -- settings table for the auto-list
 KELA_SETTINGS_DATA =
 {
-	-- ROAD MAP
-    [KELA_SETTING_PANEL_MAINMENU] =
-    {
-        {
-            panel = KELA_SETTING_PANEL_MAINMENU,
-            system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_MAININFO_ENABLED,
-            header = KELA_SETTINGS_MAININFO_ENABLED,
-        },
-        {
-            panel = KELA_SETTING_PANEL_MAINMENU,
-            system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_MAININFO_NOTES,
-        },
-        {
-            panel = KELA_SETTING_PANEL_MAINMENU,
-            system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_MAININFO_QUEST,
-        },
-    },
 	-- FEATURES
     [KELA_SETTING_PANEL_FEATURES] =
     {
@@ -192,48 +167,6 @@ KELA_SETTINGS_DATA =
 -- control data table for the auto-list
 kela_SettingsData = 
 {
-    --Options_Gameplay_InputModePreferred
-    [KELA_SETTING_PANEL_MAINMENU] =
-    {
-		[SETTING_TYPE_KELA] =
-		{
-			[KELA_SETTING_PANEL_MAININFO_ENABLED] =
-			{
-				controlType = OPTIONS_CHECKBOX,
-				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_MAINMENU,
-				settingId = KELA_SETTING_PANEL_MAININFO_ENABLED,
-				text = KELA_SETTINGS_MAININFO_ENABLED,
-				tooltipText = KELA_SETTINGS_MAININFO_ENABLED_TOOLTIP,
-				gamepadHasEnabledDependencies = true,
-			},
-			[KELA_SETTING_PANEL_MAININFO_NOTES] =
-			{
-				controlType = OPTIONS_CHECKBOX,
-				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_MAINMENU,
-				settingId = KELA_SETTING_PANEL_MAININFO_NOTES,
-				visible  = function()
-                    return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_MAININFO_ENABLED)
-                end,
-				text = KELA_SETTINGS_MAININFO_NOTES,
-				tooltipText = KELA_SETTINGS_MAININFO_NOTES_TOOLTIP,
-			},
-			[KELA_SETTING_PANEL_MAININFO_QUEST] =
-			{
-				controlType = OPTIONS_CHECKBOX,
-				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_MAINMENU,
-				settingId = KELA_SETTING_PANEL_MAININFO_QUEST,
-                visible  = function()
-                    return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_MAININFO_ENABLED)
-                end,
-                text = KELA_SETTINGS_MAININFO_QUEST,
-                tooltipText = KELA_SETTINGS_MAININFO_QUEST_TOOLTIP,
-			},
-		},
-	},
-	
     [KELA_SETTING_PANEL_SETS] =
     {
 		[SETTING_TYPE_KELA] =
@@ -496,10 +429,6 @@ KELA_SETTINGS_DEFAULTS =
 {
 	[SETTING_TYPE_KELA] =
 	{
-		-- ROAD MAP
-		[KELA_SETTING_PANEL_MAININFO_ENABLED] 			= "true",
-		[KELA_SETTING_PANEL_MAININFO_NOTES] 			= "true",
-		[KELA_SETTING_PANEL_MAININFO_QUEST] 			= "true",
 		-- SETS
 		[KELA_SETTING_PANEL_SETS_ENABLED] 				= "true",
 		-- FEATURES
@@ -1461,7 +1390,6 @@ function Kela_GamepadOptions:RefreshCategoryList()
 
 
     self.categoryList:Clear()
-    self:AddCategory(KELA_SETTING_PANEL_MAINMENU)
     self:AddCategory(KELA_SETTING_PANEL_FEATURES)
     self:AddCategory(KELA_SETTING_PANEL_SETS)
     self:AddCategory(KELA_SETTING_PANEL_TRADE)
@@ -1471,7 +1399,6 @@ end
 do
     local CATEGORY_ICONS =
     {
-        [KELA_SETTING_PANEL_MAINMENU] = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_tutorial.dds",
         [KELA_SETTING_PANEL_FEATURES] = "EsoUI/Art/Journal/Gamepad/gp_journalCheck.dds",
         [KELA_SETTING_PANEL_SETS] = "esoui/art/treeicons/gamepad/gp_collectionicon_weapona+armor.dds",
         [KELA_SETTING_PANEL_TRADE] = "esoui/art/guild/gamepad/gp_guild_menuIcon_trader.dds",

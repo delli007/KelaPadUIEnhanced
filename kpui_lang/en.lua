@@ -2,12 +2,8 @@
    local Add = ZO_CreateStringId
 
     -- Main Menu
-	Add("KELA_MAINMENU_TITLE",												"KelaPadUI")	
-	Add("KELA_MAINMENU_HEADER",												"Information about KelaPadUI")	
-	Add("KELA_MAINMENU_WEBSITE",											"https://www.esoui.com/downloads/info2394-KelaPadUI.html")
-	Add("KELA_MAINMENU_INFO",												"Reference")
-	Add("KELA_MAINMENU_SETS",												"Sets")	
-	Add("KELA_MAINMENU_SETS_COLLECTED",										"Collected sets")	
+	Add("KELA_MAINMENU_TITLE",												"KelaPadUI")
+	Add("KELA_MAINMENU_SETS",												"Sets")
 
 	-- Main info tooltip
 	Add("KELA_ITEM_IN_BANK",						"in the bank")
@@ -170,14 +166,6 @@
 	Add("KELA_SETS_TOOLTIP_LIST",					"  - ")
 
 	-- Settings Scene
-	Add("KELA_SETTINGSYSTEMPANEL7100",				"Main menu")
-	Add("KELA_SETTINGSYSTEMPANELTOOLTIP7100",		"MAIN MENU \n\nAdds an informational tooltip to the pause menu. \nThe tooltip contains information about inventory, research, soul gems, and more. \nYou can switch quests directly from the pause menu.")
-	Add("KELA_SETTINGS_MAININFO_ENABLED",			"Travel notes")
-	Add("KELA_SETTINGS_MAININFO_ENABLED_TOOLTIP",	"Adds the KelaPadUI travel-notes panel to the gamepad pause menu.")
-	Add("KELA_SETTINGS_MAININFO_NOTES",				"Notes")
-	Add("KELA_SETTINGS_MAININFO_NOTES_TOOLTIP",		"Shows your notes inside travel notes.")
-	Add("KELA_SETTINGS_MAININFO_QUEST",				"Current quest")
-	Add("KELA_SETTINGS_MAININFO_QUEST_TOOLTIP",		"Shows the focused quest and lets you change it from travel notes.")
 	Add("KELA_SETTING_INFO_DEFAULT",				"Default: <<1>>")
 	Add("KELA_SETTING_INFO_ON",						"On")
 	Add("KELA_SETTING_INFO_OFF",					"Off")
