@@ -1,6 +1,6 @@
 -- KelaPadUI gamepad group rally-point control.
--- Adds a Quaternary (Y) keybind to the gamepad map info screen so a group
--- leader can set or remove the group rally point at the map cursor.
+-- Adds a right-stick-click (R3) keybind to the gamepad map info screen so a
+-- group leader can set or remove the group rally point at the map cursor.
 
 local KELA_MAP_RALLY_KEYBINDS = nil
 local KELA_MAP_RALLY_KEYBINDS_SHOWN = false
@@ -62,7 +62,7 @@ function KelaMapRally_ShowKeybind()
             alignment = KEYBIND_STRIP_ALIGN_CENTER,
             {
                 name = KelaMapRally_GetLabel,
-                keybind = "UI_SHORTCUT_QUATERNARY",
+                keybind = "UI_SHORTCUT_RIGHT_STICK",
                 visible = KelaMapRally_IsVisible,
                 callback = KelaMapRally_Toggle,
                 sound = SOUNDS.GAMEPAD_MENU_FORWARD,

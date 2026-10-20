@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - Moved the gamepad map rally keybind from Y to R3 to avoid the map-info/zone-story keybind conflict.
+
 10/20/2026 - Fixed the gamepad map rally keybind failing because it called the private ESOUI IsShowingCosmicMap helper instead of GetMapType().
 
 10/20/2026 - Fixed the trading-house known-item filter for combination-fragment collectibles.
