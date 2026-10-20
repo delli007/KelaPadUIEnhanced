@@ -9,9 +9,6 @@ local colors = kpuiConst.Colors
 
 KELA_KNOWN_ITEM_FILTER = "ALL"
 KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX = 1
-KELA_CURRENT_SEARCH_TABLE = {}
-KELA_TRADINGHOUSE_ITEMCOUNT = 0
-KELA_TRADINGHOUSE_SEARCH_WAIT = false
 
 KELA_TRADINGHOUSE_CURRENTSCENE = ""
 KELA_TRADINGHOUSE_CURRENT_SELECTEDDATA = {}
@@ -765,7 +762,6 @@ function KelaSetupTradingHouse()
 							control:Deactivate()
 							control:FilterScrollList()
 							ZO_SortFilterList.CommitScrollList(control)
-							KELA_TRADINGHOUSE_SEARCH_WAIT = false
 							control:RefreshPagingControls()
 							control:UpdateKeybinds()
 							control:Activate()
@@ -790,7 +786,6 @@ function KelaSetupTradingHouse()
 							control:Deactivate()
 							control:FilterScrollList()
 							ZO_SortFilterList.CommitScrollList(control)
-							KELA_TRADINGHOUSE_SEARCH_WAIT = false
 							control:RefreshPagingControls()
 							control:UpdateKeybinds()
 							control:Activate()
@@ -799,62 +794,27 @@ function KelaSetupTradingHouse()
 				}
 				control:AddUniversalKeybind(keybind)
 
-				if not KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					local keybind  =
-					{
-						name = "Gamepad Interactive Sort Filter List Left Trigger",
-						keybind = "UI_SHORTCUT_LEFT_TRIGGER",
-						ethereal = true,
-						callback = function()
-							control:OnLeftTrigger()
-						end,
-					}
-					control:AddUniversalKeybind(keybind)
+				local keybind  =
+				{
+					name = "Gamepad Interactive Sort Filter List Left Trigger",
+					keybind = "UI_SHORTCUT_LEFT_TRIGGER",
+					ethereal = true,
+					callback = function()
+						control:OnLeftTrigger()
+					end,
+				}
+				control:AddUniversalKeybind(keybind)
 
-					local keybind  =
-					{
-						name = "Gamepad Interactive Sort Filter List Right Trigger",
-						keybind = "UI_SHORTCUT_RIGHT_TRIGGER",
-						ethereal = true,
-						callback = function()
-							control:OnRightTrigger()
-						end,
-					}
-					control:AddUniversalKeybind(keybind)
-				end
-				-- remove the preview button
-				for k, v in pairs(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS.keybindStripDescriptor) do
-					if KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-						if v.name == GetString(SI_CRAFTING_ENTER_PREVIEW_MODE) then 
-							v.visible = function() return false end					
-							break
-						end
-					else
-						if v.name == GetString(SI_CRAFTING_ENTER_PREVIEW_MODE) then 
-							v.visible = function()
-								local selectedData = GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS:GetSelectedData()
-								return selectedData and GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS:CanPreviewTradingHouseItem(selectedData)
-							end				
-							break
-						end					
-					end
-				end			
-				ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "OnLeftTrigger", function(control, ...)
-					if IsKPUITradingHouseSettingEnabled() then
-						if not KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-							TRADING_HOUSE_SEARCH:SearchPreviousPage()
-						end
-						return true
-					end
-				end)
-				ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "OnRightTrigger", function(control, ...)
-					if IsKPUITradingHouseSettingEnabled() then
-						if not KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-							TRADING_HOUSE_SEARCH:SearchNextPage()
-						end
-						return true
-					end
-				end)
+				local keybind  =
+				{
+					name = "Gamepad Interactive Sort Filter List Right Trigger",
+					keybind = "UI_SHORTCUT_RIGHT_TRIGGER",
+					ethereal = true,
+					callback = function()
+						control:OnRightTrigger()
+					end,
+				}
+				control:AddUniversalKeybind(keybind)
 			end)
 			-- add the trade message
 			SecurePostHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "UpdateItemSelectedTooltip", function(control, selectedData, ...)
@@ -882,55 +842,30 @@ function KelaSetupTradingHouse()
 			-- keep page-turn buttons visible on headers
 			ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "RefreshPagingControls", function(control, ...)
 				if IsKPUITradingHouseSettingEnabled() then
-					if KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-						local prevButton = control.footer.previousButton
-						local nextButton = control.footer.nextButton
-						prevButton:SetEnabled(false)
-						nextButton:SetEnabled(false)
-						prevButton:SetHidden(true)
-						nextButton:SetHidden(true)
-						local scrollData = ZO_ScrollList_GetDataList(control.list)
-						if KELA_TRADINGHOUSE_SEARCH_WAIT == false and next(scrollData) == nil and #KELA_CURRENT_SEARCH_TABLE ~= 0 then
-							control:SetEmptyText(colors.COLOR_WHITE:Colorize("0")..GetString(KELA_TRADING_TRADING_NOTEFFECTLOTS)..colors.COLOR_WHITE:Colorize(tostring(#KELA_CURRENT_SEARCH_TABLE)))		
-						elseif KELA_TRADINGHOUSE_SEARCH_WAIT == true and #KELA_CURRENT_SEARCH_TABLE ~= 0 then
-							control:SetEmptyText(GetString("SI_TRADINGHOUSESEARCHSTATE", 1).." "..colors.COLOR_WHITE:Colorize(tostring(#KELA_CURRENT_SEARCH_TABLE)))						
-						end						
-						control.footer.pageNumberLabel:SetHidden(false)
-						local pageNumberLabel = tostring(#KELA_CURRENT_SEARCH_TABLE)
-						if KELA_TRADINGHOUSE_ITEMCOUNT ~= 0 then 
-							pageNumberLabel = tostring(KELA_TRADINGHOUSE_ITEMCOUNT).." / "..pageNumberLabel 
+					local enablePrevious = TRADING_HOUSE_SEARCH:HasPreviousPage()
+					local enableNext = TRADING_HOUSE_SEARCH:HasNextPage()
+					local hideButtons = not (enablePrevious or enableNext)
+					local prevButton = control.footer.previousButton
+					local nextButton = control.footer.nextButton
+					prevButton:SetEnabled(enablePrevious)
+					nextButton:SetEnabled(enableNext)
+					prevButton:SetHidden(hideButtons)
+					nextButton:SetHidden(hideButtons)
+					local scrollData = ZO_ScrollList_GetDataList(control.list)
+					if next(scrollData) == nil then
+						if TRADING_HOUSE_SEARCH.numItemsOnPage ~= 0 then
+							control:SetEmptyText(colors.COLOR_WHITE:Colorize("0")..GetString(KELA_TRADING_TRADING_NOTEFFECTLOTS)..colors.COLOR_WHITE:Colorize(tostring(TRADING_HOUSE_SEARCH.numItemsOnPage)))
 						end
-						control.footer.pageNumberLabel:SetText(pageNumberLabel)
 					else
-						--IsPanelFocused ignores activated or not which matters here
-						local enablePrevious = TRADING_HOUSE_SEARCH:HasPreviousPage() -- control:IsPanelFocused() 
-						local enableNext = TRADING_HOUSE_SEARCH:HasNextPage() -- control:IsPanelFocused() and 
-						local hideButtons = not (TRADING_HOUSE_SEARCH:HasPreviousPage() or TRADING_HOUSE_SEARCH:HasNextPage())
-						local showPageNumber = not hideButtons
-						local prevButton = control.footer.previousButton
-						local nextButton = control.footer.nextButton
-						prevButton:SetEnabled(enablePrevious)
-						nextButton:SetEnabled(enableNext)
-						prevButton:SetHidden(hideButtons)
-						nextButton:SetHidden(hideButtons)
-						local scrollData = ZO_ScrollList_GetDataList(control.list)
-						if next(scrollData) == nil then
-							if TRADING_HOUSE_SEARCH.numItemsOnPage == 0 then
-								-- control:SetEmptyText("")
-							else
-								control:SetEmptyText(colors.COLOR_WHITE:Colorize("0")..GetString(KELA_TRADING_TRADING_NOTEFFECTLOTS)..colors.COLOR_WHITE:Colorize(tostring(TRADING_HOUSE_SEARCH.numItemsOnPage)))		
-							end
-						else
-							control:SetEmptyText(GetString("SI_TRADINGHOUSESEARCHSTATE", 1))						
-						end						
-						if showPageNumber then
-							control.footer.pageNumberLabel:SetHidden(false)
-							control.footer.pageNumberLabel:SetText(tostring(#scrollData).." / "..tostring(TRADING_HOUSE_SEARCH.numItemsOnPage)..GetString(KELA_TRADING_TRADING_PAGES)..zo_strformat(SI_GAMEPAD_PAGED_LIST_PAGE_NUMBER, TRADING_HOUSE_SEARCH:GetPage() + 1)) -- Pages start at 0, offset by 1 for expected display number
-						else
-							control.footer.pageNumberLabel:SetHidden(true)
-						end
+						control:SetEmptyText(GetString("SI_TRADINGHOUSESEARCHSTATE", 1))
 					end
-					return true	
+					if not hideButtons then
+						control.footer.pageNumberLabel:SetHidden(false)
+						control.footer.pageNumberLabel:SetText(tostring(#scrollData).." / "..tostring(TRADING_HOUSE_SEARCH.numItemsOnPage)..GetString(KELA_TRADING_TRADING_PAGES)..zo_strformat(SI_GAMEPAD_PAGED_LIST_PAGE_NUMBER, TRADING_HOUSE_SEARCH:GetPage() + 1))
+					else
+						control.footer.pageNumberLabel:SetHidden(true)
+					end
+					return true
 				end
 			end)
 			-- empty-list text
@@ -940,7 +875,6 @@ function KelaSetupTradingHouse()
 					local shouldDeactivateBrowseResults = false
 					if searchState == TRADING_HOUSE_SEARCH_STATE_NONE then
 						control:SetEmptyText("")
-						KELA_TRADINGHOUSE_SEARCH_WAIT = false
 						control:RefreshPagingControls()
 					elseif searchState == TRADING_HOUSE_SEARCH_STATE_WAITING then
 						control:SetEmptyText(GetString("SI_TRADINGHOUSESEARCHSTATE", searchState))
@@ -948,8 +882,7 @@ function KelaSetupTradingHouse()
 						if searchOutcome == TRADING_HOUSE_SEARCH_OUTCOME_HAS_RESULTS then
 							control:DeselectListData()
 							shouldActivateBrowseResults = true
-							KELA_TRADINGHOUSE_SEARCH_WAIT = false
-							control:RefreshPagingControls(control)
+							control:RefreshPagingControls()
 						else
 							control:SetEmptyText(GetString("SI_TRADINGHOUSESEARCHOUTCOME", searchOutcome))
 							shouldDeactivateBrowseResults = (searchOutcome == TRADING_HOUSE_SEARCH_OUTCOME_ALL_RESULTS_PURCHASED)
@@ -974,51 +907,6 @@ function KelaSetupTradingHouse()
 					return true
 				end
 			end)
-			ZO_PreHook(TRADING_HOUSE_SEARCH, "OnResponseReceived", function(control, responseType, result, ...)		
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					if control:IsWaitingForResponseType(responseType) then
-						control:ClearAwaitingResponseType()
-						if responseType == TRADING_HOUSE_RESULT_PURCHASE_PENDING and result == TRADING_HOUSE_RESULT_SUCCESS then
-							if AreAllTradingHouseSearchResultsPurchased() then
-								control:SetSearchState(TRADING_HOUSE_SEARCH_STATE_COMPLETE, TRADING_HOUSE_SEARCH_OUTCOME_ALL_RESULTS_PURCHASED)
-							end
-						elseif responseType == TRADING_HOUSE_RESULT_SEARCH_PENDING and result == TRADING_HOUSE_RESULT_SUCCESS then
-							control.numItemsOnPage, control.page, control.hasMorePages = GetTradingHouseSearchResultsInfo()
-							for tradingHouseItemIndex = 1, TRADING_HOUSE_SEARCH:GetNumItemsOnPage() do
-								local itemData = ZO_TradingHouse_CreateSearchResultItemData(tradingHouseItemIndex)
-								if itemData then
-									table.insert(KELA_CURRENT_SEARCH_TABLE, itemData)
-								end
-							end	
-							KELA_TRADINGHOUSE_SEARCH_WAIT = true
-							GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS:RefreshPagingControls()
-							if control.hasMorePages then
-								control:SetSearchState(TRADING_HOUSE_SEARCH_STATE_WAITING)
-								control:SearchNextPage()  
-								return true
-							end	
-							local searchOutcome = (control.numItemsOnPage == 0) and TRADING_HOUSE_SEARCH_OUTCOME_NO_RESULTS or TRADING_HOUSE_SEARCH_OUTCOME_HAS_RESULTS
-							control:SetSearchState(TRADING_HOUSE_SEARCH_STATE_COMPLETE, searchOutcome)
-						end	
-						control:FireCallbacks("OnResponseReceived", responseType, result)
-					end
-					return true
-				end
-			end)
-			-- mark the item being purchased
-			ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "ShowPurchaseItemConfirmation", function(control, selectedData, ...)		
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					if selectedData then
-						local dialogName = selectedData.isGuildSpecificItem and "TRADING_HOUSE_CONFIRM_BUY_GUILD_SPECIFIC_ITEM" or "TRADING_HOUSE_CONFIRM_BUY_ITEM"
-						if not selectedData.isGuildSpecificItem then
-							SetPendingItemPurchaseByItemUniqueId(selectedData.itemUniqueId, selectedData.purchasePrice)
-							-- CHAT_SYSTEM:AddMessage(tostring(selectedData.itemUniqueId).." / "..tostring(selectedData.purchasePrice))
-						end
-						ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog(selectedData, dialogName, selectedData.purchasePrice, selectedData.icon)
-					end
-					return true
-				end
-			end)
 			ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "FilterScrollList", function(control, ...)		
 				if IsKPUITradingHouseSettingEnabled() then
 					local scrollData = ZO_ScrollList_GetDataList(control.list)
@@ -1036,87 +924,63 @@ function KelaSetupTradingHouse()
 							end
 						end
 					else
-						-- onepage search
-						if KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-							KELA_TRADINGHOUSE_ITEMCOUNT = 0
-							for tradingHouseItemIndex, itemData in pairs(KELA_CURRENT_SEARCH_TABLE) do
-								if itemData then
-									local index = ZO_Inventory_GetSlotIndex(itemData)
-									local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemData.itemLink)
-									local valueEffectDeal = KelaGetEffectOfDeal (priceInfoTTC, priceInfoATT, itemData, "GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS")
-									if valueEffectDeal == "-" then 
-										valueEffectDeal = KelaGetEffectIfUndefined(itemData)
+						for tradingHouseItemIndex = 1, TRADING_HOUSE_SEARCH:GetNumItemsOnPage() do
+							local itemData = ZO_TradingHouse_CreateSearchResultItemData(tradingHouseItemIndex)
+							if itemData then
+								local _, _, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemData.itemLink)
+								local valueEffectDeal = KelaGetEffectOfDeal (priceInfoTTC, priceInfoATT, itemData, "GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS")
+
+								local itemType, specializedItemType = GetItemLinkItemType(itemData.itemLink)
+								local grantedCollectibleId = GetItemLinkContainerCollectibleId(itemData.itemLink)
+								local isItemKnown = "ALL"
+								if IsItemLinkBook(itemData.itemLink) or IsItemLinkBookPartOfCollection(itemData.itemLink) then
+									-- Motifs and books
+									if IsItemLinkBookKnown(itemData.itemLink) then
+										isItemKnown = "KNOWN"
+									else
+										isItemKnown = "UNKNOWN"
 									end
-									if KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX == 1 or (KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX == 2 and valueEffectDeal == 0) or (KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX > 2 and valueEffectDeal >= KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX) then	
+								elseif itemType == ITEMTYPE_RECIPE then
+									-- Recipe's
+									if IsItemLinkRecipeKnown(itemData.itemLink) then
+										isItemKnown = "KNOWN"
+									else
+										isItemKnown = "UNKNOWN"
+									end
+								elseif IsItemLinkSetCollectionPiece(itemData.itemLink) then
+									-- Sets: Armor, weapon, and jewelry
+									local itemId = GetItemLinkItemId(itemData.itemLink)
+									if IsItemSetCollectionPieceUnlocked(itemId) then
+										isItemKnown = "KNOWN"
+									else
+										isItemKnown = "UNKNOWN"
+									end
+								elseif grantedCollectibleId > 0 then
+									-- Other Collectibles: runeboxes, style pages, etc
+									if IsCollectibleOwnedByDefId(grantedCollectibleId) then
+										isItemKnown = "KNOWN"
+									elseif collectibleCategory == COLLECTIBLE_CATEGORY_TYPE_COMBINATION_FRAGMENT and not CanCombinationFragmentBeUnlocked(grantedCollectibleId) then
+										isItemKnown = "KNOWN"
+									else
+										isItemKnown = "UNKNOWN"
+									end
+								end
+
+								if valueEffectDeal == "-" then 
+									valueEffectDeal = KelaGetEffectIfUndefined(itemData)
+								end
+								if KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX == 1 or (KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX == 2 and valueEffectDeal == 0) or (KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX > 2 and valueEffectDeal >= KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX) then	
+									if KELA_KNOWN_ITEM_FILTER=="ALL" or (KELA_KNOWN_ITEM_FILTER==isItemKnown) then
 										local dataEntry = ZO_ScrollList_CreateDataEntry(ZO_GAMEPAD_INTERACTIVE_FILTER_LIST_PRIMARY_DATA_TYPE, itemData)
-										control.searchResultItemDataList[index] = itemData
+										control.searchResultItemDataList[tradingHouseItemIndex] = itemData
 										table.insert(scrollData, dataEntry)
-										KELA_TRADINGHOUSE_ITEMCOUNT = KELA_TRADINGHOUSE_ITEMCOUNT + 1
+										if control:CanPreviewTradingHouseItem(itemData) then
+											table.insert(control.previewListEntries, tradingHouseItemIndex)
+										end
 									end
 								end
 							end
-						else
-							for tradingHouseItemIndex = 1, TRADING_HOUSE_SEARCH:GetNumItemsOnPage() do
-								local itemData = ZO_TradingHouse_CreateSearchResultItemData(tradingHouseItemIndex)
-								if itemData then
-									local _, _, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemData.itemLink)
-									local valueEffectDeal = KelaGetEffectOfDeal (priceInfoTTC, priceInfoATT, itemData, "GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS")
-
-									local itemType, specializedItemType = GetItemLinkItemType(itemData.itemLink)
-									local grantedCollectibleId = GetItemLinkContainerCollectibleId(itemData.itemLink)
-									local isItemKnown = "ALL"
-									if IsItemLinkBook(itemData.itemLink) or IsItemLinkBookPartOfCollection(itemData.itemLink) then
-										-- Motifs and books
-										if IsItemLinkBookKnown(itemData.itemLink) then
-											isItemKnown = "KNOWN"
-										else
-											isItemKnown = "UNKNOWN"
-										end
-									elseif itemType == ITEMTYPE_RECIPE then
-										-- Recipe's
-										if IsItemLinkRecipeKnown(itemData.itemLink) then
-											isItemKnown = "KNOWN"
-										else
-											isItemKnown = "UNKNOWN"
-										end
-									elseif IsItemLinkSetCollectionPiece(itemData.itemLink) then
-										-- Sets: Armor, weapon, and jewelry
-										local itemId = GetItemLinkItemId(itemData.itemLink)
-										if IsItemSetCollectionPieceUnlocked(itemId) then
-											isItemKnown = "KNOWN"
-										else
-											isItemKnown = "UNKNOWN"
-										end
-									elseif grantedCollectibleId > 0 then
-										-- Other Collectibles: runeboxes, style pages, etc
-										if IsCollectibleOwnedByDefId(grantedCollectibleId) then
-											isItemKnown = "KNOWN"
-										elseif collectibleCategory == COLLECTIBLE_CATEGORY_TYPE_COMBINATION_FRAGMENT and not CanCombinationFragmentBeUnlocked(grantedCollectibleId) then
-											isItemKnown = "KNOWN"
-										else
-											isItemKnown = "UNKNOWN"
-										end
-									end
-									
-
-									if valueEffectDeal == "-" then 
-										valueEffectDeal = KelaGetEffectIfUndefined(itemData)
-									end
-									if KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX == 1 or (KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX == 2 and valueEffectDeal == 0) or (KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX > 2 and valueEffectDeal >= KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX) then	
-										--if KELA_KNOWN_ITEM_FILTER=="ALL" or (KELA_KNOWN_ITEM_FILTER=="KNOWN" and isItemKnown) or (KELA_KNOWN_ITEM_FILTER=="UNKNOWN" and not isItemKnown) then
-										if KELA_KNOWN_ITEM_FILTER=="ALL" or (KELA_KNOWN_ITEM_FILTER==isItemKnown) then
-											local dataEntry = ZO_ScrollList_CreateDataEntry(ZO_GAMEPAD_INTERACTIVE_FILTER_LIST_PRIMARY_DATA_TYPE, itemData)
-											control.searchResultItemDataList[tradingHouseItemIndex] = itemData
-											table.insert(scrollData, dataEntry)
-											if control:CanPreviewTradingHouseItem(itemData) then
-												table.insert(control.previewListEntries, tradingHouseItemIndex)
-											end
-										end
-									end
-								end
-							end						
 						end
-						KELA_TRADINGHOUSE_SEARCH_WAIT = false
 						control:RefreshPagingControls()
 					end
 					if TRADING_HOUSE_PREVIEW_GAMEPAD_SCENE:IsShowing() then
@@ -1164,60 +1028,6 @@ function KelaSetupTradingHouse()
 						end
 					end
 					control.unitPriceLabel:SetColor(colorPrice:UnpackRGB())
-				end
-			end)
-			-- clear the results table
-			SecurePostHook(ZO_GamepadTradingHouse, "DeactivateBrowseResults", function(control, ...)
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					TRADING_HOUSE_SEARCH:ResetPageData()
-					TRADING_HOUSE_SEARCH.targetPage = nil
-					TRADING_HOUSE_SEARCH.useLastExecutedSearchFilters = false
-					ZO_ClearTable(KELA_CURRENT_SEARCH_TABLE)
-				end
-			end)
-			TRADING_HOUSE_GAMEPAD_SCENE:RegisterCallback("StateChange", function(oldState, newState)
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					if newState == SCENE_SHOWING then
-					elseif newState == SCENE_HIDDEN then
-						TRADING_HOUSE_SEARCH.targetPage = nil
-						TRADING_HOUSE_SEARCH.useLastExecutedSearchFilters = false
-						ZO_ClearTable(KELA_CURRENT_SEARCH_TABLE)
-					end
-				end
-			end)			
-			-- during purchase and sorting
-			ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "BuildMasterList", function(control, ...)
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					control:SetMasterList(KELA_CURRENT_SEARCH_TABLE)
-				end
-			end)			
-			ZO_PreHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "RefreshSort", function(selfControl, ...)
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					local sortKey = "purchasePricePerUnit"
-					if selfControl.currentSortKey == TRADING_HOUSE_SORT_EXPIRY_TIME then
-						sortKey = "timeRemaining"
-					elseif selfControl.currentSortKey == TRADING_HOUSE_SORT_SALE_PRICE then
-						sortKey = "purchasePrice"
-					end 
-					if selfControl.currentSortOrder == ZO_SORT_ORDER_UP then
-						table.sort(KELA_CURRENT_SEARCH_TABLE, function (a,b) return (string.lower(a[sortKey]) < string.lower(b[sortKey])) end)
-					else
-						table.sort(KELA_CURRENT_SEARCH_TABLE, function (a,b) return (string.lower(b[sortKey]) < string.lower(a[sortKey])) end)
-					end
-					selfControl:RefreshData()
-					if not selfControl.control:IsHidden() then
-						TRADING_HOUSE_SEARCH:ChangeSort(selfControl.currentSortKey, selfControl.currentSortOrder)
-					end
-					KELA_TRADINGHOUSE_SEARCH_WAIT = false
-					selfControl:RefreshPagingControls()
-					return true
-				end
-			end)		
-			ZO_PreHook(TRADING_HOUSE_SEARCH, "ChangeSort", function(selfControl, sortKey, sortOrder, ...)
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_SEARCH_ONEPAGE) then
-					selfControl.sortField = sortKey
-					selfControl.sortOrder = sortOrder
-					return true
 				end
 			end)
 			-- TRADING_HOUSE_CREATE_LISTING_GAMEPAD
@@ -1397,13 +1207,6 @@ function KelaSetupTradingHouse()
 						callback =  function(dialog)
 										if IsKPUITradingHouseSettingEnabled() then
 											KelaAddToBuyingUniqueTable(dialog.data.uniqueId, dialog.data.itemName, dialog.data.price, dialog.data.pricePerUnit, dialog.data.listingIndex, dialog.data.displayQuality)
-											for k, v in ipairs(KELA_CURRENT_SEARCH_TABLE) do
-												if Id64ToString(v.itemUniqueId) == Id64ToString(dialog.data.uniqueId) then 
-													local byIndex = true
-													KelaRemoveValueByKey(KELA_CURRENT_SEARCH_TABLE, k, byIndex) -- check in Ipars; remove Table[2] and shift remaining entries
-													break
-												end
-											end
 										end
 										ConfirmPendingItemPurchase()
 									 end
