@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - Fixed the gamepad map rally keybind failing because it called the private ESOUI IsShowingCosmicMap helper instead of GetMapType().
+
 10/20/2026 - Fixed the trading-house known-item filter for combination-fragment collectibles.
 
 10/20/2026 - Removed 47 dead localization strings and tightened the static audit to recognize indirect KELA string references and dynamic string prefixes.

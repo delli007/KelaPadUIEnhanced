@@ -23,7 +23,7 @@ function KelaMapRally_IsAtRallyPoint(x, y)
 end
 
 function KelaMapRally_IsVisible()
-    return IsUnitGrouped("player") and IsUnitGroupLeader("player") and not IsShowingCosmicMap()
+    return IsUnitGrouped("player") and IsUnitGroupLeader("player") and GetMapType() ~= MAPTYPE_COSMIC
 end
 
 function KelaMapRally_GetLabel()

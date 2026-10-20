@@ -14,6 +14,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Removed the dead `kpui_features/kpui_crafting_panel_tips.lua` file.
 - [x] Removed the nonfunctional one-page trading search setting (`7503`) and its hooks.
 - [x] Fixed the known-item filter for combination-fragment collectibles in trading results.
+- [x] Fixed the gamepad map rally keybind's cosmic-map visibility check.
 - [x] Branded the KELAPADUI main-menu entry with a champion icon and purple text/icon tint.
 - [x] Removed the retired pause-menu travel-notes feature; documented restoration notes.
 - [x] Added `docs/MAINTENANCE.md`, `docs/SETTINGS.md`, and `docs/TRADING_HOUSE.md`.
