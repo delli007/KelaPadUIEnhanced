@@ -1,0 +1,12 @@
+# Local build and editor artifacts
+__pycache__/
+*.py[cod]
+*.zip
+*.bak
+*.tmp
+*.log
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store

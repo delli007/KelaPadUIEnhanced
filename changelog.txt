@@ -1,0 +1,14 @@
+KelaPadUI changelog (newest first)
+
+10/19/2026 - Refactor phase 2: reorganized retained Lua/XML into kpui_core, kpui_features, kpui_data, and kpui_compat; made the main-menu entry append-only; removed the retired settings panels and unused settings XML; trimmed unused templates; translated all remaining Russian text to English; kept ru.lua as an English no-op; added the gamepad map-info rally-point keybind; and completed the static manifest/syntax/XML audit.
+
+10/18/2026 - Refactor phase 1: removed Quick Access, old Researching, old Undaunted scene, broken rally experiment, KelaPadUIBuyingData, and KelaPadUIListingData; split companion, dungeon-finder/pledge, chat, and trial-link code into feature modules; added a gamepad group-rally-point button in the map info screen; trimmed dead XML/settings/templates; retired Russian text in favor of English while keeping ru.lua; preserved commented debugging code and added DEBUG_NOTES.md; added OPTIMIZATION_TODO.md for deferred trading-house/tooltip work.
+
+07/15/2022 - Fixed Tradinghouse display and duplicate "another quality" listings
+06/20/2022 - Added a "Link in Chat" option for achievements and various other fixes and improvements
+03/23/2022 - Slimmed down the main menu code so it doesn't re-create the entire menu, only places KelapadUI in the existing menu. Also moved the menu placement next to the Options menu
+03/20/2022 - Fixed crash when trying to sell grouped items whose individual cost was over 999
+03/01/2022 - Fixed crashes on load
+03/20/2023 - Added 2 chat switches. "/achievementsearch [string]" will open the achievement window in keyboard layout and search for the string. "/keyboardmap" will open the map in keyboard layout to access map addon features that don't have gamepad support.
+04/01/2023 - Added additional companion information such as rapport numbers, stages, and sources of rapport
+04/15/2023 - Added a guild store search feature to filter by known or unknown items. This includes motifs, style pages, rune boxes, recipe's, and item sets.
