@@ -1,11 +1,13 @@
 -- KelaPadUI companion information and rapport notifications.
 -- Extracted from KelaPadUI.lua during the refactor; behavior is unchanged.
 
+local COMPANION_RAPPORT_EVENT_NAMESPACE = "KelaPadUI_CompanionRapport"
+
 local function Set_Companion_Notifications()
 	local maxRapport = GetMaximumRapport()
-	local stopNotifyRapportLevel = 4000 -- After this amount, don't notify, since 
+	local stopNotifyRapportLevel = 4000 -- Stop notifying once both rapport values reach the Companion tier.
 	
-	EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_COMPANION_RAPPORT_UPDATE, function( eventCode, companionId, previousRapport, currentRapport )
+	EVENT_MANAGER:RegisterForEvent(COMPANION_RAPPORT_EVENT_NAMESPACE, EVENT_COMPANION_RAPPORT_UPDATE, function(_, companionId, previousRapport, currentRapport)
 		if currentRapport < stopNotifyRapportLevel or previousRapport < stopNotifyRapportLevel then
 			CHAT_ROUTER:AddSystemMessage(zo_strformat(
 				"<<1>> <<2>>: <<3>> <<4>>",
@@ -16,9 +18,6 @@ local function Set_Companion_Notifications()
 			))
 		end
 	end)
-end
-local function Stop_Companion_Notifications()
-	EVENT_MANAGER:UnregisterForEvent("KelaPadUI", EVENT_COMPANION_RAPPORT_UPDATE)
 end
 
 -- Adds companion rapport numbers to the companion information UI

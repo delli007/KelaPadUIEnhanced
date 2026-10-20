@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - Companion rapport notifications now use a dedicated event namespace; removed the unused companion event cleanup function.
+
 10/20/2026 - Maintenance pass: flattened KelaPadUI settings into one list with category headings and removed the category submenu; added reload-gated feature toggles with defaults and requirement tooltips; removed obsolete support/donation/message settings; restored trading buying/listing history, retention cleanup, guild statistics, and history icons; centralized the ATT analysis-period fallback and clamped it to 1-30 days; fixed the trading-house setup retry and listing-retention cleanup; removed the nonfunctional one-page trading search; branded the KELAPADUI main-menu entry with a purple champion icon and text tint; cleaned chat-tool registration and research guards; removed the dead crafting-panel file and retired pause-menu notes; added maintenance, settings, and trading-house documentation.
 
 10/19/2026 - Refactor phase 2: reorganized retained Lua/XML into kpui_core, kpui_features, kpui_data, and kpui_compat; made the main-menu entry append-only; removed the retired settings panels and unused settings XML; trimmed unused templates; translated all remaining Russian text to English; kept ru.lua as an English no-op; added the gamepad map-info rally-point keybind; and completed the static manifest/syntax/XML audit.
