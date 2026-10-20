@@ -189,7 +189,7 @@
 	Add("KELA_SETTINGS_SETS_ENABLED_TOOLTIP",		"Adds the KelaPadUI sets browser to the main menu. Turn this off to hide the Sets menu entry.")
 	Add("KELA_SETTINGSYSTEMPANEL7500",						"Trading Interface")
 	Add("KELA_SETTINGS_TRADE_ENABLED",						"Enable trading interface")
-	Add("KELA_SETTINGS_TRADE_ENABLED_TOOLTIP",				"Enables KelaPadUI trading tooltips and guild-store enhancements. \n\nRequires Tamriel Trade Centre and Arcadius Trade Tools.")
+	Add("KELA_SETTINGS_TRADE_ENABLED_TOOLTIP",				"Enables KelaPadUI trading tooltips and guild-store enhancements. \n\nRequires Tamriel Trade Centre and Arkadius Trade Tools.")
 	Add("KELA_SETTINGS_TRADE_ATTGRAPH_PERIOD", 				"ATT analysed period")
 	Add("KELA_SETTINGS_TRADE_ATTGRAPH_PERIOD_TOOLTIP",		"Number of days of Arkadius Trade Tools sales used in trading statistics. \n\nRange: 1-30 days.")
 	Add("KELA_SETTING_TRADE_TOOLTIP_HEADER",				"Trading tooltip")

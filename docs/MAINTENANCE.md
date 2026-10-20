@@ -1,0 +1,179 @@
+# KelaPadUI Maintenance Guide
+
+This guide describes the current add-on structure, load order, validation
+workflow, and the areas that are most likely to need attention after an ESO
+update.
+
+## Runtime requirements
+
+- The add-on is designed for the gamepad UI.
+- `LibSets` is required and is declared in `KelaPadUI.txt`.
+- `Tamriel Trade Centre` (TTC) and `Arkadius Trade Tools` (ATT) are both
+  required for the trading features. Without both dependencies, the trading
+  setup is skipped and the trading master setting is forced off.
+- `LibCustomMenu` is optional and is used only for chat context-menu actions.
+- The manifest currently targets API version `101051`.
+
+## Repository layout
+
+| Path | Purpose |
+| --- | --- |
+| `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
+| `KelaPadUI.txt` | Manifest and load order. |
+| `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
+| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, and the main menu. |
+| `kpui_compat/` | Trading-house compatibility code and trading history. |
+| `kpui_lang/` | English strings and the English-fallback `ru.lua`. |
+| `kpui_data/` | Static set/category data. |
+| `docs/` | Maintenance notes, settings notes, trading-house notes, and archived decisions. |
+| `_tools/audit_addon.py` | Static manifest, XML, string, and removed-reference audit. |
+| `OPTIMIZATION_TODO.md` | Deferred refactors and known higher-risk work. |
+| `changelog.txt` | Release-facing change history. |
+
+## Load order
+
+Keep the manifest order in mind when adding code that runs at file scope:
+
+1. `kpui_lang/en.lua` and the selected language file.
+2. Core constants, utilities, and tooltip styles.
+3. Core templates XML.
+4. Settings Lua and XML.
+5. Tooltip Lua and XML.
+6. Sets, antiquities, trading history, and trading-house compatibility.
+7. Feature modules.
+8. `KelaPadUI.lua` bootstrap, which initializes settings and enabled features.
+
+Feature modules that write to the `KelaPadUI` table at file scope must be loaded
+after the table exists. In practice, register event hooks and scene callbacks in
+setup functions rather than at file scope where possible.
+
+## Settings architecture
+
+The KelaPadUI settings screen is a single gamepad options list in the
+`kela_options_root` scene. There is no category submenu. The category order is
+defined by `KELA_SETTINGS_CATEGORY_ORDER` in
+`kpui_core/kpui_settings_gamepad.lua`:
+
+1. Features (`7400`)
+2. Item sets (`7300`)
+3. Trading Interface (`7500`)
+
+`Kela_GamepadOptions:RefreshOptionsList()` clears the list and calls
+`AddSettingGroup(panelId, categoryHeader)` for each category. The first visible
+setting in each group receives the category heading. Existing section headings,
+such as `Trading tooltip`, still work inside a group.
+
+See `docs/SETTINGS.md` for the settings data model, IDs, and the procedure for
+adding a setting.
+
+## Feature toggles
+
+The Features category contains reload-gated toggles:
+
+| Setting | Default |
+| --- | --- |
+| Companion information | on |
+| Dungeon finder information | on |
+| Chat tools | on |
+| Map rally point | on |
+| Antiquity filters | on |
+| Antiquity lead details | on |
+
+`KelaPadUI_OnLoaded()` checks these settings before calling the corresponding
+setup function. Changing a toggle therefore requires `/reload`; the setting
+tooltip communicates this. Keep the feature-gating checks in the bootstrap when
+adding a new load-time feature, and add a matching default and string.
+
+The Item sets toggle hides the Sets entry in the KelaPadUI main-menu submenu but
+does not remove the sets list from the add-on. The KELAPADUI main-menu entry
+itself is always visible so the user cannot lock themselves out of settings.
+
+## Trading features
+
+The trading stack is initialized only when TTC and ATT are both present and the
+trading master setting is enabled. It includes:
+
+- guild-store search filtering and price-effect indicators;
+- TTC/ATT-enhanced item tooltips;
+- buying and listing history with retention cleanup;
+- ATT-based guild statistics and category mapping;
+- crafting-station tooltip integration.
+
+See `docs/TRADING_HOUSE.md` for module details and test notes.
+
+## Validation workflow
+
+Run these checks after a change:
+
+```powershell
+python _tools\audit_addon.py
+```
+
+The audit checks manifest entries, Lua file presence, XML references, removed
+feature references, and undefined/duplicated KELA strings. It is a static check,
+not an in-game test.
+
+To parse-check every Lua file, use `luaparse` through Node:
+
+```powershell
+npx.cmd --yes luaparse path\to\file.lua > $null
+```
+
+`kpui_lang/en.lua` begins with a UTF-8 BOM, which `luaparse` rejects. Strip the
+BOM before parsing it, or treat a BOM-only failure as a tooling limitation
+rather than a syntax error. All other Lua files should parse without errors.
+
+Manual in-game checks are still required for:
+
+- opening KelaPadUI from the gamepad main menu;
+- scrolling the flattened settings list and confirming category headings;
+- changing and resetting settings, including reload-gated toggles;
+- entering the guild store with and without TTC/ATT;
+- confirming tooltips, search filters, and trading history;
+- switching between gamepad and keyboard UI modes.
+
+## Git workflow
+
+Git is not on `PATH` on this machine. Use:
+
+```powershell
+& 'C:\Program Files\Git\cmd\git.exe' status
+& 'C:\Program Files\Git\cmd\git.exe' diff
+& 'C:\Program Files\Git\cmd\git.exe' add <files>
+& 'C:\Program Files\Git\cmd\git.exe' commit -m "Short description"
+```
+
+Keep commits focused on one feature or cleanup. Do not commit generated audit
+output or local editor files. The repository has a `.gitignore` for the usual
+Python, build, editor, and OS artifacts.
+
+## Change checklist
+
+1. Update the setting/string/default together when adding a setting.
+2. Keep feature-gating checks and defaults in sync.
+3. Check that removed settings are also removed from all data tables and
+   localization files; retired IDs stay retired.
+4. Run the audit and Lua parse check.
+5. Perform the relevant in-game checks.
+6. Update `changelog.txt`.
+7. Add deferred or risky work to `OPTIMIZATION_TODO.md` rather than leaving
+   untracked TODOs in code.
+
+## Known deferred work
+
+`OPTIMIZATION_TODO.md` is the source of truth. The largest remaining areas are:
+
+- replacing copied trading-house XML/templates with core hooks;
+- reducing the full tooltip-style override to additive custom styles;
+- replacing hardcoded set metadata with LibSets data where practical;
+- cleaning the remaining unused `KELA_*` localization strings;
+- reviewing trading ATT numeric fallbacks and display edge cases.
+
+## Documentation map
+
+- `docs/SETTINGS.md` - settings storage, IDs, and adding settings.
+- `docs/TRADING_HOUSE.md` - trading dependencies, modules, and history data.
+- `docs/main_menu_notes.md` - removed pause-menu notes feature and restoration
+  guidance.
+- `docs/commented_code_archive.md` - archived code kept for reference.
+- `DEBUG_NOTES.md` - debugging notes retained during cleanup.

@@ -2,6 +2,20 @@
 
 This file tracks deferred, higher-risk work. Keep it updated after each refactor phase.
 
+## Completed in the current maintenance pass
+- [x] Fixed settings navigation and removed obsolete support/donation/message settings.
+- [x] Added selected-setting information, defaults, apply behavior, and requirement text.
+- [x] Added the Features category and six reload-gated feature toggles.
+- [x] Flattened all settings categories into one list with category headings; removed the category submenu and panel scene.
+- [x] Restored buying/listing history, retention cleanup, guild statistics, category mapping, and history icons.
+- [x] Fixed the recursive trading-house setup retry and the listing-retention deletion bug.
+- [x] Cleaned chat-tool command/context-menu registration and guarded missing research data.
+- [x] Removed the dead `kpui_features/kpui_crafting_panel_tips.lua` file.
+- [x] Removed the nonfunctional one-page trading search setting (`7503`) and its hooks.
+- [x] Branded the KELAPADUI main-menu entry with a champion icon and purple text/icon tint.
+- [x] Removed the retired pause-menu travel-notes feature; documented restoration notes.
+- [x] Added `docs/MAINTENANCE.md`, `docs/SETTINGS.md`, and `docs/TRADING_HOUSE.md`.
+
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
 - [x] Removed `KelaPadUIBuyingData` and `KelaPadUIListingData`.
@@ -38,9 +52,6 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Use a supported ZOS menu-extension API if one is added; the current approach appends to `ZO_MENU_ENTRIES`.
 - [ ] Revisit the KelaPadUI entry position now that it is append-only.
 - [ ] Consider moving the custom settings entry into the core Options menu instead of a duplicate Settings submenu.
-
-## Crafting panel
-- [ ] Decide whether `kpui_features/kpui_crafting_panel_tips.lua` should be wired into the manifest. It is currently unloaded (as before the refactor); do not enable it until its hooks, tooltip interactions, and missing `KELA_STAT_GAMEPAD_CRAFTING_PANEL_*` strings are addressed. Load it after `KelaPadUI.lua` if it is enabled, because it writes to the `KelaPadUI` table at file scope.
 
 ## XML
 - [ ] Audit the remaining virtual templates and remove unused ones.
