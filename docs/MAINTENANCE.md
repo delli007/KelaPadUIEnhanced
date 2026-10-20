@@ -131,6 +131,9 @@ Manual in-game checks are still required for:
 - changing and resetting settings, including reload-gated toggles;
 - entering the guild store with and without TTC/ATT;
 - confirming tooltips, search filters, and trading history;
+- checking the Known filter for collectible fragments, books, recipes, and set
+  pieces;
+- verifying purchased listings disappear without duplicate or misaligned rows;
 - switching between gamepad and keyboard UI modes.
 
 ## Git workflow
@@ -167,7 +170,7 @@ Python, build, editor, and OS artifacts.
 - replacing copied trading-house XML/templates with core hooks;
 - reducing the full tooltip-style override to additive custom styles;
 - replacing hardcoded set metadata with LibSets data where practical;
-- reviewing trading ATT numeric fallbacks and display edge cases.
+- reviewing remaining trading display edge cases and numeric fallbacks.
 
 ## Documentation map
 

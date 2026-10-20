@@ -133,6 +133,8 @@ Test with both TTC and ATT installed and up to date:
 
 - Open the guild store and confirm the known-item filter cycles and the result
   count/page number update.
+- Confirm the known-item filter treats books, recipes, set pieces, owned
+  collectibles, and locked combination fragments correctly.
 - Confirm the price-effect/deal filter cycles and does not hide the page
   controls.
 - Buy an item and confirm it disappears from the current page, appears in buying
