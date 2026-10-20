@@ -1,6 +1,7 @@
 -- KelaPadUI gamepad group rally-point control.
--- Adds a right-stick-click (R3) keybind to the gamepad map info screen so a
--- group leader can set or remove the group rally point at the map cursor.
+-- Adds a keybind to the gamepad world map so a group leader can set or remove
+-- the group rally point at the map cursor. The keybind group is active for the
+-- whole map scene, so it also remains available while the map options are open.
 
 local KELA_MAP_RALLY_KEYBINDS = nil
 local KELA_MAP_RALLY_KEYBINDS_SHOWN = false
@@ -62,7 +63,9 @@ function KelaMapRally_ShowKeybind()
             alignment = KEYBIND_STRIP_ALIGN_CENTER,
             {
                 name = KelaMapRally_GetLabel,
-                keybind = "UI_SHORTCUT_RIGHT_STICK",
+                -- UI_SHORTCUT_QUINARY is free on the world map. For a hold
+                -- binding, use "UI_SHORTCUT_RIGHT_STICK" with handlesKeyUp = true.
+                keybind = "UI_SHORTCUT_QUINARY",
                 visible = KelaMapRally_IsVisible,
                 callback = KelaMapRally_Toggle,
                 sound = SOUNDS.GAMEPAD_MENU_FORWARD,
@@ -88,24 +91,22 @@ function KelaSetupMapRally()
         return
     end
 
-    -- CHAT_SYSTEM:AddMessage("Initializing Group Rally Point Map Option")
-
-    if not GAMEPAD_WORLD_MAP_INFO then
+    if not GAMEPAD_WORLD_MAP_SCENE then
         zo_callLater(KelaSetupMapRally, 1000)
         return
     end
 
     KelaPadUI.KelaMapRallyInitialized = true
 
-    ZO_PostHook(GAMEPAD_WORLD_MAP_INFO, "OnShowing", function()
-        KelaMapRally_ShowKeybind()
+    GAMEPAD_WORLD_MAP_SCENE:RegisterCallback("StateChange", function(oldState, newState)
+        if newState == SCENE_SHOWING then
+            KelaMapRally_ShowKeybind()
+        elseif newState == SCENE_HIDING then
+            KelaMapRally_HideKeybind()
+        end
     end)
 
-    ZO_PreHook(GAMEPAD_WORLD_MAP_INFO, "OnHiding", function()
-        KelaMapRally_HideKeybind()
-    end)
-
-    if GAMEPAD_WORLD_MAP_INFO:GetFragment():IsShowing() then
+    if GAMEPAD_WORLD_MAP_SCENE:IsShowing() then
         KelaMapRally_ShowKeybind()
     end
 end
