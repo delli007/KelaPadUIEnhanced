@@ -176,6 +176,10 @@ Sliders use `OPTIONS_SLIDER` and must define `minValue` and `maxValue`. Use
 percentage step. `showValue` appends the current value to the label.
 `valueFormat` controls the displayed value; the ATT period uses `"%d"`.
 
+Read the ATT analysis period through `KelaGetATTAnalysisPeriod()`. It falls back
+to the default of 15 days and clamps the result to the supported 1-30 range, so
+old or malformed saved values cannot produce an invalid ATT query window.
+
 ### Visibility and dependencies
 
 - `visible` can be a boolean or a function. A function is evaluated each time

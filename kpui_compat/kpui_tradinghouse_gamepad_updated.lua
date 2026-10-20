@@ -1539,10 +1539,10 @@ function KelaSetupTradingHouse()
 				KelaPadUI.selector:SetClampValues(true)
 				KelaPadUI.selector:SetMaxValue(30)
 				KelaPadUI.selector.control:SetHidden(false)
-				KelaPadUI.selector:SetValue(KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD))
+				KelaPadUI.selector:SetValue(KelaGetATTAnalysisPeriod())
 			end
 			local function callbackRow(dialog)
-				KelaPadUI.selector:SetValue(KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD))
+				KelaPadUI.selector:SetValue(KelaGetATTAnalysisPeriod())
 				KelaPadUI.selectorContainer:SetHidden(false)
 				KelaPadUI.selector.control:SetHidden(false)
 				local targetControl = dialog.entryList:GetTargetControl()
@@ -1572,7 +1572,7 @@ function KelaSetupTradingHouse()
 		end
 	end
 	function KelaDeactivateSelector()
-		KelaPadUI.selector:SetValue(KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD))
+		KelaPadUI.selector:SetValue(KelaGetATTAnalysisPeriod())
 		KelaPadUI.selector:Deactivate()
 		KelaPadUI.selectorActive = false
 	end
@@ -2355,7 +2355,7 @@ function GetATTPriceStats(itemLink)
 	
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
     local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
-    local days = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 30
+    local days = KelaGetATTAnalysisPeriod()
 	local itemSales = ArkadiusTradeToolsSales:GetItemSalesInformation(itemLink, GetTimeStamp() - days * seconds_in_day) --	30 * 86400)
 
 	local stats = {
@@ -2415,7 +2415,7 @@ function GetATTPriceAndStatus(itemLink)
 	
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
     local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
-    local days = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 30
+    local days = KelaGetATTAnalysisPeriod()
 	local itemSales = ArkadiusTradeToolsSales:GetItemSalesInformation(itemLink, GetTimeStamp() - days * seconds_in_day) --	30 * 86400)
 
 
@@ -2475,7 +2475,7 @@ function KelaGetATTPriceInfo(itemLink)
 
 
     local seconds_in_day = ArkadiusTradeToolsTooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
-    local days = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 30
+    local days = KelaGetATTAnalysisPeriod()
 
     itemLink = ArkadiusTradeToolsSales:NormalizeItemLink(itemLink)
     if itemLink == nil then return end
@@ -2598,7 +2598,7 @@ function KelaGetCurrentATTCraftingInfo(itemLink)
 	
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
     local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
-    local days = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 30
+    local days = KelaGetATTAnalysisPeriod()
     local itemType = GetItemLinkItemType(itemLink)
 
 	fromTimeStamp = GetTimeStamp() - days * seconds_in_day
@@ -2648,7 +2648,7 @@ function KelaUpdateATTGraph(itemLink, graphControl, priceInfoATTSuggestedPrice, 
 	local L = ArkadiusTradeToolsSales.Localization
 	local attRound = math.attRound
     local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
-    local days = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 30
+    local days = KelaGetATTAnalysisPeriod()
     itemLink = ArkadiusTradeToolsSales:NormalizeItemLink(itemLink)
     if itemLink == nil then return end
 

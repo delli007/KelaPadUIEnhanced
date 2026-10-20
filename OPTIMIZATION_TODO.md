@@ -8,6 +8,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Added the Features category and six reload-gated feature toggles.
 - [x] Flattened all settings categories into one list with category headings; removed the category submenu and panel scene.
 - [x] Restored buying/listing history, retention cleanup, guild statistics, category mapping, and history icons.
+- [x] Centralized the ATT analysis-period default and clamped it to 1-30 days.
 - [x] Fixed the recursive trading-house setup retry and the listing-retention deletion bug.
 - [x] Cleaned chat-tool command/context-menu registration and guarded missing research data.
 - [x] Removed the dead `kpui_features/kpui_crafting_panel_tips.lua` file.

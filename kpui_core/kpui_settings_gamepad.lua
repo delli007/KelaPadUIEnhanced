@@ -524,6 +524,11 @@ function KelaGetSetting_Number(system, settingId)
 	return isValue
 end
 
+function KelaGetATTAnalysisPeriod()
+    local days = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 15
+    return math.max(1, math.min(30, days))
+end
+
 local function GetControlType(control)
     return control.optionsManager:GetControlTypeFromControl(control)
 end

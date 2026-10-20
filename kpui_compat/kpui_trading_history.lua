@@ -422,7 +422,7 @@ function KelaUpdateGuildATTStat()
 
 	KELA_ATT_GUILD_STAT = {}
 
-	local periodDays = KelaGetSetting_Number(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD) or 15
+	local periodDays = KelaGetATTAnalysisPeriod()
 	local period = periodDays * ZO_ONE_DAY_IN_SECONDS
 	local cutoff = GetTimeStamp() - period
 
