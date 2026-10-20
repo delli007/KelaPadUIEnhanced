@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - Fixed the trading-house known-item filter for combination-fragment collectibles.
+
 10/20/2026 - Removed 47 dead localization strings and tightened the static audit to recognize indirect KELA string references and dynamic string prefixes.
 
 10/20/2026 - Companion rapport notifications now use a dedicated event namespace; removed the unused companion event cleanup function.

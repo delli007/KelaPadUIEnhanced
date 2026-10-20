@@ -957,6 +957,7 @@ function KelaSetupTradingHouse()
 									end
 								elseif grantedCollectibleId > 0 then
 									-- Other Collectibles: runeboxes, style pages, etc
+									local collectibleCategory = GetCollectibleCategoryType(grantedCollectibleId)
 									if IsCollectibleOwnedByDefId(grantedCollectibleId) then
 										isItemKnown = "KNOWN"
 									elseif collectibleCategory == COLLECTIBLE_CATEGORY_TYPE_COMBINATION_FRAGMENT and not CanCombinationFragmentBeUnlocked(grantedCollectibleId) then
