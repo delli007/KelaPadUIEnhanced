@@ -6,12 +6,8 @@ local function AddContextMenuItems()
 
 	local LCM = LibCustomMenu or LibStub("LibCustomMenu", true)
 	if LCM then
-		--CHAT_SYSTEM:AddMessage("Found libCustomMenu")
 		LCM:RegisterPlayerContextMenu(
 			function (playerName, rawName)
-				--AddCustomMenuItem(GetString(SI_SOCIAL_MENU_SEND_MAIL), function() SendMail(playerName) end) -- Supports gamepad mode mail. doesn't work as of u37
-				--AddCustomMenuItem(GetString(SI_SOCIAL_MENU_SEND_MAIL), function() MAIL_SEND:ComposeMailTo(playerName) end) -- keyboard layout mail
-				--MAIL_MANAGER_GAMEPAD:GetSend():ComposeMailTo(ZO_FormatUserFacingCharacterOrDisplayName(self.socialData.displayName)) -- Gamepad
 				AddCustomMenuItem(GetString(SI_SOCIAL_MENU_SEND_MAIL), function() MAIL_MANAGER_GAMEPAD:GetSend():ComposeMailTo(playerName) end)
 
 				AddCustomMenuItem(GetString(SI_SOCIAL_MENU_JUMP_TO_PLAYER), function()

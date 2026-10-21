@@ -6,7 +6,6 @@ KELA_LAST_SELECTED_DATA = {}
 KELA_SETS_FIRST_SHOW = true
 
 -- Redefined text lines
--- SI_ITEM_FORMAT_STR_SET_NAME = "<<1>> (<<2>>/<<3>>)" --"<<1>> set (<<2>>/<<3>> items)"
 SafeAddString(SI_ITEM_FORMAT_STR_SET_NAME, "<<1>> (<<2>>/<<3>>)", 6)
 
 -- KELA_SETS
@@ -17,11 +16,6 @@ local KELA_SETS_ROW_DROPBONUS = 3
 local KELA_SETS_ROW_DROPBOUND = 4
 local KELA_SETS_ROW_DROPZONE = 5
 local KELA_SETS_ROW_DROPDLC = 6
-
-local KELA_QUALITY_FINE = 367
-local KELA_QUALITY_SUPERIOR = 368
-local KELA_QUALITY_EPIC = 369
-local KELA_QUALITY_LEGENDARY = 370
 
 KELA_SETS_DIALOG_ITEM_WEAPON = 1
 KELA_SETS_DIALOG_ITEM_LIGHTARMOR = 2
@@ -37,7 +31,6 @@ KELA_GAMEPAD_SETS_LIST_OBTAINABLEITEMS_WIDTH = 220
 KELA_GAMEPAD_SETS_LIST_SETTYPE_WIDTH = 130
 KELA_GAMEPAD_SETS_LIST_SOURCE_WIDTH = 320
 KELA_GAMEPAD_SETS_LIST_DLC_WIDTH = 180
-KELA_GAMEPAD_SETS_LIST_FIRST_CALL = true
 KELA_LIST_DATA = 1
 local KELA_LIST_TEMPLATE = "Kela_Sets_List_Row_Gamepad"
 local KELA_LIST_ENTRY_SORT_KEYS =
@@ -217,67 +210,6 @@ function Kela_Sets_List:Initialize(control)
 		KEYBIND_STRIP:AddKeybindButton(self.KelaKeyBindSetsList)
 	end
 
-	-- local OldZO_ComboBox_GamepadInitializeKeybindStripDescriptors = ZO_ComboBox_Gamepad.InitializeKeybindStripDescriptors
-	-- ZO_ComboBox_Gamepad.InitializeKeybindStripDescriptors = function(control, ...) 
-	-- 	control.keybindStripDescriptor =
-	-- 	{
-	-- 		alignment = KEYBIND_STRIP_ALIGN_LEFT,
-	-- 		{
-	-- 			keybind = "UI_SHORTCUT_NEGATIVE",
-	-- 			name = GetString(SI_GAMEPAD_BACK_OPTION),
-	-- 			callback = function()
-	-- 			   PlaySound(SOUNDS.GAMEPAD_MENU_BACK)
-	-- 			   control:Deactivate()
-	-- 			end,
-	-- 			visible = function() return not ZO_Dialogs_IsShowingDialog() end,
-	-- 		},
-
-	-- 		{
-	-- 			keybind = "DIALOG_NEGATIVE",
-	-- 			name = GetString(SI_GAMEPAD_BACK_OPTION),
-	-- 			callback = function()
-	-- 			   control:Deactivate()
-	-- 			end,
-	-- 			visible = ZO_Dialogs_IsShowingDialog,
-	-- 		},
-
-	-- 		{
-	-- 			keybind = "UI_SHORTCUT_PRIMARY",
-	-- 			name = GetString(SI_GAMEPAD_SELECT_OPTION),
-	-- 			callback = function()
-	-- 				control:SelectHighlightedItem()
-	-- 			end,
-	-- 			enabled = function()
-	-- 				return control:IsHighlightedItemEnabled()
-	-- 			end,
-	-- 			visible = function() return not ZO_Dialogs_IsShowingDialog() end,
-	-- 		},
-
-	-- 		{
-	-- 			keybind = "DIALOG_PRIMARY",
-	-- 			name = GetString(SI_GAMEPAD_SELECT_OPTION),
-	-- 			callback = function()
-	-- 				control:SelectHighlightedItem()
-	-- 			end,
-	-- 			enabled = function()
-	-- 				return control:IsHighlightedItemEnabled()
-	-- 			end,
-	-- 			visible = ZO_Dialogs_IsShowingDialog,
-	-- 		},
-	-- 		{
-	-- 			keybind = "DIALOG_TERTIARY",		-- set comparison
-	-- 			name = GetString(KELA_SETSLIST_HEADER_NAME),
-	-- 			callback =  function()
-	-- 				KELA_SETS_LIST.compareView = not KELA_SETS_LIST.compareView
-	-- 				control.refreshTooltipFunction (control.itemData)
-	-- 			end,
-	-- 			visible = function()
-	-- 				return ZO_Dialogs_IsShowingDialog("KELA_SETS_LIST_DIALOG") and control.isKelaDialogSetItemsDropdown
-	-- 			end,
-	-- 		},	
-			
-	-- 	}
-	-- end
 	
 end
 
@@ -472,7 +404,6 @@ function Kela_Sets_List:CreateMapPinRows(dialog)
 							return
 							{
 								template = "Kela_GamepadFullWidthLabelEntryTemplate",
-								--icon = icon,
 								header = GetString(KELA_SETS_DIALOG_ZONES),
 								headerTemplate = "Kela_GamepadMenuEntryFullWidthHeaderTemplate",
 								templateData =
@@ -492,7 +423,6 @@ function Kela_Sets_List:CreateMapPinRows(dialog)
 							return 
 							{
 								template = "Kela_GamepadFullWidthLabelEntryTemplate",
-								--icon = icon,
 								templateData =
 								{
 									toChat = false,
@@ -552,7 +482,6 @@ function Kela_Sets_List:CreateMapPinRows(dialog)
 									template = "Kela_GamepadFullWidthLabelEntryTemplate",
 									header = GetString(KELA_SETS_DIALOG_ZONES),
 									headerTemplate = "Kela_GamepadMenuEntryFullWidthHeaderTemplate",
-									--icon = icon,
 									templateData =
 									{
 										toChat = false,
@@ -571,7 +500,6 @@ function Kela_Sets_List:CreateMapPinRows(dialog)
 								return 
 								{
 									template = "Kela_GamepadFullWidthLabelEntryTemplate",
-									--icon = icon,
 									templateData =
 									{
 										toChat = false,
@@ -623,8 +551,6 @@ ZO_WorldMapPins.GetWayshrinePin = function(control, nodeIndex, ...)
 		ZO_WorldMap_PanToNormalizedPosition(xLoc, yLoc)	
 		return false
 	end
-	-- local ret = OldZO_WorldMapPinsGetWayshrinePin(control, ...) 	
-	-- return ret	
 end
 
 function Kela_Sets_List:BuildSetsObtainableItemsData(dialog)
@@ -1170,8 +1096,6 @@ function Kela_Sets_List:FilterScrollList()
 end
 
 function Kela_Sets_List:MainFilterScrollList()
-    local playerName = GetUnitName("player")
-
 	local tableSources
 	local sourceIndex
 	if KELA_SETS.CurrentSetsSource then 
@@ -1719,9 +1643,6 @@ function Kela_Sets_List:SetMasterSetsList()
 				end
 				
 				
-				--if not canTeleport then setZoneNames = " - " end
-						
-						
 				-- for search
 				local DMText
 				local DMTextFull
@@ -1775,7 +1696,6 @@ function Kela_Sets_List:SetMasterSetsList()
 				DMText = DMText,
 				DMTextFull = DMTextFull,
 				}
-				--self:SetupDataTable(data)
 				MasterList[#MasterList + 1] = data
 	
 			end
@@ -2288,7 +2208,6 @@ function Kela_Sets:PerformUpdate()
     KEYBIND_STRIP:UpdateKeybindButtonGroup(self.keybindStripDescriptor)
     self.headerData.titleText = GetString(KELA_MAINMENU_SETS)
     ZO_GamepadGenericHeader_Refresh(self.header, self.headerData)
-    -- self.dirty = false
 end
 
 -- XML Functions

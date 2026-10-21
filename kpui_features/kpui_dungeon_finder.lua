@@ -1,37 +1,10 @@
 -- KelaPadUI dungeon-finder and pledge enhancements.
 -- Extracted from KelaPadUI.lua; this is the retained working Undaunted/pledge functionality.
 
--- local function GetGoalPledgesOld()
--- 	local Pledges,haveQuest={},false
--- 	for i=1,MAX_JOURNAL_QUESTS do
--- 		local name,_,_,stepType,_,completed,_,_,_,questType,instanceType=GetJournalQuestInfo(i)
--- 		if name and name~="" and not completed and questType==QUEST_TYPE_UNDAUNTED_PLEDGE and instanceType==INSTANCE_TYPE_GROUP and name:match(".*:%s*(.*)") then
--- 			local text=string.format("%s",name:gsub(".*:%s*",""):gsub(" "," "):gsub("%s+"," "):lower())
--- 			local number=string.match(text,"%sii$")
--- 			text=string.match(text,"[^%s]+")..(number or "")
--- 			Pledges[text]=stepType~=QUEST_STEP_TYPE_AND
--- 			if stepType==QUEST_STEP_TYPE_AND then haveQuest=true end
--- 			if BUI.Vars.DeveloperMode then d(zo_strformat("QuestName: \"<<1>>\" Dungeon: \"<<2>>\" Step: <<3>>",name,text,stepType)) end
--- 		end
--- 	end
--- 	return Pledges,haveQuest
--- end
--- local function GetGoalPledgesOld2()
--- 	local Pledges={}
--- 	for i=1,MAX_JOURNAL_QUESTS do
--- 		local name,_,activeStepText,stepType,activeStepTrackerOverrideText,completed,_,_,_,questType,instanceType=GetJournalQuestInfo(i)
--- 		if name and questType==QUEST_TYPE_UNDAUNTED_PLEDGE then
--- 			local trimmedName = string.match(name, "^Pledge: (.+)$")
--- 			Pledges[trimmedName] = activeStepTrackerOverrideText
--- 		end
--- 	end
--- 	return Pledges
--- end
 local function GetGoalPledges()
 	local pledgeQuests = {}
 
 	for i = 1, MAX_JOURNAL_QUESTS do
-		--local name, _, _, _, _, _, _, _, _, questType = GetJournalQuestInfo(i)
 		local name,_,activeStepText,stepType,activeStepTrackerOverrideText,completed,_,_,_,questType,instanceType=GetJournalQuestInfo(i)
 
 		if name and questType == QUEST_TYPE_UNDAUNTED_PLEDGE then
@@ -127,10 +100,6 @@ local function show_pledges()
 	local day = math.floor(GetDiffBetweenTimeStamps(currentdaystart, pledgecyclestartday) / 86400)
 	local pledgeQuests=GetGoalPledges() -- Get active pledges
 	local todaysPledges = {}
-	-- CHAT_SYSTEM:AddMessage("\n|cFFD700Active Pledges|r")
-	-- for key, value in pairs(pledgeQuests) do
-    -- 	CHAT_SYSTEM:AddMessage("|cAAAAAA  " .. tostring(key) .. " " .. tostring(value))
-	-- end
 
 	CHAT_SYSTEM:AddMessage("|cFFD700Today's Daily Pledges|r")
 	for npc=1,3 do
@@ -143,7 +112,6 @@ local function show_pledges()
 
 	local printedHeader = false
 	for key, value in pairs(pledgeQuests) do
-    	--CHAT_SYSTEM:AddMessage("|cAAAAAA  " .. tostring(key) .. " " .. tostring(value))
 		if not todaysPledges[key] then
 			if not printedHeader then 
 				CHAT_SYSTEM:AddMessage("|c66FF66Active Pledges not from Today|r")
@@ -156,10 +124,7 @@ local function show_pledges()
 end
 
 
-
 local function Add_Enhanced_DungeonFinder_Info()
-	--local USPF = USPF or LibStub("USPF")
-	--if not USPF then return end
 
 	local DUNGEON_ZONES = { -- zone id's of dungeons.
 		BC1 =  380, BC2 =  935, EH1 =  126, EH2 =  931, CA1 =  176, CA2 =  681,
@@ -192,36 +157,22 @@ local function Add_Enhanced_DungeonFinder_Info()
 
 
 	SecurePostHook(ZO_ActivityFinderTemplate_Gamepad, "RefreshSingularSectionPanel", function( self )
-		--CHAT_SYSTEM:AddMessage("post hook on refreshSingularSectionPanel")
 		local NAVIGATION_MODES = {CATEGORIES = 1,RANDOM_ENTRIES = 2,SPECIFIC_ENTRIES = 3,}
 		if self.navigationMode ~= NAVIGATION_MODES.CATEGORIES then
-			--CHAT_SYSTEM:AddMessage("passed navigation mode: mode: "..self.navigationMode)
 			local currentList = self:GetCurrentList()
 			if currentList then
-				--CHAT_SYSTEM:AddMessage("has currentlist")
 				local targetData = currentList:GetTargetData()
 				if targetData then
-					--CHAT_SYSTEM:AddMessage("has targetdata")
 					local entryData = targetData.data
 					if not entryData.isRoleSelector and (entryData.activityType==2 or entryData.activityType==3) then
-						--  and entryData.activityType==3 -- Veteran Dungeon
-						--  and entryData.activityType==2 -- Normal Dungeon
-						-- 9 is ToT, 7 is Battleground
-						--CHAT_SYSTEM:AddMessage('Triggered attempt to modify dungeon description')
-						--printTableToChat(entryData)
-						--printTableToChat(targetData)
-						--CHAT_SYSTEM:AddMessage("Activity Type: " .. entryData.activityType)
 						local zid = entryData.zoneId
 						if zid then
-							--CHAT_SYSTEM:AddMessage(tprint(targetData))
-							--CHAT_SYSTEM:AddMessage(tprint(entryData))
 							
 							-- Match zone ID to the quest ID and get updated data, if its not stored already
 							if DUNGEON_STATUS_BY_ZONE[zid] == nil or DUNGEON_STATUS_BY_ZONE[zid] == "" then
 								for k, v in pairs(DUNGEON_ZONES) do
 									if v == zid and DUNGEON_STATUS_BY_ZONE[v] == "" or DUNGEON_STATUS_BY_ZONE[v] == nil then
 										DUNGEON_STATUS_BY_ZONE[v] = GetCompletedQuestInfo(DUNGEON_QUESTS[k]) -- ~= "" and 1 or 0 --returns something if completed
-										--qid = DUNGEON_QUESTS[k]
 									end
 								end
 							end
@@ -239,9 +190,6 @@ local function Add_Enhanced_DungeonFinder_Info()
 							local pledgeQuests = GetGoalPledges()
 							for k, v in pairs(pledgeQuests) do
 								if k == entryData.rawName or "The "..k == entryData.rawName then -- entryData.nameGamepad, entryData.nameKeyboard
-									--local statusText = ""
-									--if v ~= "" then statusText = " - " .. v end
-									--newText = newText .. "\n|c008000ACTIVE PLEDGE|r\n" .. statusText
 									newText = newText .. "\nPledge Status: " .. v
 								end
 							end
@@ -255,65 +203,7 @@ local function Add_Enhanced_DungeonFinder_Info()
 		end
 	end)
 
-	-- function ZO_ActivityFinderTemplate_Gamepad:RefreshSingularSectionPanel()
-    --     if self.navigationMode ~= NAVIGATION_MODES.CATEGORIES then
-    --         local currentList = self:GetCurrentList()
-    --         if currentList then
-    --             local targetData = currentList:GetTargetData()
-    --             if targetData then
-    --                 local entryData = targetData.data
-    --                 if not entryData.isRoleSelector then
-    --                     if not self.isShowingSingularPanel then
-    --                         SCENE_MANAGER:AddFragmentGroup(self.singularFragmentGroup)
-    --                         self.isShowingSingularPanel = true
-    --                     end
-
-    --                     self.backgroundTexture:SetTexture(entryData.descriptionTextureGamepad)
-    --                     self.titleLabel:SetText(entryData.nameGamepad)
-
-    --                     entryData:SetGroupSizeRangeText(self.groupSizeRangeLabel, GROUP_SIZE_ICON_FORMAT)
-
-    --                     self:RefreshRewards(entryData)
-    --                     if entryData.isLocked then
-    --                         local lockReasonText = entryData.lockReasonTextOverride or entryData.lockReasonText
-    --                         if type(lockReasonText) == "function" then
-    --                             self.lockReasonTextFunction = lockReasonText
-    --                         else
-    --                             self:LayoutLockedTooltip(lockReasonText)
-    --                             self.lockReasonTextFunction = nil
-    --                         end
-    --                     else
-    --                         GAMEPAD_TOOLTIPS:ClearTooltip(GAMEPAD_RIGHT_TOOLTIP)
-    --                     end
-
-    --                     local isCompetitive = entryData.activityType == LFG_ACTIVITY_TRIBUTE_COMPETITIVE
-    --                     local HIDE_IF_NOT_COMPETITIVE = not isCompetitive
-    --                     self:RefreshTributeSeasonData(HIDE_IF_NOT_COMPETITIVE)
-    --                     if isCompetitive then
-    --                         if RequestTributeClubData() == TRIBUTE_PLAYER_INITIALIZATION_STATE_SUCCESS then
-    --                             self:OnTributeClubDataInitialized()
-    --                         end
-
-    --                         if RequestActiveTributeCampaignData() == TRIBUTE_PLAYER_INITIALIZATION_STATE_SUCCESS then
-    --                             self:OnTributeCampaignDataInitialized()
-    --                         end
-
-    --                         self:ShowTributeRank()
-    --                     elseif entryData.activityType == LFG_ACTIVITY_TRIBUTE_CASUAL then
-    --                         self:ShowTributeRank()
-    --                     else
-    --                         self:HideTributeRank()
-    --                     end
-
-    --                     ZO_ActivityFinderTemplate_Shared.AppendSetDataToControl(self.setTypesSectionControl, entryData)
-    --                     return
-    --                 end
-    --             end
-    --         end
-    --     end
-	-- end
 end
-
 
 
 function KelaShowPledges()

@@ -2,11 +2,8 @@
 -- for the cautious refactor phase. Rebuild it with core hooks and small custom
 -- controls in a future pass. See OPTIMIZATION_TODO.md before changing it.
 
-
 local lib = LIB_ITEM_LINK
 local colors = kpuiConst.Colors	
--- KPUI_ATTGraph = nil
-
 KELA_KNOWN_ITEM_FILTER = "ALL"
 KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX = 1
 
@@ -27,15 +24,6 @@ local hookTradingHouseAlready = false
 local hookBankingAlready = false
 local hookStoregAlready = false
 local hookATTAlready = false
-
--- local KELA_QUALITY_NORMAL = 366
--- local KELA_QUALITY_FINE = 367
--- local KELA_QUALITY_SUPERIOR = 368
--- local KELA_QUALITY_EPIC = 369
--- local KELA_QUALITY_LEGENDARY = 370
-
-KELA_TRADING_TOOLTIP_TYPE_SMITHING = 1
-KELA_TRADING_TOOLTIP_TYPE_TRADINGHOUSE = 2
 
 KELA_SMITHING_IMPROVED_TOOLTIP_TYPE = 0
 
@@ -61,27 +49,11 @@ function KelaIsSceneTradingHouse(currentScene)
 end
 
 
-
-
--- local subIdToQuality = { }
 local function GetItemLinks(itemLink)
 
 	local function GetQualityItemLink(itemId, itemQuality, itemLevel, itemChampionPoints, enchantId)
 		if itemId == nil or itemId == 0 then return end
-		-- LibItemLink
-		-- Generates an item link
-		--- itemId = any itemId of a valid item
-		--- itemQuality = number - any valid quality type like ITEM_QUALITY_NORMAL (optional)
-		--- itemLevel = number 1-50 - if it's not a champion item, define the level (optional)
-		--- itemChampionPoints = number 0-160 - if you want to create a cp item (optional)
-		--- itemStyle = number - choose a motif style (optional)
-		--- isCrafted = boolean - if it's a crafted item (optional)
-		--- enchantId = number 1-unknown - if you want to add any enchantment to your item (optional)
-		--- enchantQuality = number - any valid quality type like ITEM_QUALITY_LEGENDARY (optional)
-		--- linkStyle = if you want some brackets or not (optional)
-		--CHAT_SYSTEM:AddMessage("Getting item link for "..itemId.." "..itemQuality.." "..itemLevel.." "..itemChampionPoints.." "..enchantId)
-		tlink = lib:BuildItemLink(tonumber(itemId), tonumber(itemQuality), tonumber(itemLevel), tonumber(itemChampionPoints), nil, nil, tonumber(enchantId))	
-		--CHAT_SYSTEM:AddMessage(tlink.." "..GetItemLinkQuality(tlink))
+		local tlink = lib:BuildItemLink(tonumber(itemId), tonumber(itemQuality), tonumber(itemLevel), tonumber(itemChampionPoints), nil, nil, tonumber(enchantId))
 		return tlink
 	end
 	
@@ -92,17 +64,11 @@ local function GetItemLinks(itemLink)
 	local itemId = GetItemLinkItemId(itemLink)
 	local referenceQuality = GetItemLinkQuality(itemLink)
 	
-	--CHAT_SYSTEM:AddMessage(GetString("SI_ITEMTYPE", itemType))
-	
-	-- if itemType == ITEMTYPE_RECIPE or itemType == ITEMTYPE_BLACKSMITHING_RAW_MATERIAL or itemType == ITEMTYPE_CLOTHIER_RAW_MATERIAL or itemType == ITEMTYPE_WOODWORKING_RAW_MATERIAL or itemType == ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL then
 		if itemType == ITEMTYPE_RECIPE then
 			resultItemLink = GetItemLinkRecipeResultItemLink(itemLink)
 		else
 			resultItemLink = GetItemLinkRefinedMaterialItemLink(itemLink)
 		end
-	-- end
-
-	
 	if itemType == ITEMTYPE_GLYPH_ARMOR or itemType == ITEMTYPE_GLYPH_JEWELRY or itemType == ITEMTYPE_GLYPH_WEAPON then
 		minLevel, minChampionPoints = GetItemLinkGlyphMinLevels(itemLink)
 		referenceEnchantID = GetItemLinkFinalEnchantId(itemLink)
@@ -140,9 +106,7 @@ local function GetBuyInfo(tblBuyingItems, itemUID)
 	local buyStackCount = KelaLocalizedFormatNumber(buyPrice/buyPricePerUnit)
 	local iconCoin = zo_iconFormat(GetCurrencyGamepadIcon(CURT_MONEY), 20, 20)
 	strBuyInfo = "* "..GetString(KELA_TRADING_BOUGHT)..buyingTime..GetString(KELA_TRADING_BOUGHT_FOR)..colors.COLOR_WHITE:Colorize(KelaLocalizedFormatNumber(buyPrice)..iconCoin)
-	-- if buyPrice ~= buyPricePerUnit then
 		strBuyInfo = strBuyInfo.." ("..buyStackCount.."*"..KelaLocalizedFormatNumber(buyPricePerUnit)..")"
-	-- end					
 	if guildName ~= "" then
 		local guildColor = colors.COLOR_WHITE
 		if ArkadiusTradeTools ~= nil then
@@ -225,7 +189,6 @@ local function AddClearLine(tooltip, lastControl, x, y)
 	if not y then y = 0 end
 	local bodySection = tooltip:AcquireSection(tooltip:GetStyle("bodySection1"))
 	bodySection:AddLine(" ")
-	-- bodySection:AddLine(" ")
 	tooltip:AddSection(bodySection)
 	bodySection:ClearAnchors()
 	bodySection:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT, x, y)
@@ -320,7 +283,6 @@ function KelaSetupCraftingStation()
 					end)
 					hookAlchemyTooltipAlready = true
 				end	
-			-- if KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ENABLED) then
 				if control:IsCraftable() then
 					control.tooltip:SetHidden(false)
 					control.tooltip.tip:ClearLines()
@@ -358,10 +320,6 @@ function KelaSetupCraftingStation()
 					end
 				end
 				return true
-			-- else
-				-- control.tooltip:ClearAnchors()
-				-- control.tooltip:SetAnchor(BOTTOM, ingredientsBar, TOP, 0, -25)	
-			-- end
 		end)
 
 		-- enchanting
@@ -529,16 +487,11 @@ function KelaSetupCraftingStation()
 		-- Smithing Deconstruction
 		SecurePostHook(ZO_GamepadSmithingExtraction, "UpdateSelection", function(control, ...)
 			control.slotContainer:ClearAnchors()
-			-- if CRAFT_ADVISOR_MANAGER:HasActiveWrits() then
-				-- control.slotContainer:SetAnchor(BOTTOM, GuiRoot, BOTTOMLEFT, GAMEPAD_SMITHING_EXTRACTION_CRAFTING_QUEST_OFFSET_X, ZO_GAMEPAD_CRAFTING_UTILS_FLOATING_BOTTOM_OFFSET)
-			-- else
 				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_CRAFTING) then
 					control.slotContainer:SetAnchor(CENTER, GuiRoot, CENTER, 740, 300)
 				else
 					control.slotContainer:SetAnchor(BOTTOM, GuiRoot, BOTTOMLEFT, ZO_GAMEPAD_PANEL_FLOATING_CENTER_QUADRANT_1_2_SHOWN, ZO_GAMEPAD_CRAFTING_UTILS_FLOATING_BOTTOM_OFFSET)				
 				end
-			-- end
-			-- setting
 			if (SCENE_MANAGER:IsShowing("gamepad_smithing_deconstruct") and not hookDeconstructTooltipAlready) or (SCENE_MANAGER:IsShowing("gamepad_smithing_refine") and not hookRefineTooltipAlready) then
 				control.slotContainer:GetNamedChild("ExtractionSlot"):GetNamedChild("Name"):SetFont("ZoFontGamepadCondensed34")
 				control.tooltip.tip.styleNamespace = ZO_TOOLTIP_STYLES
@@ -719,8 +672,6 @@ function KelaSetupTradingHouse()
 						local bag, index = ZO_Inventory_GetBagAndIndex(selectedData)
 						
 						local itemUniqueId = GetItemUniqueId(bag, index)
-						-- CHAT_SYSTEM:AddMessage("itemUniqueId  "..tostring(itemUniqueId))						
-						
 						local itemLink = GetItemLink(bag, index)
 						local parentControl = GAMEPAD_TOOLTIPS:GetTooltipInfo(GAMEPAD_LEFT_TOOLTIP).bgControl
 						KPUI_GAMEPAD_TOOLTIPS:ClearTooltip(KPUI_GAMEPAD_TRADING_TOOLTIP)
@@ -1091,7 +1042,6 @@ function KelaSetupTradingHouse()
 						end				
 						if stackCount > 1 then
 							local numPrice = KelaRoundNumber(price / stackCount, 2)	 -- Round to 2 decimal places
-							-- local strPrice = KelaLocalizedFormatNumber(numPrice, 2)
 							local strPrice = ZO_CurrencyControl_FormatCurrencyAndAppendIcon(numPrice, true, CURT_MONEY, true)
 							if not ctlListingPriceLabel then ctlListingPriceLabel = CreateControlFromVirtual("$(parent)KPUI_ListingPrice", controlContainer, "KPUI_LabelValue") end				
 							ctlListingPriceLabel:ClearAnchors()
@@ -1104,11 +1054,9 @@ function KelaSetupTradingHouse()
 							if ctlListingPriceLabel then ctlListingPriceLabel:SetHidden(true) end
 						end
 						if buyPrice then
-							-- local strClearProfit = KelaLocalizedFormatNumber(profit-buyPrice)
 							local strClearProfit = profit-buyPrice
 
 							if not HAS_ERROR then 
-								-- CHAT_SYSTEM:AddMessage(tostring(strClearProfit).." / "..tostring(buyPrice))
 								if strClearProfit >= buyPrice then
 									colorValue = colors.COLOR_DEALGREAT
 								elseif strClearProfit >= buyPrice*0.3 then
@@ -1141,9 +1089,6 @@ function KelaSetupTradingHouse()
 				local listingIndex = itemData.slotIndex
 				local stackCount = itemData.stackCount
 				local itemName = itemData.name
-				-- local timeRemaining = itemData.timeRemaining
-				-- local pricePerUnit = itemData.purchasePricePerUnit
-				-- local uniqueId = itemData.itemUniqueId
 				local price = displayPrice
 				-- itemData.quality is deprecated, included here for addon backwards compatibility
 				local displayQuality = itemData.displayQuality or itemData.quality
@@ -1678,7 +1623,6 @@ function ZO_Tooltip:LayoutEnchantingTradingTooltip(tooltip, itemLink, maxIterati
 		tooltip:AddSection(bodySection)
 		lastControl = bodySection
 		
-		-- local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink)		
 		local listingItemsTable = KelaGetItemLinkListingTable(itemLink)
 		local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemLink)
 		-- Purchased item information
@@ -1888,8 +1832,6 @@ function ZO_Tooltip:LayoutSmithingCreationTooltip(tooltip, itemLink)
 		local listingItemsTable = KelaGetItemLinkListingTable(itemLink)
 		local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemLink)
 
-		-- empty line
-		-- AddClearLine(true)
 		local bodySection = tooltip:AcquireSection(tooltip:GetStyle("bodySection1"))
 		bodySection:AddLine(GetString(KELA_TRADING_TRADING_INFO))
 		bodySection:AddLine(" ")
@@ -1987,8 +1929,6 @@ function ZO_Tooltip:LayoutSmithingTradingTooltip(tooltip, itemBagId, itemSlotInd
 			end			
 		elseif KELA_SMITHING_IMPROVED_TOOLTIP_TYPE == 1 then
 		
-		 --GetItemLinkFinalEnchantId (itemLink)
-
 			local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink)
 			local listingItemsTable = KelaGetItemLinkListingTable(itemLink)
 			local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemLink)
@@ -2009,8 +1949,6 @@ function ZO_Tooltip:LayoutSmithingTradingTooltip(tooltip, itemBagId, itemSlotInd
 			end		
 			tooltip:AddItemTitle(itemLink, name)
 			
-			-- empty line
-			-- AddClearLine(true)
 			local bodySection = tooltip:AcquireSection(tooltip:GetStyle("bodySection1"))
 			bodySection:AddLine(" ")
 			tooltip:AddSection(bodySection)
@@ -2132,8 +2070,6 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 
 	if currentScene == "GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS" and leftAnchor then
 		KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_TRADING_TOOLTIP.bgType = KPUI_GAMEPAD_TOOLTIP_DARK_BG	
-	-- elseif currentScene == "GAMEPAD_SMITHING_IMPROVEMENT" then
-		-- isCrafting = true
 	else
 		KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_TRADING_TOOLTIP.bgType = KPUI_GAMEPAD_TOOLTIP_NORMAL_BG
 	end
@@ -2150,9 +2086,6 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 		if leftAnchor then 
 			tooltypeTradingControl:SetAnchor(TOPRIGHT, parentControl, TOPLEFT, -offsetX, offsetY) 
 			tooltypeTradingControl:SetAnchor(BOTTOMRIGHT, parentControl, BOTTOMLEFT, -offsetX, offsetY) 	
-		-- elseif isCrafting then
-			-- tooltypeTradingControl:SetAnchor(TOPRIGHT, parentControl, TOPRIGHT, -10, 53) 
-			-- tooltypeTradingControl:SetAnchor(BOTTOMRIGHT, parentControl, BOTTOMRIGHT, -10, -125) 		
 		else
 			tooltypeTradingControl:SetAnchor(TOPLEFT, parentControl, TOPRIGHT, offsetX, offsetY) 
 			tooltypeTradingControl:SetAnchor(BOTTOMLEFT, parentControl, BOTTOMRIGHT, offsetX, offsetY) 	
@@ -2182,18 +2115,13 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 				end
 				local currentListings, maxListings = GetTradingHouseListingCounts()
 				guildName = zo_iconFormat(icon, 22, 22).." "..guildColor:Colorize(guildName.." ("..tostring(currentListings).."/"..tostring(maxListings)..")")
-				--KPUI_GAMEPAD_TOOLTIPS:SetStatusLabelText(tooltipType, guildName, strGold..", "..strBackpack, "* "..colors.COLOR_TTC:Colorize(GetString(KELA_TRADING_TTC_TITLE)).." - "..string.lower(updatedString), true)
 				bodySection:AddLine(colors.GENERAL_COLOR_NORMAL:Colorize(GetString(SI_GAMEPAD_GUILD_BANK_GUILD_FOOTER_LABEL))..": "..guildName, self:GetStyle("bodyHeader"))
 			
 			end
-			--KPUI_GAMEPAD_TOOLTIPS:SetStatusLabelText(tooltipType, guildName, strGold..", "..strBackpack, "* "..colors.COLOR_TTC:Colorize(GetString(KELA_TRADING_TTC_TITLE)).." - "..string.lower(updatedString), true)
-			-- Show available funds and bank capacity
 			bodySection:AddLine(colors.GENERAL_COLOR_NORMAL:Colorize(GetString(SI_GAMEPAD_GUILD_BANK_AVAILABLE_FUNDS))..": "..strGold, self:GetStyle("bodyHeader"))
 			bodySection:AddLine(colors.GENERAL_COLOR_NORMAL:Colorize(GetString(SI_GAMEPAD_INVENTORY_CAPACITY))..": "..strBackpack, self:GetStyle("bodyHeader"))
 			self:AddSection(bodySection)	
 		else
-			-- Shown in the Bank
-			--KPUI_GAMEPAD_TOOLTIPS:SetStatusLabelText(tooltipType, "", strGold..", "..strBackpack, "* "..colors.COLOR_TTC:Colorize(GetString(KELA_TRADING_TTC_TITLE)).." - "..string.lower(updatedString), true)
 		end
 
 
@@ -2244,7 +2172,6 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 					lastControl = AddTitle(lastControl)
 					if not ctlItemTypeGuildStat then ctlItemTypeGuildStat = CreateControlFromVirtual("$(parent)ctlItemTypeGuildStat", self, "KPUI_ItemTypeGuildStat") end	
 					lastControl = ctlItemTypeGuildStat.SetItemTypeGuildStat(itemLink, itemTradeCategory, lastControl)
-					--lastControl = AddTitle(lastControl)
 				else
 					if ctlItemTypeGuildStat then ctlItemTypeGuildStat:SetHidden(true) end	
 					lastControl = AddTitle()
@@ -2346,7 +2273,6 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 end
 
 
-
 --Integration with TamrielTradeCentre and ArkadiusTradeTools
 
 function GetATTPriceStats(itemLink)
@@ -2367,11 +2293,7 @@ function GetATTPriceStats(itemLink)
 		Quantity = 0,
 	}
 
-	-- local itemQuality = GetItemLinkQuality(itemLink)
-	-- local itemType = GetItemLinkItemType(itemLink)
-
 	for link, sales in pairs(itemSales) do
-		--link == itemLink
 		if KelaCompareLink(link, itemLink) then
 			-- Found the item, get stats
 			-- Loop through the recordes sales
@@ -2408,67 +2330,6 @@ function GetATTPriceStats(itemLink)
 	return nil
 end
 
-
-function GetATTPriceAndStatus(itemLink)
-	if not ArkadiusTradeTools then
-		return "", ""
-	end
-	
-	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
-    local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
-    local days = KelaGetATTAnalysisPeriod()
-	local itemSales = ArkadiusTradeToolsSales:GetItemSalesInformation(itemLink, GetTimeStamp() - days * seconds_in_day) --	30 * 86400)
-
-
-
-	local itemQuality = GetItemLinkQuality(itemLink)
-	local itemType = GetItemLinkItemType(itemLink)
-	for link, sales in pairs(itemSales) do
-		averagePrice = 0
-		quantity = 0
-
-		--link == itemLink
-		if KelaCompareLink(link, itemLink) then
-			local minPrice = math.huge
-			local maxPrice = 0
-			local price
-			for _, sale in pairs(sales) do
-				price = sale.price / sale.quantity
-				if (price < minPrice) then 
-					minPrice = price 
-				end
-				if (price > maxPrice) then 
-					maxPrice = price 
-				end
-			end
-		end
-
-		for _, sale in pairs(sales) do
-			averagePrice = averagePrice + sale.price
-			quantity = quantity + sale.quantity
-		end
-
-		if (quantity > 0) then
-			averagePrice = math.attRound(averagePrice / quantity, 2)
-		else
-			averagePrice = 0
-		end
-
-		--averagePrice = KelaLocalizedFormatNumber(averagePrice, 2)
-		
-		if KelaCompareLink(link, itemLink) then
-			if (quantity > 0) then
-				if (#sales ~= quantity) then
-					statsString = zo_strformat("|cf58585<<1>>|r", string.format(GetString(KELA_MM_PRICE_XLISTINGSYITEMS), KelaLocalizedFormatNumber(#sales, 0), KelaLocalizedFormatNumber(quantity, 0)))
-				else
-					statsString = zo_strformat("|cf58585<<1>>|r", string.format(GetString(KELA_MM_PRICE_XLISTINGS), KelaLocalizedFormatNumber(#sales, 0)))
-				end
-				return averagePrice, statsString
-			end
-		end
-	end
-	return nil, nil 
-end
 
 function KelaGetATTPriceInfo(itemLink)
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
@@ -2524,7 +2385,6 @@ function KelaGetATTPriceInfo(itemLink)
 			local borderGroup1 = range*0.25
 			local borderGroup2 = range*0.50
 			local borderGroup3 = range*0.75
-			-- local borderGroup4 = range*0.80
 			for _, sale in pairs(sales) do
 				local salePrice = sale.price/sale.quantity
 				if salePrice >= val1 and salePrice < borderGroup1 then
@@ -2533,8 +2393,6 @@ function KelaGetATTPriceInfo(itemLink)
 					valueGroup2[#valueGroup2 + 1] = salePrice
 				elseif salePrice >= borderGroup2 and salePrice < borderGroup3 then
 					valueGroup3[#valueGroup3 + 1] = salePrice
-				-- elseif salePrice >= borderGroup3 and salePrice < borderGroup4 then
-					-- valueGroup4[#valueGroup4 + 1] = salePrice
 				elseif salePrice >= borderGroup3 and salePrice <= val2 then
 					valueGroup4[#valueGroup4 + 1] = salePrice
 				end
@@ -2570,7 +2428,6 @@ function KelaGetATTPriceInfo(itemLink)
 		if #selectedSales < #valueGroup2 then selectedSales = valueGroup2 end
 		if #selectedSales < #valueGroup3 then selectedSales = valueGroup3 end
 		if #selectedSales < #valueGroup4 then selectedSales = valueGroup4 end
-		-- if #selectedSales < #valueGroup5 then selectedSales = valueGroup5 end
 		if #selectedSales >= 3 then
 			for _, price in ipairs(selectedSales) do
 				suggestedPrice = suggestedPrice + price
@@ -2605,7 +2462,6 @@ function KelaGetCurrentATTCraftingInfo(itemLink)
 	fromTimeStamp = GetTimeStamp() - days * seconds_in_day
 
 	local craftingComponentPrices = {}	
-
 
 
 	if itemType == ITEMTYPE_MASTER_WRIT then
@@ -2688,7 +2544,6 @@ function KelaUpdateATTGraph(itemLink, graphControl, priceInfoATTSuggestedPrice, 
 			end
 
 
-
 			graphControl.object:SetRange(GetTimeStamp() - days * seconds_in_day, GetTimeStamp(), minPrice, maxPrice)
 			graphControl.object:SetXLabels(-days .. " " .. L["ATT_STR_DAYS"], -days / 2 .. " " .. L["ATT_STR_DAYS"], L["ATT_STR_NOW"])
 			graphControl.object:SetYLabels(ArkadiusTradeTools:LocalizeDezimalNumber(attRound(maxPrice, 2)) .. " |t16:16:EsoUI/Art/currency/currency_gold.dds|t", "", ArkadiusTradeTools:LocalizeDezimalNumber(attRound(minPrice, 2)) .. " |t16:16:EsoUI/Art/currency/currency_gold.dds|t")
@@ -2713,7 +2568,6 @@ function KelaUpdateATTGraph(itemLink, graphControl, priceInfoATTSuggestedPrice, 
 		if priceInfoTTCSuggestedPrice and priceInfoTTCSuggestedPrice ~= 0 then
 			graphControl.object:AddDot(GetTimeStamp(), priceInfoTTCSuggestedPrice, colors.COLOR_TTC)
 		end		
-
 
 
     end
@@ -2863,7 +2717,6 @@ function KelaGetEffectOfDeal (priceInfoTTC, priceInfoATT, data, action, stackCou
 	end
 
 
-	
 	return valueEffectDeal, effectOfDeal, colorEffectDeal, suggestedTCC, suggestedATT, suggestedAVG, suggestedTCCStack, suggestedATTStack, suggestedAVGStack, suggestedTCCWrit, suggestedATTWrit, suggestedAVGWrit, compareValuePrice
 
 end
@@ -2952,11 +2805,6 @@ function KelaGetPriceInfoTTCATT (itemLink)
 end
 
 
-
-
-
-
-
 ------------------------------------
 -- Initialization functions
 ------------------------------------
@@ -2977,8 +2825,6 @@ function KPUI_ItemTypeGuildStat_OnInitialize(control)
 		lastControl = control:GetNamedChild("Header")
 		lastControl = lastControl:GetNamedChild("Divider")
 		local tblItemCategorySales = {}
-		
-		-- spairs(listingItemsTable, function (t, a, b) return (a > b) end) do
 		
 		for guildName, value in pairs (KELA_ATT_GUILD_STAT[itemTradeCategory]) do
 			local K = 1 - (100/(value["price"]/value["quantity"]))
@@ -3255,8 +3101,6 @@ end
 
 function KPUI_PreviousListings_OnInitialize(control)
 	control.SetPreviousListings = function(listingItemsTable, lastControl)
-		--local kelaPlayerAccountName = GetUnitDisplayName('player')
-		
 		for i = 1, 5 do
 			local row = GetControl(control:GetName().."row"..i)
 			if row then row:SetHidden(true) end
@@ -3405,7 +3249,6 @@ function KPUI_OtherQualityInfo_OnInitialize(control)
 				lastControlATT = rowATT
 			else
 				if rowATT then rowATT:SetHidden(true) end
-				--if isFirst then lastControlATT = nil end
 			end
 		end
 		local function addTTCRow(sufText, itemLink, priceInfoTTC)
@@ -3444,7 +3287,6 @@ function KPUI_OtherQualityInfo_OnInitialize(control)
 				lastControlTTC = rowTTC
 			else
 				if rowTTC then rowTTC:SetHidden(true) end
-				--if isFirst then lastControlTTC = nil end
 			end
 		end			
 
@@ -3682,4 +3524,3 @@ function KPUI_CraftingInfo_OnInitialize(control)
 		end
 	end
 end
-

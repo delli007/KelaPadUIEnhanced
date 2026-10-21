@@ -17,15 +17,6 @@
 				ZO_GamepadCraftingUtils_CraftingTooltip_Gamepad_Initialize(self, ZO_GamepadSmithingImprovement_TooltipScreenResizeHandler)
 			</OnInitialized>
 		</Control>
-		
-		<!-- <Control name="KPUI_ProfitLabel" virtual="true"> -->
-			<!-- <Controls> -->
-                <!-- <Label name="$(parent)label" font="ZoFontGamepad27" horizontalAlignment="LEFT" verticalAlignment="CENTER" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" modifyTextType="UPPERCASE" > -->
-                    <!-- <Anchor point="LEFT" /> -->
-                <!-- </Label> -->
-			<!-- </Controls> -->
-		<!-- </Control> -->
-
 
 		<Control name="KPUI_LabelValue" virtual="true" >
 			<Controls>

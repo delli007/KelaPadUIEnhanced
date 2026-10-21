@@ -170,7 +170,6 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_SETS_ENABLED,
 				text = KELA_SETTINGS_SETS_ENABLED,
 				tooltipText = KELA_SETTINGS_SETS_ENABLED_TOOLTIP,
-				-- gamepadHasEnabledDependencies = true,
 			},
 		},
 	},
@@ -512,7 +511,6 @@ function KelaGetSetting_Bool(system, settingId)
 end
 function KelaGetSetting_Number(system, settingId)
 	local value = KelaGetSetting(system, settingId)
-	-- CHAT_SYSTEM:AddMessage("value "..value)
     local checkStateType = type(value) 
 	local isValue
 	if checkStateType == "boolean" then
@@ -597,9 +595,6 @@ local function OptionsSlider_SelectChoice(control, value, eventReason)
 		valueLabelControl:SetText(text.." ("..formattedValueString..")")
 	end
 
-    -- if data.mustReloadSettings then
-        -- KEYBOARD_OPTIONS:UpdateCurrentPanelOptions(DONT_SAVE_CURRENT_VALUES)
-    -- end
 end
 function Kela_Options_SliderOnValueChanged(sliderControl, value, eventReason)
     OptionsSlider_SelectChoice(sliderControl:GetParent(), value, eventReason)
@@ -654,7 +649,6 @@ local updateControlFromSettings =
                                     enabled = control.data.enabled()
                                 end
 								if enabled == false then
-									-- CHAT_SYSTEM:AddMessage(tostring(checkBoxControl).." / "..tostring(enabled))
 									checkBoxControl:SetText(GetString(SI_CHECK_BUTTON_DISABLED))
 									ZO_CheckButton_Disable(checkBoxControl)
 								else
@@ -790,7 +784,6 @@ end
 function Kela_GamepadOptions:InitializeHeader()
 
 
-
     ZO_GamepadGenericHeader_SetDataLayout(self.header, ZO_GAMEPAD_HEADER_LAYOUTS.DATA_PAIRS_TOGETHER)
     self:RefreshHeader()
 end
@@ -861,16 +854,6 @@ do
     end
 end
 
-
-function Kela_GamepadOptions_OptionsHorizontalListSetup(control, data, selected, reselectingDuringRebuild, enabled, selectedFromParent)
-    if data.parentControl.data.enabled ~= false then
-        ZO_GamepadDefaultHorizontalListEntrySetup(control, data, selected, reselectingDuringRebuild, enabled, selectedFromParent)
-    end
-end
-
-function Kela_GamepadOptions_HorizontalListEqualityFunction(left, right)
-    return left.text == right.text
-end
 
 local function ReleaseControl(control)
     control.state = nil
@@ -1184,10 +1167,8 @@ function Kela_GamepadOptions:InitializeControl(control, selected)
     local label = control:GetNamedChild("Name")
 
 
-	-- if not control.data.enabled then selected = false end
     -- control.data.enabled = true
 
-	-- local enabled = control.data.enabled == nil or 
 
     -- Determine if this control should be disabled because of a dependency
     if control.data.gamepadIsEnabledCallback then
@@ -1247,11 +1228,6 @@ function Kela_GamepadOptions:InitializeControl(control, selected)
     local IS_GAMEPAD_CONTROL = true
 	KelaInitializeControl(control, selected, IS_GAMEPAD_CONTROL)
 		
-		-- if data.enabled then
-			-- ZO_Options_SetOptionActive(control)
-		-- else
-			-- ZO_Options_SetOptionInactive(control)
-		-- end
 		
     if not control.data.enabled and control.data.disabledText then
         label:SetText(GetTextEntry(control.data.disabledText))
@@ -1348,8 +1324,6 @@ end
 function Kela_GamepadOptions:InitializeSaveReloadDialog()
 	-- close lists when leaving the dialog unexpectedly
     local noChoiceCallback = function(dialog)
-		--CHAT_SYSTEM:AddMessage("noChoiceCallback")
-		--SaveSettings(KELA_RESTORE_SAVED)
 	end	
     ZO_Dialogs_RegisterCustomDialog("KELA_OPTIONS_RESET_TO_SAVED",
     {
@@ -1418,4 +1392,3 @@ function Kela_GamepadOptions:InitializeSaveReloadDialog()
     })
 
 end
-

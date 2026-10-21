@@ -233,11 +233,7 @@ local function Add_Enhanced_Companion_Information()
 	SecurePostHook(ZO_Tooltip, "LayoutCompanionOverview", function( self, companionData )
 		-- What companion is active
 		local activeCompanionID = GetActiveCompanionDefId()
-		--local activeCompanionName = GetCompanionName(activeCompanionID)
 		local activeCompanionName = zo_strformat(SI_COMPANION_NAME_FORMATTER, GetCompanionName(activeCompanionID))
-		--activeCompanionName = string.gsub(activeCompanionName, "^f", "") --Remove Female/Male denominator
-		--activeCompanionName = string.gsub(activeCompanionName, "^m", "")
-		--activeCompanionName = string.sub(activeCompanionName, 0, string.len(activeCompanionName) - 2)
 		
 		-- Get companion rapport information
 		local rapportLevel = GetActiveCompanionRapportLevel()
@@ -255,12 +251,7 @@ local function Add_Enhanced_Companion_Information()
 		
 		-- Add Additional Rapport Information
 		local rapportBodySection2 = self:AcquireSection(self:GetStyle("companionOverviewBodySection"))
-		--rapportBodySection2:AddLine(rapportDescription2, self:GetStyle("companionOverviewDescription"))
 		rapportBodySection2:AddLine("Notable Rapport Stages", self:GetStyle("statValuePairStat"))
-		--rapportBodySection2:AddLine("<= -4000: Disdainful", self:GetStyle("companionOverviewDescription"))
-		--rapportBodySection2:AddLine("<= -2500: Irritated", self:GetStyle("companionOverviewDescription"))
-		--rapportBodySection2:AddLine("<= 749: Wary", self:GetStyle("companionOverviewDescription"))
-		--rapportBodySection2:AddLine(" 750: Cordial", self:GetStyle("companionOverviewDescription"))
 		rapportBodySection2:AddLine("1000: Friendly (1st Personal Quest)", self:GetStyle("statValuePairValue"))
 		rapportBodySection2:AddLine("2000: Close (2nd Personal Quest, Final quest for Mirri and Bastion)", self:GetStyle("statValuePairValue"))
 		rapportBodySection2:AddLine("3000: Allied (3rd Personal Quest)", self:GetStyle("statValuePairValue"))
