@@ -60,7 +60,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Replaced the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with pre/post hooks; core text and narration now stay intact.
 - [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
 - [x] Audited the copied confirmation dialogs against current core; retained core-owned narration/display handling and left guild-specific-item/display-error dialogs core-owned.
-- [ ] Decide whether guild-specific-store purchases should appear in Kela buying history; the core dialog currently remains untouched.
+- [x] Closed as out of scope: guild-specific-store purchases are not added to Kela buying history, and the core guild-specific dialog remains untouched.
 - [ ] Re-test TTC-only, ATT-only, and combined price tooltips, graphs, listings, and crafting-component rows after each ESO update.
 
 ## Tooltips and styles

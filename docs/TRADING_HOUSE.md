@@ -71,7 +71,8 @@ signature.
 so `mainTextParams`, `mainTextNarrationParams`, display quality, and icon
 handling stay intact. Core's `TRADING_HOUSE_CONFIRM_BUY_GUILD_SPECIFIC_ITEM` and
 `TRADING_HOUSE_DISPLAY_ERROR` dialogs are not copied; guild-specific-store
-purchases are not added to Kela buying history.
+purchases are not added to Kela buying history. This is intentional: the core
+guild-specific item data has no item unique ID to key a history row.
 
 ### `kpui_compat/kpui_trading_history.lua`
 
