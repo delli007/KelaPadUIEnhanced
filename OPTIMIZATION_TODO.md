@@ -59,7 +59,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 
 ## Sets
 - [ ] Validate LibSets metadata and set-browser entries after set/DLC updates.
-- [ ] Add a build-time validation check comparing the sets browser's LibSets assumptions with the installed LibSets version.
+- [x] Added an audit check for the sets browser's LibSets API calls and API-version compatibility against the sibling LibSets add-on.
 
 ## Main menu
 - [ ] Use a supported ZOS menu-extension API if one is added; the current approach appends to `ZO_MENU_ENTRIES`.

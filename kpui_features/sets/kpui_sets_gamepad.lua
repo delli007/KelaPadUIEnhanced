@@ -1,5 +1,4 @@
-local colors = kpuiConst.Colors	
---LibSets.DLCData[DLC_BASE_GAME] = GetString(KELA_SETS_DLC_BASE_GAME)
+local colors = kpuiConst.Colors
 
 KELA_SETS_LIST_PIN_NAME = ""
 KELA_LAST_SELECTED_DATA = {}

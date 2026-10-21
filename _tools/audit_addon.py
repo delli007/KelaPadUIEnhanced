@@ -2,8 +2,9 @@
 """Static audit for KelaPadUI.
 
 Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text,
-removed references, and commented debug lines. This is a build/development
-helper only; ESO does not load it.
+removed references, commented debug lines, TODO markers, unused virtual
+templates, and LibSets API compatibility. This is a build/development helper
+only; ESO does not load it.
 """
 
 import re
@@ -14,6 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "KelaPadUI.txt"
+LIBSETS_ROOT = ROOT.parent / "LibSets"
 LUA53 = Path(r"lua53.exe")
 SKIP_DIRS = {"_tools", "docs"}
 CYRILLIC = re.compile(r"[\u0400-\u04FF]")
@@ -37,6 +39,8 @@ REMOVED_IDENTIFIERS = [
     "KELA_SETTING_PANEL_MAININFO_ACHIVTRACK",
     "KelaPadUI.donations",
 ]
+LIBSETS_USE = re.compile(r"\bLibSets\.([A-Za-z_]\w*)")
+LIBSETS_GLOBAL_USE = re.compile(r"\b(LIBSETS_[A-Z0-9_]+)\b")
 KELA_STRING = re.compile(r"\b(KELA_[A-Z0-9_]+)\b")
 LOCALIZATION_USE = re.compile(
     r"(?:GetString\(\s*[\"']?|(?:text|tooltipText|header|name|stringId)\s*=\s*[\"']?)(KELA_[A-Z0-9_]+)"
@@ -66,6 +70,50 @@ def iter_files(suffixes):
 
 def read_text(path):
     return path.read_text(encoding="utf-8", errors="replace")
+
+
+def strip_lua_comments(text):
+    result = []
+    i = 0
+    while i < len(text):
+        if text.startswith("--", i):
+            if text.startswith("--[[", i):
+                end = text.find("]]", i + 4)
+                i = len(text) if end < 0 else end + 2
+            else:
+                end = text.find("\n", i)
+                i = len(text) if end < 0 else end
+            continue
+
+        char = text[i]
+        result.append(char)
+        if char in ("'", '"'):
+            quote = char
+            i += 1
+            while i < len(text):
+                result.append(text[i])
+                if text[i] == "\\" and i + 1 < len(text):
+                    result.append(text[i + 1])
+                    i += 2
+                    continue
+                if text[i] == quote:
+                    i += 1
+                    break
+                i += 1
+            continue
+        i += 1
+    return "".join(result)
+
+
+def manifest_metadata(path):
+    metadata = {}
+    for line in read_text(path).splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("##") or ":" not in stripped:
+            continue
+        key, value = stripped[2:].split(":", 1)
+        metadata[key.strip()] = value.strip()
+    return metadata
 
 
 def check_manifest():
@@ -168,6 +216,50 @@ def virtual_template_report():
     return unused, len(definitions)
 
 
+def check_libsets():
+    errors = []
+    info = {"available": False, "version": None, "api": [], "checked": 0}
+    manifest = LIBSETS_ROOT / "LibSets.addon"
+    if not manifest.exists():
+        return errors, info
+
+    info["available"] = True
+    metadata = manifest_metadata(manifest)
+    info["version"] = metadata.get("Version", "unknown")
+    info["api"] = metadata.get("APIVersion", "").split()
+
+    for api in manifest_metadata(MANIFEST).get("APIVersion", "").split():
+        if api not in info["api"]:
+            errors.append(
+                "LIBSETS API version mismatch: add-on {}, LibSets {}".format(
+                    api, " ".join(info["api"]) or "unknown"
+                )
+            )
+
+    lib_text = "\n".join(
+        strip_lua_comments(read_text(path))
+        for path in sorted(LIBSETS_ROOT.rglob("*.lua"))
+    )
+    defined = set(re.findall(r"function\s+(?:lib|LibSets)\.([A-Za-z_]\w*)", lib_text))
+    defined.update(re.findall(r"\b(?:lib|LibSets)\.([A-Za-z_]\w*)\s*=", lib_text))
+
+    used = set()
+    used_globals = set()
+    for path in iter_files({".lua"}):
+        text = strip_lua_comments(read_text(path))
+        used.update(LIBSETS_USE.findall(text))
+        used_globals.update(LIBSETS_GLOBAL_USE.findall(text))
+
+    info["checked"] = len(used)
+    for name in sorted(used - defined):
+        errors.append("LIBSETS API missing: LibSets.{}".format(name))
+    for name in sorted(used_globals):
+        if not re.search(r"\b" + re.escape(name) + r"\s*=", lib_text):
+            errors.append("LIBSETS constant missing: {}".format(name))
+
+    return errors, info
+
+
 def debug_line_report():
     report = {}
     for path in iter_files({".lua"}):
@@ -216,11 +308,22 @@ def main():
     unused_virtual, virtual_count = virtual_template_report()
     for name, path in unused_virtual:
         errors.append("UNUSED VIRTUAL: {}: {}".format(path, name))
+    libsets_errors, libsets_info = check_libsets()
+    errors.extend(libsets_errors)
 
     print("Manifest entries:", len(entries))
     print("Lua files checked:", lua_count)
     print("XML files checked:", xml_count)
     print("Virtual templates checked:", virtual_count)
+    if libsets_info["available"]:
+        print(
+            "LibSets version: {} (API {})".format(
+                libsets_info["version"], " ".join(libsets_info["api"])
+            )
+        )
+        print("LibSets APIs checked:", libsets_info["checked"])
+    else:
+        print("LibSets check skipped: sibling LibSets add-on not found")
     for name, path in unused_virtual:
         print("  UNUSED VIRTUAL", name, "({})".format(path))
     print("Debug comment count:")

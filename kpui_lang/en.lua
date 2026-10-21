@@ -36,7 +36,6 @@ do
 	Add("KELA_SETS_DLCDROPDOWN_HEADER",				"DLC")
 	Add("KELA_SETS_LIST_EMPTYTEXT",					"Nothing found")
 	Add("KELA_SETS_SEARCHFIELD_DEFAULTTEXT",		"Search")
-	Add("KELA_SETS_DLC_BASE_GAME",					"Base game")
 	Add("KELA_SETS_DIALOG_TEXT",					"Chat can take no more than 5 links on items")
 	Add("KELA_SETS_DIALOG_REQUEST_HEADER",			"Request set items in the chat")
 	Add("KELA_SETS_DIALOG_ZONES",					"Set locations")
