@@ -248,7 +248,7 @@ function KelaCompareLink(l1,l2)
 end
 
 
-function KelaGetLocalTimeShift()
+local function KelaGetLocalTimeShift()
   local timeShift = GetSecondsSinceMidnight() - (GetTimeStamp() % 86400)
 
   if (timeShift < -12 * 60 * 60) then

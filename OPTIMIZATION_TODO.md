@@ -79,7 +79,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 
 ## Constants and helper functions
 - [ ] Re-audit `kpuiConst` after future feature changes and remove data that loses its last caller.
-- [ ] Convert genuinely internal `kpui_utils.lua` helpers to locals after confirming no cross-file callers; keep tooltip-facing helpers global until then.
+- [x] Converted the internal `KelaGetLocalTimeShift` helper to a local; remaining helpers have cross-file callers.
 - [ ] Review the `KELA_RESEARCH_COMPAT` read-only shim; remove it if the tooltip research section is retired or re-implemented with core APIs.
 
 ## Settings UI
