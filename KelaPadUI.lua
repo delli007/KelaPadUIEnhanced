@@ -29,26 +29,13 @@ KELA_OPTIONS_ROOT_SCENE:AddFragment(GAMEPAD_MENU_SOUND_FRAGMENT)
 KELA_OPTIONS_ROOT_SCENE:AddFragment(KELA_OPTIONS_FRAGMENT)
 KELA_OPTIONS_ROOT_SCENE:AddFragment(KELA_OPTIONS:GetHeaderFragment())
 
-	-- show info tooltip
-
 function KelaSetupTooltips()
 	local tooltipLeft = GAMEPAD_TOOLTIPS:GetTooltip(GAMEPAD_LEFT_TOOLTIP)
 	local tooltipRight = GAMEPAD_TOOLTIPS:GetTooltip(GAMEPAD_RIGHT_TOOLTIP)	
 	local tooltipQuad1 = GAMEPAD_TOOLTIPS:GetTooltip(GAMEPAD_QUAD1_TOOLTIP)	
-	local tooltipMove = GAMEPAD_TOOLTIPS:GetTooltip(GAMEPAD_MOVABLE_TOOLTIP)
-	local tooltipLeftDialog = GAMEPAD_TOOLTIPS:GetTooltip(GAMEPAD_LEFT_DIALOG_TOOLTIP)	
-	local tooltipQuad3 = GAMEPAD_TOOLTIPS:GetTooltip(GAMEPAD_QUAD3_TOOLTIP)		
-
-	local tooltipChamp1 =  ZO_ChampionPerksChosenConstellationGamepadLeftTooltipContainerTipScrollScrollChildTooltip
-	local tooltipChamp2 =  ZO_ChampionPerksChosenConstellationGamepadRightTooltipContainerTipScrollScrollChildTooltip
 
 	kelaTotalRedefineStyles()
 
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_LEFT_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDTH)	
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_WIDE_SETS_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDE_WIDTH)
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_WIDE_CRAFTING_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDE_WIDTH)
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_WIDE_RESEARCH_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDE_WIDTH)
-		
 	GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_LEFT_TOOLTIP.control:ClearAnchors()
 	GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_LEFT_TOOLTIP.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, 535, 53) 
 	GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_LEFT_TOOLTIP.control:SetAnchor(BOTTOMLEFT, GuiRoot, BOTTOMLEFT, 535, -125) 
@@ -64,15 +51,6 @@ function KelaSetupTooltips()
 	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_RIGHT_TOOLTIP.control:SetAnchor(BOTTOMRIGHT, GuiRoot, BOTTOMRIGHT, -10, -125) 		
 	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_RIGHT_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDTH)		
 	
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_MAIN_TOOLTIP.control:ClearAnchors()
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_MAIN_TOOLTIP.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, 56, 53) 
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_MAIN_TOOLTIP.control:SetAnchor(BOTTOMLEFT, GuiRoot, BOTTOMLEFT, 56, -125) 		
-	KPUI_GAMEPAD_TOOLTIPS.tooltips.KPUI_GAMEPAD_MAIN_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDTH)		
-
-	-- GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_MOVABLE_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDTH)
-	-- GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_LEFT_DIALOG_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDTH)
-	-- GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_QUAD3_TOOLTIP.control:SetWidth(KELA_TOOLTIPS_WIDTH)	
-
 	LOOT_WINDOW_GAMEPAD.control:ClearAnchors()
 	LOOT_WINDOW_GAMEPAD.control:SetAnchor(TOPRIGHT, GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_RIGHT_TOOLTIP.control, TOPLEFT, -5, 0) 
 	LOOT_WINDOW_GAMEPAD.control:SetAnchor(BOTTOMRIGHT, GAMEPAD_TOOLTIPS.tooltips.GAMEPAD_RIGHT_TOOLTIP.control, BOTTOMLEFT, -5, 0) 
@@ -83,9 +61,6 @@ function KelaSetupTooltips()
 	kelaReplaceTooltips (tooltipLeft)
 	kelaReplaceTooltips (tooltipRight)
 	kelaReplaceTooltipQuad1 (tooltipQuad1)
-	-- kelaReplaceTooltipChamps (tooltipChamp1)
-	-- kelaReplaceTooltipChamps (tooltipChamp2)
-	-- kelaReplaceTooltips (GAMEPAD_QUAD3_TOOLTIP)
 
 
 	ZO_CRAFTING_TOOLTIP_STYLES = ZO_DeepTableCopy(ZO_TOOLTIP_STYLES)
@@ -152,7 +127,6 @@ end
 
 
 local function OnGamepadPreferredModeChanged(eventType, addonName)
-	--_initialized = false
 	if IsInGamepadPreferredMode() then
 		KelaPadUI_OnLoaded (eventType, addonName)
 	end		
@@ -160,9 +134,4 @@ end
 
 EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_ADD_ON_LOADED, KelaPadUI_OnLoaded)
 EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_GAMEPAD_PREFERRED_MODE_CHANGED, function(code, inGamepad)  OnGamepadPreferredModeChanged(EVENT_GAMEPAD_PREFERRED_MODE_CHANGED, KelaPadUI.name) end)
-
-
--- EVENT_MANAGER:RegisterForEvent("testtest", EVENT_ACTION_LAYER_POPPED, testtest)
-
-
 
