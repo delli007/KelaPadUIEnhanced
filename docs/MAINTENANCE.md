@@ -27,7 +27,7 @@ update.
 | `kpui_lang/` | English strings; `en.lua` is the only locale file. |
 | `kpui_data/` | Static set/category data. |
 | `docs/` | Maintenance, settings, trading-house, and main-menu notes. |
-| `_tools/audit_addon.py` | Static manifest, XML, string, and removed-reference audit. |
+| `_tools/audit_addon.py` | Static manifest, XML, string, `SI_*` assignment, and removed-reference audit. |
 | `OPTIMIZATION_TODO.md` | Deferred refactors and known higher-risk work. |
 | `changelog.txt` | Release-facing change history. |
 
@@ -127,8 +127,8 @@ python _tools\audit_addon.py
 ```
 
 The audit checks manifest entries, Lua syntax, XML well-formedness, removed
-feature references, TODO/FIXME markers, unused virtual templates, and
-undefined/unused KELA strings. It counts any KELA token in Lua/XML as a
+feature references, TODO/FIXME markers, direct `SI_*` constant assignments,
+unused virtual templates, and undefined/unused KELA strings. It counts any KELA token in Lua/XML as a
 reference, so localization IDs passed indirectly are not reported as unused.
 Virtual-template references are counted across add-on Lua/XML, including
 `inherits`, `CreateControlFromVirtual`, and template strings. When the sibling

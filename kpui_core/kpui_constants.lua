@@ -51,8 +51,8 @@ KELA_TOOLTIPS_FONT_MEDIUM = 27
 KELA_TOOLTIPS_FONT_SMALL = 23
 
 	
-	-- Redefined
-SI_ITEM_FORMAT_STR_SET_NAME = "<<1>> (<<2>>/<<3>>)" --"<<1>> set (<<2>>/<<3>> items)"
+-- SI_ITEM_FORMAT_STR_SET_NAME is overridden with SafeAddString in
+-- kpui_sets_gamepad.lua; it is a numeric string ID, not a format string.
 
 
 kpuiConst.UnknowableTraitTypes = {

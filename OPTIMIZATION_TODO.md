@@ -36,6 +36,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Removed the optional `LibCustomMenu` absence warning and localized the trading known-item filter label.
 - [x] Guarded ATT tooltip-extension access with a one-day fallback when the optional extension is absent.
 - [x] Guarded optional MasterMerchant tooltip data access.
+- [x] Replaced the direct `SI_ITEM_FORMAT_STR_SET_NAME` assignment with a `SafeAddString` override; verify set-name tooltips in game.
+- [x] Added an audit check that rejects direct assignments to `SI_*` constants.
 
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
@@ -64,6 +66,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 ## Tooltips and styles
 - [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
 - [ ] Verify the five active custom tooltip types and their remaining styles against new core styles after every game update.
+- [ ] Verify the shortened set-name format in item tooltips after the `SafeAddString` change.
 - [x] Reviewed the `ZO_CRAFTING_TOOLTIP_STYLES` copy; core's crafting consumer reads that global directly, so the copy is required and now documented.
 
 ## Sets

@@ -2,9 +2,9 @@
 """Static audit for KelaPadUI.
 
 Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text,
-removed references, commented debug lines, TODO markers, unused virtual
-templates, and LibSets API compatibility. This is a build/development helper
-only; ESO does not load it.
+removed references, commented debug lines, TODO markers, direct SI constant
+assignments, unused virtual templates, and LibSets API compatibility. This is
+a build/development helper only; ESO does not load it.
 """
 
 import re
@@ -21,6 +21,7 @@ SKIP_DIRS = {"_tools", "docs"}
 CYRILLIC = re.compile(r"[\u0400-\u04FF]")
 DEBUG_PATTERNS = re.compile(r"(?i)(CHAT_SYSTEM|AddMessage\(|--\s*(print|d|trace|debug)\b|\bDEBUG\b)")
 TODO_PATTERN = re.compile(r"\b(TODO|FIXME|HACK|XXX)\b")
+SI_GLOBAL_ASSIGN = re.compile(r"(?m)^[ \t]*(SI_[A-Z0-9_]+)[ \t]*=(?!=)")
 VIRTUAL_TAG = re.compile(r"<[^>]*\bvirtual=\"true\"[^>]*>", re.S)
 NAME_ATTR = re.compile(r'\bname="([^"]+)"')
 REMOVED_IDENTIFIERS = [
@@ -198,6 +199,20 @@ def check_todo_markers():
     return errors
 
 
+def check_si_global_assignments():
+    errors = []
+    for path in iter_files({".lua"}):
+        text = strip_lua_comments(read_text(path))
+        for match in SI_GLOBAL_ASSIGN.finditer(text):
+            line = text.count("\n", 0, match.start()) + 1
+            errors.append(
+                "SI GLOBAL ASSIGN: {}:{}: {}".format(
+                    path.relative_to(ROOT), line, match.group(1)
+                )
+            )
+    return errors
+
+
 def virtual_template_report():
     definitions = {}
     for path in iter_files({".xml"}):
@@ -305,6 +320,7 @@ def main():
     errors.extend(check_cyrillic())
     errors.extend(check_removed_references())
     errors.extend(check_todo_markers())
+    errors.extend(check_si_global_assignments())
     unused_virtual, virtual_count = virtual_template_report()
     for name, path in unused_virtual:
         errors.append("UNUSED VIRTUAL: {}: {}".format(path, name))

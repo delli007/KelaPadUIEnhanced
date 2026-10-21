@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/21/2026 - Set-name tooltips now override the core format through SafeAddString instead of replacing the SI_ITEM_FORMAT_STR_SET_NAME constant, preserving the numeric string ID for other add-ons. The static audit now rejects direct assignments to SI_* constants.
+
 10/21/2026 - Trading-house confirmation-dialog cleanup: the copied buy/sell/remove dialogs now match current core, the obsolete sell API argument was removed, and the documentation records narration and guild-specific-dialog coverage.
 
 10/21/2026 - Maintenance cleanup: fixed accidental globals in trading-tooltip and sets code, pruned unused constants, removed stale commented assignments, localized the known-item filter label, and stopped warning when optional LibCustomMenu is absent. ATT tooltip-extension access now falls back to a one-day window instead of erroring when the optional extension is missing, and optional MasterMerchant tooltip data is nil-guarded.

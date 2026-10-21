@@ -4,7 +4,8 @@ KELA_SETS_LIST_PIN_NAME = ""
 KELA_LAST_SELECTED_DATA = {}
 KELA_SETS_FIRST_SHOW = true
 
--- Redefined text lines
+-- Override the core set-name format through the supported string API.
+-- SI_ITEM_FORMAT_STR_SET_NAME is a numeric string ID and must not be reassigned.
 SafeAddString(SI_ITEM_FORMAT_STR_SET_NAME, "<<1>> (<<2>>/<<3>>)", 6)
 
 -- KELA_SETS
