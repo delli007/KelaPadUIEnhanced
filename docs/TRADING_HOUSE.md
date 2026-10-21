@@ -154,11 +154,14 @@ not attempt to call TTC/ATT APIs and should leave the master setting off.
 
 ## Known deferred work
 
-See `OPTIMIZATION_TODO.md` for the trading-house refactor backlog:
+See `OPTIMIZATION_TODO.md` for the trading-house backlog. The `KPUI_*` XML
+templates are bespoke gamepad tooltip layouts; only `KPUI_Graph` overrides an
+ATT template. The remaining work is to:
 
-- replace the copied trading-house XML with core XML plus a small custom file;
-- rebuild custom graph/list/quality/production/crafting controls with hooks;
-- re-test all price, sales, and category data after each ESO update.
+- re-test all price, sales, category, and graph data after each ESO update;
+- keep the ATT graph override under review if ATT adds a supported extension
+  point;
+- replace other core overrides only where a supported hook exists.
 
 The old one-page search code was removed rather than repaired. If it is ever
 reintroduced, design it as an explicit opt-in feature with its own tested search

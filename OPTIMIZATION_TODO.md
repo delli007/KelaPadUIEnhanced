@@ -46,8 +46,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Completed the static audit (manifest, Lua syntax, XML, Cyrillic, removed references).
 
 ## Trading house (deferred, higher risk)
-- [ ] Replace `kpui_compat/kpui_tradinghouse_gamepad_updated.xml` with the core trading-house XML plus a small custom-control XML.
-- [ ] Rebuild `KPUI_Graph`, `KPUI_PreviousListings`, `KPUI_OtherQualityInfo`, `KPUI_ProductMaterialInfo`, and `KPUI_CraftingInfo` via core hooks instead of copied core templates.
+- [x] Reviewed the trading-house XML: the `KPUI_*` templates are bespoke tooltip controls, not copied core XML; only `KPUI_Graph` overrides an ATT template.
+- [x] Reviewed the graph/list/quality/production/crafting controls: they are custom layouts, so replacing them with core hooks would add risk without removing duplicated core code.
 - [x] Replaced the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with pre/post hooks; core text and narration now stay intact.
 - [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
 - [ ] Re-test TTC/ATT price tooltips, graphs, listings, and crafting-component rows after each ESO update.
@@ -63,7 +63,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 
 ## Main menu
 - [ ] Use a supported ZOS menu-extension API if one is added; the current approach appends to `ZO_MENU_ENTRIES`.
-- [ ] Revisit the KelaPadUI entry position now that it is append-only.
+- [x] Revisited the KelaPadUI entry position: append-only is required because API `101051` has no supported menu-extension hook.
 - [ ] Consider moving the custom settings entry into the core Options menu instead of a duplicate Settings submenu.
 
 ## XML
@@ -80,11 +80,11 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 ## Constants and helper functions
 - [ ] Re-audit `kpuiConst` after future feature changes and remove data that loses its last caller.
 - [x] Converted the internal `KelaGetLocalTimeShift` helper to a local; remaining helpers have cross-file callers.
-- [ ] Review the `KELA_RESEARCH_COMPAT` read-only shim; remove it if the tooltip research section is retired or re-implemented with core APIs.
+- [x] Reviewed the `KELA_RESEARCH_COMPAT` shim; retained as a read-only compatibility layer because no current writer populates its research data.
 
 ## Settings UI
 - [x] Disabled sliders already follow core's `ZO_GamepadMenuEntryTemplate_GetLabelColor` path; no separate palette is needed.
-- [ ] If sliders or horizontal lists gain dependent controls, call `RefreshVisible` when their values change.
+- [x] Reviewed `RefreshVisible`: no configured sliders or horizontal lists currently have dependent controls; apply it when such a dependency is added.
 
 ## API / dependencies
 - [x] Verify and update `## APIVersion` for the current live client (`101051`).

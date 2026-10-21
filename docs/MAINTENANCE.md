@@ -182,10 +182,10 @@ Python, build, editor, and OS artifacts.
 
 `OPTIMIZATION_TODO.md` is the source of truth. The largest remaining areas are:
 
-- replacing copied trading-house XML/templates with core hooks;
 - verifying tooltip overrides against new core styles after each ESO update;
 - validating LibSets metadata after set/DLC updates;
-- reviewing remaining trading display edge cases and numeric fallbacks.
+- reviewing trading-house display edge cases and testing TTC/ATT data after
+  each ESO update.
 
 ## Documentation map
 
