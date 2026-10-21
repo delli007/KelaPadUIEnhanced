@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - TTC and ATT now work independently: either provider can enable trading, missing-provider tooltip rows show N/A, and ATT-only graph/guild features are hidden without ATT. The trading XML no longer requires ATT at load time.
+
 10/20/2026 - Trading-house confirmation dialogs now use core ZOS text and narration; KelaPadUI only decorates the dialog data needed for buying and listing history.
 
 10/20/2026 - Tooltip style cleanup: tooltip overrides now change only the properties that differ from core and inherit future core defaults; custom-only styles remain explicit. The static audit now also rejects TODO/FIXME markers and unused virtual templates, and validates LibSets API compatibility.

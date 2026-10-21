@@ -203,6 +203,10 @@ local function SetSmithTradingInfo (ctlSmithTradingInfo, lastControl, priceInfoT
 	return ctlSmithTradingInfo.SetItemInfo(priceInfoTTC, priceInfoATT, currentScene, selectedData, stackCount)
 end
 local function SetSmithGraph (ctlSmithGraph, lastControl, itemLink, priceInfoTTC, priceInfoATT, stackCount)
+	if not ArkadiusTradeTools or not ctlSmithGraph.object then
+		ctlSmithGraph:SetHidden(true)
+		return lastControl
+	end
 	ctlSmithGraph:ClearAnchors()
 	ctlSmithGraph:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT, 10, 0)
 	ctlSmithGraph:SetAnchor(TOPRIGHT, lastControl, BOTTOMRIGHT, -10, 0)
@@ -955,14 +959,15 @@ function KelaSetupTradingHouse()
 			local PRICE_THRESHOLD_DIGITS = 6
 			local PRICE_THRESHOLD = zo_pow(10, PRICE_THRESHOLD_DIGITS)
 			ZO_PostHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "SetupResultItemRow", function(selfControl, control, itemData, ...)		
-				if IsKPUITradingHouseSettingEnabled() and TamrielTradeCentre ~= nil then
+				if IsKPUITradingHouseSettingEnabled() then
 					local colorPrice = colors.COLOR_WHITE
 					local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemData.itemLink)
-					if trueTTC or trueATT then 				
+					local priceInfo = (trueTTC and priceInfoTTC) or (trueATT and priceInfoATT)
+					if priceInfo then
 						local valueEffectDeal, _, colorEffectDeal = KelaGetEffectOfDeal (priceInfoTTC, priceInfoATT, itemData, "GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS")
-						local avgPrice = priceInfoTTC.Avg
-						local minPrice = priceInfoTTC.Min
-						local maxPrice = priceInfoTTC.Max
+						local avgPrice = priceInfo.Avg
+						local minPrice = priceInfo.Min
+						local maxPrice = priceInfo.Max
 						if valueEffectDeal ~= "-" then
 							colorPrice = colorEffectDeal
 						elseif avgPrice ~= 0 and itemData.purchasePricePerUnit ~= avgPrice then
@@ -1023,14 +1028,15 @@ function KelaSetupTradingHouse()
 					if itemLink then
 						local controlContainer = selfControl.control:GetNamedChild("Mask"):GetNamedChild("Container")
 						local controlRail = controlContainer:GetNamedChild("Rail")
-						local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
 						local itemUniqueId = GetItemUniqueId(selfControl.itemBag, selfControl.itemIndex)
 						local stackCount, buyPrice, buyPricePerUnit
 						local itemType = GetItemLinkItemType(itemLink)
-						if (itemType == ITEMTYPE_MASTER_WRIT) then
-							stackCount = ArkadiusTradeToolsSales:GetVoucherCount(itemLink)
-						else
+						if itemType == ITEMTYPE_MASTER_WRIT and ArkadiusTradeTools and ArkadiusTradeTools.Modules and ArkadiusTradeTools.Modules.Sales then
+							stackCount = ArkadiusTradeTools.Modules.Sales:GetVoucherCount(itemLink)
+						elseif selectedData and selectedData.stackCount then
 							stackCount = selectedData.stackCount
+						else
+							stackCount = 1
 						end
 						if itemUniqueId then
 							tblBuyingItems = kpuiSVBuyingData["buyingTable"]			
@@ -1367,7 +1373,7 @@ function KelaSetupTradingHouse()
 	end)
 
 	-- set up the ATT graph
-	if ArkadiusTradeTools ~= nil and not hookATTAlready then 
+	if ArkadiusTradeTools ~= nil and ArkadiusTradeToolsSalesGraph and not hookATTAlready then
 		ZO_PreHook(ArkadiusTradeToolsSalesGraph, "AddDot", function(control, x, y, color)
 
 				local drawAreaWidth, drawAreaHeight = control.drawArea:GetDimensions()
@@ -1418,8 +1424,10 @@ function KelaSetupTradingHouse()
 		
 	end
 
-	--GUILD SELECTION DIALOG SETUP
-	local function SetupTradingHouseGuildItem(control, data, ...)
+	if ArkadiusTradeTools then
+		-- The ATT analysis-period selector extends the core guild dialog.
+		-- Without ATT, leave the core TRADING_HOUSE_CHANGE_ACTIVE_GUILD untouched.
+		local function SetupTradingHouseGuildItem(control, data, ...)
 		ZO_SharedGamepadEntry_OnSetup(control, data, ...)
 		if data.isCurrentGuild then
 			control.statusIndicator:AddIcon("EsoUI/Art/Inventory/Gamepad/gp_inventory_icon_equipped.dds")
@@ -1585,6 +1593,7 @@ function KelaSetupTradingHouse()
 		},
         noChoiceCallback = noChoiceCallback,
 	}
+	end
 end
 
 
@@ -2084,7 +2093,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 		local iconBag = zo_iconFormatInheritColor("EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_inventory.dds", 20, 20)
 		local strBackpack = iconBag.." "..zo_strformat(SI_GAMEPAD_INVENTORY_CAPACITY_FORMAT, GetNumBagUsedSlots(BAG_BACKPACK), GetBagSize(BAG_BACKPACK))			
 		local updatedString = ""
-		if TamrielTradeCentre ~= nil then
+		if TamrielTradeCentre ~= nil and TamrielTradeCentrePrice ~= nil then
 			updatedString = TamrielTradeCentrePrice:GetPriceTableUpdatedDateString()
 		end
 		
@@ -2150,7 +2159,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 			end
 
 			-- information about the level of benefits in guilds by type of product	
-			if KelaIsSceneTradingHouse(currentScene) and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_GUILDSTAT) then
+			if ArkadiusTradeTools and KelaIsSceneTradingHouse(currentScene) and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_GUILDSTAT) then
 				local itemTradeCategory = KelaGetItemTradeCategory(itemLink)
 				if KELA_ATT_GUILD_STAT[itemTradeCategory] then 
 					local bodySection = self:AcquireSection(self:GetStyle("bodySection1"))
@@ -2181,7 +2190,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 					SafeAddString(SI_GAMEPAD_TRADING_HOUSE_CONFIRM_BUY_DIALOG_TEXT, GetString(KELA_TRADING_TRADING_CONFIRM_BUY).."\n\n"..effectOfDeal, 1)
 					SafeAddString(SI_GAMEPAD_TRADING_HOUSE_CONFIRM_BUY_MULTIPLE_DIALOG_TEXT, GetString(KELA_TRADING_TRADING_CONFIRM_BUY_MULT).."\n\n"..effectOfDeal, 0)
 				end
-				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO) then
+				if ArkadiusTradeTools and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO) then
 					if not KPUI_ATTGraph then KPUI_ATTGraph = CreateControlFromVirtual("$(parent)ProvGraph", self, "KPUI_Graph") end							
 					lastControl = SetSmithGraph (KPUI_ATTGraph, lastControl, itemLink, priceInfoTTC, priceInfoATT, stackCount)
 				else
@@ -2264,7 +2273,7 @@ end
 --Integration with TamrielTradeCentre and ArkadiusTradeTools
 
 function GetATTPriceStats(itemLink)
-	if not ArkadiusTradeTools then
+	if not ArkadiusTradeTools or not ArkadiusTradeTools.Modules or not ArkadiusTradeTools.Modules.Sales then
 		return nil
 	end
 	
@@ -2320,6 +2329,9 @@ end
 
 
 function KelaGetATTPriceInfo(itemLink)
+	if not ArkadiusTradeTools or not ArkadiusTradeTools.Modules or not ArkadiusTradeTools.Modules.Sales then
+		return
+	end
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
 	local ArkadiusTradeToolsTooltipExtension = ArkadiusTradeToolsSales.TooltipExtension
 
@@ -2441,7 +2453,10 @@ function KelaGetATTPriceInfo(itemLink)
 end
 
 function KelaGetCurrentATTCraftingInfo(itemLink)
-	
+	if not ArkadiusTradeTools or not ArkadiusTradeTools.Modules or not ArkadiusTradeTools.Modules.Sales then
+		return false
+	end
+
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
     local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
     local days = KelaGetATTAnalysisPeriod()
@@ -2489,6 +2504,10 @@ function KelaGetCurrentATTCraftingInfo(itemLink)
 end
 
 function KelaUpdateATTGraph(itemLink, graphControl, priceInfoATTSuggestedPrice, priceInfoTTCSuggestedPrice)
+	if not ArkadiusTradeTools or not ArkadiusTradeTools.Modules or not ArkadiusTradeTools.Modules.Sales or not graphControl.object then
+		graphControl:SetHidden(true)
+		return
+	end
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
 	local L = ArkadiusTradeToolsSales.Localization
 	local attRound = math.attRound
@@ -2608,48 +2627,59 @@ function KelaGetEffectOfDeal (priceInfoTTC, priceInfoATT, data, action, stackCou
 	suggestedTCCStack = suggestedTCC*stackCount
 	suggestedTCCWrit = suggestedTCC*multiplier
 
-	if suggestedATT == 0 or suggestedTCC == 0 then
-		suggestedAVG = 0
-	else
+	local bothProviders = priceInfoTTC.Available and priceInfoATT.Available
+	local useAverage = bothProviders and suggestedATT ~= 0 and suggestedTCC ~= 0
+	local useAverageStack = bothProviders and suggestedATTStack ~= 0 and suggestedTCCStack ~= 0
+	local useAverageWrit = bothProviders and suggestedATTWrit ~= 0 and suggestedTCCWrit ~= 0
+
+	if useAverage then
 		suggestedAVG = (suggestedATT + suggestedTCC)/2
-	end
-	if suggestedATTStack == 0 or suggestedTCCStack == 0 then
-		suggestedAVGStack = 0
+	elseif suggestedTCC ~= 0 then
+		suggestedAVG = suggestedTCC
 	else
+		suggestedAVG = suggestedATT
+	end
+	if useAverageStack then
 		suggestedAVGStack = (suggestedATTStack + suggestedTCCStack)/2
-	end
-	if suggestedATTWrit == 0 or suggestedTCCWrit == 0 then
-		suggestedAVGWrit = 0
+	elseif suggestedTCCStack ~= 0 then
+		suggestedAVGStack = suggestedTCCStack
 	else
+		suggestedAVGStack = suggestedATTStack
+	end
+	if useAverageWrit then
 		suggestedAVGWrit = (suggestedATTWrit + suggestedTCCWrit)/2
+	elseif suggestedTCCWrit ~= 0 then
+		suggestedAVGWrit = suggestedTCCWrit
+	else
+		suggestedAVGWrit = suggestedATTWrit
 	end
 	
 	if IsMasterWrit then
-		if suggestedAVGWrit ~= 0 then
-			compareValuePrice = suggestedAVGWrit 
+		if useAverageWrit then
+			compareValuePrice = suggestedAVGWrit
 			compareValueSuffix = colors.COLOR_WHITE:Colorize(" (AVG)")
 		elseif suggestedTCCWrit ~= 0 then
-			compareValuePrice = suggestedTCCWrit 
-			compareValueSuffix = colors.COLOR_TTC:Colorize(" (TCC)")
+			compareValuePrice = suggestedTCCWrit
+			compareValueSuffix = colors.COLOR_TTC:Colorize(" (TTC)")
 		elseif suggestedATTWrit ~= 0 then
-			compareValuePrice = suggestedATTWrit 
+			compareValuePrice = suggestedATTWrit
 			compareValueSuffix = colors.COLOR_ATT:Colorize(" (ATT)")
 		else
 			compareValuePrice = 0
 		end
-	elseif stackCount ~= 0 then					
-		if suggestedAVGStack ~= 0 then
-			compareValuePrice = suggestedAVGStack 
+	elseif stackCount ~= 0 then
+		if useAverageStack then
+			compareValuePrice = suggestedAVGStack
 			compareValueSuffix = colors.COLOR_WHITE:Colorize(" (AVG)")
 		elseif suggestedTCCStack ~= 0 then
-			compareValuePrice = suggestedTCCStack 
-			compareValueSuffix = colors.COLOR_TTC:Colorize(" (TCC)")
+			compareValuePrice = suggestedTCCStack
+			compareValueSuffix = colors.COLOR_TTC:Colorize(" (TTC)")
 		elseif suggestedATTStack ~= 0 then
-			compareValuePrice = suggestedATTStack 
+			compareValuePrice = suggestedATTStack
 			compareValueSuffix = colors.COLOR_ATT:Colorize(" (ATT)")
 		else
 			compareValuePrice = 0
-		end						
+		end
 	else
 		compareValuePrice = 0
 	end
@@ -2711,12 +2741,13 @@ end
 
 function KelaGetEffectIfUndefined(itemData)
 	local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemData.itemLink)
+	local priceInfo = (trueTTC and priceInfoTTC) or (trueATT and priceInfoATT)
 	local result = 0
 	local colorPrice = colors.COLOR_WHITE
-	if trueTTC or trueATT then 				
-		local avgPrice = priceInfoTTC.Avg
-		local minPrice = priceInfoTTC.Min
-		local maxPrice = priceInfoTTC.Max
+	if priceInfo then
+		local avgPrice = priceInfo.Avg
+		local minPrice = priceInfo.Min
+		local maxPrice = priceInfo.Max
 		if avgPrice ~= 0 and itemData.purchasePricePerUnit ~= avgPrice then
 			if itemData.purchasePricePerUnit <= minPrice + (avgPrice-minPrice)*0.1 then
 				result = 5
@@ -2741,52 +2772,57 @@ end
 
 function KelaGetPriceInfoTTCATT (itemLink)
 
-	local priceInfoTTC, priceInfoATT, trueTTC, trueATT
-	if TamrielTradeCentre ~= nil then
+	local ttcAvailable = TamrielTradeCentre ~= nil and TamrielTradeCentrePrice ~= nil
+	local attAvailable = ArkadiusTradeTools ~= nil and ArkadiusTradeTools.Modules ~= nil and ArkadiusTradeTools.Modules.Sales ~= nil
+	local priceInfoTTC = {
+		Available = ttcAvailable,
+		Avg = 0,
+		Max = 0,
+		Min = 0,
+		EntryCount = 0,
+		AmountCount = 0,
+		SuggestedPrice = 0,
+	}
+	local priceInfoATT = {
+		Available = attAvailable,
+		Avg = 0,
+		Max = 0,
+		Min = 0,
+		EntryCount = 0,
+		AmountCount = 0,
+		SuggestedPrice = 0,
+		Vouchers = 0,
+		GuildsInfo = {},
+		GuildsPrice = {},
+	}
+	local trueTTC = false
+	local trueATT = false
+
+	if ttcAvailable then
 		local price = TamrielTradeCentrePrice:GetPriceInfo(itemLink)
-		if price then 
-			priceInfoTTC = price 
+		if price then
+			priceInfoTTC.Avg = price.Avg or 0
+			priceInfoTTC.Max = price.Max or 0
+			priceInfoTTC.Min = price.Min or 0
+			priceInfoTTC.EntryCount = price.EntryCount or 0
+			priceInfoTTC.AmountCount = price.AmountCount or 0
+			priceInfoTTC.SuggestedPrice = price.SuggestedPrice or 0
 			trueTTC = true
-		else
-			priceInfoTTC = {
-			Avg = 0,
-			Max = 0,
-			Min = 0,
-			EntryCount = 0,
-			AmountCount = 0,
-			SuggestedPrice = 0,
-			}			 
-			trueTTC = false		
 		end
 	end
-	if ArkadiusTradeTools ~= nil then 
+	if attAvailable then
 		local minPrice, maxPrice, averagePrice, suggestedPrice, vouchers, sales, quantity, guildsInfo, guildsPrice = KelaGetATTPriceInfo(itemLink)
 		if quantity then
-			priceInfoATT = {
-			Avg = averagePrice,
-			Max = maxPrice,
-			Min = minPrice,
-			EntryCount = sales,
-			AmountCount = quantity,
-			SuggestedPrice = suggestedPrice,
-			Vouchers = vouchers,
-			GuildsInfo = guildsInfo,
-			GuildsPrice = guildsPrice,
-			}
+			priceInfoATT.Avg = averagePrice
+			priceInfoATT.Max = maxPrice
+			priceInfoATT.Min = minPrice
+			priceInfoATT.EntryCount = sales
+			priceInfoATT.AmountCount = quantity
+			priceInfoATT.SuggestedPrice = suggestedPrice
+			priceInfoATT.Vouchers = vouchers
+			priceInfoATT.GuildsInfo = guildsInfo or {}
+			priceInfoATT.GuildsPrice = guildsPrice or {}
 			trueATT = true
-		else
-			priceInfoATT = {
-			Avg = 0,
-			Max = 0,
-			Min = 0,
-			EntryCount = 0,
-			AmountCount = 0,
-			SuggestedPrice = 0,
-			Vouchers = 0,
-			GuildsInfo = {},
-			GuildsPrice = {},
-			}
-			trueATT = false
 		end
 	end
 	return trueTTC, trueATT, priceInfoTTC, priceInfoATT
@@ -2859,6 +2895,13 @@ function KPUI_MainInfo_OnInitialize(control)
 			stackCount = 1
 			if selectedData then stackCount = selectedData.stackCount end
 		end
+
+		local function formatProvider(priceInfo, value)
+			if priceInfo and priceInfo.Available then
+				return KelaLocalizedFormatNumber(value)
+			end
+			return "N/A"
+		end
 							
 		local lastControl
 		local strAmountCount = GetString(KELA_TRADING_AMOUNTCOUNT)
@@ -2879,8 +2922,8 @@ function KPUI_MainInfo_OnInitialize(control)
 			rowEntryCount:ClearAnchors()
 			rowEntryCount:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
 			rowEntryCount:GetNamedChild("Stat"):SetText(GetString(KELA_TRADING_ENTRYCOUNT))
-			rowEntryCount:GetNamedChild("ATT"):SetText(KelaLocalizedFormatNumber(priceInfoATT.EntryCount))
-			rowEntryCount:GetNamedChild("TTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.EntryCount))	
+			rowEntryCount:GetNamedChild("ATT"):SetText(formatProvider(priceInfoATT, priceInfoATT.EntryCount))
+			rowEntryCount:GetNamedChild("TTC"):SetText(formatProvider(priceInfoTTC, priceInfoTTC.EntryCount))
 			rowEntryCount:SetHidden(false)
 			lastControl = rowEntryCount
 		else
@@ -2901,8 +2944,8 @@ function KPUI_MainInfo_OnInitialize(control)
 		rowAmountCount:ClearAnchors()
 		rowAmountCount:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
 		rowAmountCount:GetNamedChild("Stat"):SetText(strAmountCount)
-		rowAmountCount:GetNamedChild("ATT"):SetText(KelaLocalizedFormatNumber(priceInfoATT.AmountCount))
-		rowAmountCount:GetNamedChild("TTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.AmountCount))	
+		rowAmountCount:GetNamedChild("ATT"):SetText(formatProvider(priceInfoATT, priceInfoATT.AmountCount))
+		rowAmountCount:GetNamedChild("TTC"):SetText(formatProvider(priceInfoTTC, priceInfoTTC.AmountCount))
 		lastControl = rowAmountCount
 		
 		local rowMin = GetControl(control:GetName().."rowMin")
@@ -2910,8 +2953,8 @@ function KPUI_MainInfo_OnInitialize(control)
 		rowMin:ClearAnchors()
 		rowMin:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
 		rowMin:GetNamedChild("Stat"):SetText(GetString(KELA_TRADING_MINPRICE))
-		rowMin:GetNamedChild("ATT"):SetText(KelaLocalizedFormatNumber(priceInfoATT.Min))
-		rowMin:GetNamedChild("TTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.Min))	
+		rowMin:GetNamedChild("ATT"):SetText(formatProvider(priceInfoATT, priceInfoATT.Min))
+		rowMin:GetNamedChild("TTC"):SetText(formatProvider(priceInfoTTC, priceInfoTTC.Min))
 		lastControl = rowMin
 		
 		local rowMax = GetControl(control:GetName().."rowMax")
@@ -2919,8 +2962,8 @@ function KPUI_MainInfo_OnInitialize(control)
 		rowMax:ClearAnchors()
 		rowMax:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
 		rowMax:GetNamedChild("Stat"):SetText(GetString(KELA_TRADING_MAXPRICE))
-		rowMax:GetNamedChild("ATT"):SetText(KelaLocalizedFormatNumber(priceInfoATT.Max))
-		rowMax:GetNamedChild("TTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.Max))	
+		rowMax:GetNamedChild("ATT"):SetText(formatProvider(priceInfoATT, priceInfoATT.Max))
+		rowMax:GetNamedChild("TTC"):SetText(formatProvider(priceInfoTTC, priceInfoTTC.Max))
 		lastControl = rowMax
 		
 		if IsMasterWrit then
@@ -2929,8 +2972,8 @@ function KPUI_MainInfo_OnInitialize(control)
 			rowVoucherPrice:ClearAnchors()
 			rowVoucherPrice:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
 			rowVoucherPrice:GetNamedChild("Stat"):SetText(GetString(KELA_TRADING_VOUCHERPRICE))
-			rowVoucherPrice:GetNamedChild("ATT"):SetText(KelaLocalizedFormatNumber(priceInfoATT.Avg))
-			rowVoucherPrice:GetNamedChild("TTC"):SetText(KelaLocalizedFormatNumber(0))
+			rowVoucherPrice:GetNamedChild("ATT"):SetText(formatProvider(priceInfoATT, priceInfoATT.Avg))
+			rowVoucherPrice:GetNamedChild("TTC"):SetText("N/A")
 			rowVoucherPrice:SetHidden(false)
 			lastControl = rowVoucherPrice
 		else
@@ -2942,8 +2985,8 @@ function KPUI_MainInfo_OnInitialize(control)
 		rowAvg:ClearAnchors()
 		rowAvg:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
 		rowAvg:GetNamedChild("Stat"):SetText(strAvgPrice)
-		rowAvg:GetNamedChild("ATT"):SetText(KelaLocalizedFormatNumber(priceInfoATT.Avg * multiplier))
-		rowAvg:GetNamedChild("TTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.Avg))
+		rowAvg:GetNamedChild("ATT"):SetText(formatProvider(priceInfoATT, priceInfoATT.Avg * multiplier))
+		rowAvg:GetNamedChild("TTC"):SetText(formatProvider(priceInfoTTC, priceInfoTTC.Avg))
 		lastControl = rowAvg
 
 		local valueEffectDeal, effectOfDeal, colorEffectDeal, suggestedTTC, suggestedATT, suggestedAVG, suggestedTTCStack, suggestedATTStack, suggestedAVGStack, suggestedTTCWrit, suggestedATTWrit, suggestedAVGWrit 
@@ -2965,28 +3008,35 @@ function KPUI_MainInfo_OnInitialize(control)
 			control:GetNamedChild("Footer"):GetNamedChild("EffectOfDeal"):SetText("")
 			control:GetNamedChild("Footer"):GetNamedChild("EffectOfDeal"):SetHidden(true)
 		end
+		local bothProviders = priceInfoTTC.Available and priceInfoATT.Available
+		local hasAverage = bothProviders and suggestedATT ~= 0 and suggestedTTC ~= 0
+		local hasAverageStack = bothProviders and suggestedATTStack ~= 0 and suggestedTTCStack ~= 0
+		local hasAverageWrit = bothProviders and suggestedATTWrit ~= 0 and suggestedTTCWrit ~= 0
+		local suggestedAVGText = hasAverage and (KelaLocalizedFormatNumber(suggestedAVG).." ~") or "N/A"
+		local suggestedAVGStackText = hasAverageStack and (KelaLocalizedFormatNumber(suggestedAVGStack).." ~") or "N/A"
+		local suggestedAVGWritText = hasAverageWrit and (KelaLocalizedFormatNumber(suggestedAVGWrit).." ~") or "N/A"
 		control:GetNamedChild("Footer"):GetNamedChild("Recomend"):SetText(GetString(KELA_TRADING_RECOMENDEDPRICE_SYSTEM))
-		control:GetNamedChild("Footer"):GetNamedChild("ATT"):SetText(colors.COLOR_ATT:Colorize(KelaLocalizedFormatNumber(suggestedATT))) 
-		control:GetNamedChild("Footer"):GetNamedChild("TTC"):SetText(colors.COLOR_TTC:Colorize(KelaLocalizedFormatNumber(suggestedTTC))) 
-		control:GetNamedChild("Footer"):GetNamedChild("AVG"):SetText(KelaLocalizedFormatNumber(suggestedAVG).." ~")
+		control:GetNamedChild("Footer"):GetNamedChild("ATT"):SetText(colors.COLOR_ATT:Colorize(formatProvider(priceInfoATT, suggestedATT)))
+		control:GetNamedChild("Footer"):GetNamedChild("TTC"):SetText(colors.COLOR_TTC:Colorize(formatProvider(priceInfoTTC, suggestedTTC)))
+		control:GetNamedChild("Footer"):GetNamedChild("AVG"):SetText(suggestedAVGText)
 		if IsMasterWrit then
 			control:GetNamedChild("Footer"):GetNamedChild("RecomendStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("TTCStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("AVGStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("RecomendStack"):SetText(GetString(KELA_TRADING_TRADING_FORWRIT).."("..multiplier..")")
-			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetText(colors.COLOR_ATT:Colorize(KelaLocalizedFormatNumber(suggestedATTWrit))) 
-			control:GetNamedChild("Footer"):GetNamedChild("TTCStack"):SetText(colors.COLOR_TTC:Colorize(KelaLocalizedFormatNumber(suggestedTTCWrit))) 
-			control:GetNamedChild("Footer"):GetNamedChild("AVGStack"):SetText(KelaLocalizedFormatNumber(suggestedAVGWrit).." ~") 
+			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetText(colors.COLOR_ATT:Colorize(formatProvider(priceInfoATT, suggestedATTWrit)))
+			control:GetNamedChild("Footer"):GetNamedChild("TTCStack"):SetText(colors.COLOR_TTC:Colorize(formatProvider(priceInfoTTC, suggestedTTCWrit)))
+			control:GetNamedChild("Footer"):GetNamedChild("AVGStack"):SetText(suggestedAVGWritText)
 		elseif stackCount > 1 then
 			control:GetNamedChild("Footer"):GetNamedChild("RecomendStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("TTCStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("AVGStack"):SetHidden(false)
 			control:GetNamedChild("Footer"):GetNamedChild("RecomendStack"):SetText(GetString(KELA_TRADING_TRADING_FORLOT).."("..stackCount..")")
-			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetText(colors.COLOR_ATT:Colorize(KelaLocalizedFormatNumber(suggestedATTStack))) 
-			control:GetNamedChild("Footer"):GetNamedChild("TTCStack"):SetText(colors.COLOR_TTC:Colorize(KelaLocalizedFormatNumber(suggestedTTCStack))) 
-			control:GetNamedChild("Footer"):GetNamedChild("AVGStack"):SetText(KelaLocalizedFormatNumber(suggestedAVGStack).." ~") 
+			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetText(colors.COLOR_ATT:Colorize(formatProvider(priceInfoATT, suggestedATTStack)))
+			control:GetNamedChild("Footer"):GetNamedChild("TTCStack"):SetText(colors.COLOR_TTC:Colorize(formatProvider(priceInfoTTC, suggestedTTCStack)))
+			control:GetNamedChild("Footer"):GetNamedChild("AVGStack"):SetText(suggestedAVGStackText)
 		else 
 			control:GetNamedChild("Footer"):GetNamedChild("RecomendStack"):SetHidden(true)
 			control:GetNamedChild("Footer"):GetNamedChild("ATTStack"):SetHidden(true)
@@ -3004,8 +3054,19 @@ end
 function KPUI_Graph_OnInitialize(control)
 	local rows = {}
 	local rowFake
-	ArkadiusTradeToolsSalesGraph:New(control)
+	-- Keep the XML independent of ATT: create the ATT graph child only when available.
+	if ArkadiusTradeTools and ArkadiusTradeToolsSalesGraph then
+		local graph = CreateControlFromVirtual("$(parent)ATTGraph", control, "ArkadiusTradeToolsSalesGraph")
+		graph:SetAnchor(TOPLEFT, control, TOPLEFT, 0, 0)
+		graph:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, 0, 0)
+		graph:SetDrawTier(DT_LOW)
+		control.object = graph.object
+	end
 	control.SetGuildSalesInfo = function(GuildsInfo, GuildsPrice, stackCount, lastControl)
+		if not ArkadiusTradeTools or not control.object then
+			control:SetHidden(true)
+			return lastControl
+		end
 		if not stackCount then stackCount = 1 end
 		stackCount = math.floor(stackCount)
 		
@@ -3113,7 +3174,7 @@ function KPUI_PreviousListings_OnInitialize(control)
 			
 			count = count + 1
 			
-			local color = ArkadiusTradeTools:GetGuildColor(listingItem["guildName"])
+			local color = ArkadiusTradeTools and ArkadiusTradeTools:GetGuildColor(listingItem["guildName"]) or colors.COLOR_WHITE
 			
 			local periodValue
 			if listingItem["period"] then
@@ -3482,12 +3543,17 @@ function KPUI_CraftingInfo_OnInitialize(control)
 					row:GetNamedChild("Quantity"):SetText(stackCount) 
 					row:GetNamedChild("ItemName"):SetText(craftingComponentPrices[i].itemLink.." *"..craftingComponentPrices[i].quantity)
 
-					local priceInfoTTC = TamrielTradeCentrePrice:GetPriceInfo(craftingComponentPrices[i].itemLink)
+					local priceInfoTTC
+					if TamrielTradeCentre and TamrielTradeCentrePrice then
+						priceInfoTTC = TamrielTradeCentrePrice:GetPriceInfo(craftingComponentPrices[i].itemLink)
+					end
 
-					if priceInfoTTC then 
-						row:GetNamedChild("CurrencyTTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.Avg * craftingComponentPrices[i].quantity)) 
-						totalPriceTTC = totalPriceTTC + (priceInfoTTC.Avg * craftingComponentPrices[i].quantity)	
-					end	
+					if priceInfoTTC then
+						row:GetNamedChild("CurrencyTTC"):SetText(KelaLocalizedFormatNumber(priceInfoTTC.Avg * craftingComponentPrices[i].quantity))
+						totalPriceTTC = totalPriceTTC + (priceInfoTTC.Avg * craftingComponentPrices[i].quantity)
+					else
+						row:GetNamedChild("CurrencyTTC"):SetText("N/A")
+					end
 
 					local priceInfoATT
 					if craftingComponentPrices[i].price and	craftingComponentPrices[i].quantity then

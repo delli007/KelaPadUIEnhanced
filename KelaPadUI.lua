@@ -99,12 +99,12 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 
 	KELA_SETS_LIST:SetMasterSetsList()
 
-	local hasTradingDependencies = TamrielTradeCentre ~= nil and ArkadiusTradeTools ~= nil
-	if hasTradingDependencies and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
+	local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
+	if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
 		KelaInitializeTradingHistory()
 		KelaSetupTradingHouse()
 		KelaSetupCraftingStation()
-	elseif not hasTradingDependencies then
+	elseif not hasTradingProvider then
 		KelaSetSetting(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ENABLED, false)
 	end
 

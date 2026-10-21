@@ -220,7 +220,8 @@
 				</Label>		
 			</Controls>
 		</Control>
-		<Control name="KPUI_Graph" inherits="ArkadiusTradeToolsSalesGraph" override="true" tier="HIGH" virtual="true">
+		<!-- ATT graph child is created at runtime only when ATT is available. -->
+		<Control name="KPUI_Graph" tier="HIGH" virtual="true">
 			<Dimensions y="150" />
 			<OnInitialized>
 				KPUI_Graph_OnInitialize(self)

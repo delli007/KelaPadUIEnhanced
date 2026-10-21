@@ -8,8 +8,9 @@ update.
 
 - The add-on is designed for the gamepad UI.
 - `LibSets` is required and is declared in `KelaPadUI.txt`.
-- `Tamriel Trade Centre` (TTC) and `Arkadius Trade Tools` (ATT) are both
-  required for the trading features. Without both dependencies, the trading
+- `Tamriel Trade Centre` (TTC) and `Arkadius Trade Tools` (ATT) are optional
+  trading-data providers. At least one is required for the trading features;
+  either provider can be used alone. Without either dependency, the trading
   setup is skipped and the trading master setting is forced off.
 - `LibCustomMenu` is optional and is used only for chat context-menu actions.
 - The manifest currently targets API version `101051`.
@@ -90,14 +91,19 @@ itself is always visible so the user cannot lock themselves out of settings.
 
 ## Trading features
 
-The trading stack is initialized only when TTC and ATT are both present and the
-trading master setting is enabled. It includes:
+The trading stack is initialized when at least one of TTC or ATT is present and
+the trading master setting is enabled. It includes:
 
 - guild-store search filtering and price-effect indicators;
-- TTC/ATT-enhanced item tooltips;
+- TTC/ATT-enhanced item tooltips, using whichever provider is available;
 - buying and listing history with retention cleanup;
-- ATT-based guild statistics and category mapping;
+- ATT-based guild statistics and category mapping when ATT is available;
 - crafting-station tooltip integration.
+
+Provider-specific tooltip rows show `N/A` for a missing source. The ATT sales
+graph and guild-statistics section are omitted without ATT; TTC-only use keeps
+the core guild-selection dialog. The custom `KPUI_Graph` control does not inherit
+an ATT template, so the trading XML loads without ATT installed.
 
 See `docs/TRADING_HOUSE.md` for module details and test notes.
 
@@ -144,7 +150,7 @@ Manual in-game checks are still required for:
 - opening KelaPadUI from the gamepad main menu;
 - scrolling the flattened settings list and confirming category headings;
 - changing and resetting settings, including reload-gated toggles;
-- entering the guild store with and without TTC/ATT;
+- entering the guild store with TTC only, ATT only, both, and neither;
 - confirming tooltips, search filters, and trading history;
 - checking the Known filter for collectible fragments, books, recipes, and set
   pieces;

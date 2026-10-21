@@ -6,28 +6,37 @@ update.
 
 ## Dependencies and startup gate
 
-Trading features require both:
+Trading features use either or both of these optional data providers:
 
 - `Tamriel Trade Centre` (TTC) for TTC price data;
 - `Arkadius Trade Tools` (ATT) for ATT sales data and guild colors.
 
-`KelaPadUI_OnLoaded()` checks both dependencies and the master setting:
+`KelaPadUI_OnLoaded()` checks for at least one provider and the master setting:
 
 ```lua
-local hasTradingDependencies = TamrielTradeCentre ~= nil and ArkadiusTradeTools ~= nil
-if hasTradingDependencies and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
+local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
+if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
     KelaInitializeTradingHistory()
     KelaSetupTradingHouse()
     KelaSetupCraftingStation()
-elseif not hasTradingDependencies then
+elseif not hasTradingProvider then
     KelaSetSetting(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ENABLED, false)
 end
 ```
 
-There is no partial TTC-only or ATT-only mode. If either dependency is missing,
-the trading setup is skipped and the master setting is forced off. The trading
-settings panel also disables the master checkbox when either dependency is
-absent. Re-enabling trading requires both add-ons and a `/reload`.
+TTC-only and ATT-only modes are supported. The trading settings panel enables
+the master checkbox when at least one provider is installed, and provider-specific
+settings are hidden when their provider is absent. Re-enabling trading after
+installing a provider requires a `/reload`.
+
+When only one provider is available, that provider supplies the recommended
+price and deal rating. When both are available, the recommended price uses their
+average where both have data. Tooltip columns for a missing provider show `N/A`.
+ATT-only features such as the sales graph and guild statistics require ATT; with
+TTC only, they are hidden and the core guild-selection dialog remains in use.
+The `KPUI_Graph` control is a plain custom template that creates an ATT graph
+child at runtime only when ATT is present, so the XML does not depend on ATT's
+templates at load time.
 
 ## Main modules
 
@@ -48,31 +57,32 @@ absent. Re-enabling trading requires both add-ons and a `/reload`.
 
 - Owns `kpuiSavedVariables.buyingData` and `kpuiSavedVariables.listingData`.
 - Tracks purchased items and player listings.
-- Reconstructs sales from ATT and records sold/recalled results.
-- Builds `KELA_ATT_GUILD_STAT`, the guild/category statistics used by the tooltip.
+- Reconstructs sales from ATT when available and records sold/recalled results.
+- Builds `KELA_ATT_GUILD_STAT`, the guild/category statistics used by the tooltip when ATT is available.
 - Runs retention cleanup when trading history is initialized.
 
 ### `KelaSetupCraftingStation()`
 
 Adds the same price and component data to crafting-station tooltips when the
-trading master setting is enabled and TTC/ATT are available.
+trading master setting is enabled and at least one provider is available. ATT
+crafting-component rows require ATT.
 
 ## Settings
 
 | ID | Purpose |
 | --- | --- |
-| `7501` | Master trading-interface toggle. Disabled without TTC + ATT. |
-| `7502` | ATT analysis period in days, range 1-30, default 15. |
+| `7501` | Master trading-interface toggle. Disabled without TTC or ATT. |
+| `7502` | ATT analysis period in days, range 1-30, default 15. Visible only with ATT. |
 | `7504` | Guild-store tooltips. |
 | `7505` | Bank tooltips. |
 | `7506` | Vendor/store tooltips. |
 | `7507` | Crafting tooltips. |
-| `7508` | Guild statistics module. |
-| `7509` | ATT price information module. |
+| `7508` | Guild statistics module. Visible only with ATT. |
+| `7509` | ATT price information module. Visible only with ATT. |
 | `7510` | Player listing rows. |
 | `7511` | Quality/price comparison rows. |
 | `7512` | Production/result rows. |
-| `7513` | Crafting-component rows. |
+| `7513` | Crafting-component rows. Visible only with ATT. |
 
 The retired one-page search setting was `7503`. Do not reuse it.
 
@@ -130,7 +140,8 @@ available yet, the update returns false and the setup retry handles it later.
 
 ## Testing checklist
 
-Test with both TTC and ATT installed and up to date:
+Test the same flows with TTC only, ATT only, both providers, and neither
+provider installed:
 
 - Open the guild store and confirm the known-item filter cycles and the result
   count/page number update.
@@ -144,23 +155,28 @@ Test with both TTC and ATT installed and up to date:
 - Check a sold and a recalled listing when ATT data is available.
 - Open the bank, a vendor, a crafting station, and the guild store and confirm
   the enabled tooltip sections appear.
-- Change the ATT analysis period and confirm the guild-stat period changes.
+- With TTC only, confirm TTC prices and ratings appear, ATT rows show `N/A`, and
+  no ATT graph or guild-stat section is created.
+- With ATT only, confirm ATT prices and ratings appear, TTC and average rows show
+  `N/A`, and the ATT graph and guild statistics work.
+- With both, confirm the average recommendation appears when both providers have
+  data and falls back to the available provider otherwise.
+- Change the ATT analysis period when ATT is installed and confirm the
+  guild-stat period changes.
 - Disable each tooltip module and confirm only that section disappears.
-- Remove or disable TTC or ATT, reload, and confirm trading is forced off with
-  no Lua errors.
-
-Also test the failure path with only one dependency installed. The add-on should
-not attempt to call TTC/ATT APIs and should leave the master setting off.
+- Remove both providers, reload, and confirm trading is forced off with no Lua
+  errors.
 
 ## Known deferred work
 
 See `OPTIMIZATION_TODO.md` for the trading-house backlog. The `KPUI_*` XML
-templates are bespoke gamepad tooltip layouts; only `KPUI_Graph` overrides an
-ATT template. The remaining work is to:
+templates are bespoke gamepad tooltip layouts. `KPUI_Graph` no longer inherits an
+ATT template: it creates an ATT graph child at runtime only when ATT is present.
+The remaining work is to:
 
 - re-test all price, sales, category, and graph data after each ESO update;
-- keep the ATT graph override under review if ATT adds a supported extension
-  point;
+- keep the ATT graph child creation under review if ATT adds a supported
+  extension point;
 - replace other core overrides only where a supported hook exists.
 
 The old one-page search code was removed rather than repaired. If it is ever

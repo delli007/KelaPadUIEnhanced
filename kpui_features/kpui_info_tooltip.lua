@@ -216,7 +216,7 @@ function kelaReplaceTooltips (tooltip)
 			end 
 			valueString = colors.COLOR_WHITE:Colorize(zo_strformat(SI_GAMEPAD_TOOLTIP_ITEM_VALUE_FORMAT, finalValue, iconGold))
 		end
-		if TamrielTradeCentre then
+		if TamrielTradeCentre and TamrielTradeCentrePrice then
 			local priceInfoTTC = TamrielTradeCentrePrice:GetPriceInfo(itemLink)
 
 			if priceInfoTTC then

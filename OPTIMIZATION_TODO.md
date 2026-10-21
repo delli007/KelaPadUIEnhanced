@@ -46,11 +46,12 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Completed the static audit (manifest, Lua syntax, XML, Cyrillic, removed references).
 
 ## Trading house (deferred, higher risk)
-- [x] Reviewed the trading-house XML: the `KPUI_*` templates are bespoke tooltip controls, not copied core XML; only `KPUI_Graph` overrides an ATT template.
+- [x] Reviewed the trading-house XML: the `KPUI_*` templates are bespoke tooltip controls, not copied core XML; `KPUI_Graph` now creates an ATT graph child at runtime only when ATT is available.
+- [x] Made TTC and ATT independent: either provider can enable trading, missing-provider tooltip values show `N/A`, ATT-only graph/guild sections are skipped without ATT, and the trading XML no longer inherits an ATT template at load time.
 - [x] Reviewed the graph/list/quality/production/crafting controls: they are custom layouts, so replacing them with core hooks would add risk without removing duplicated core code.
 - [x] Replaced the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with pre/post hooks; core text and narration now stay intact.
 - [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
-- [ ] Re-test TTC/ATT price tooltips, graphs, listings, and crafting-component rows after each ESO update.
+- [ ] Re-test TTC-only, ATT-only, and combined price tooltips, graphs, listings, and crafting-component rows after each ESO update.
 
 ## Tooltips and styles
 - [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
