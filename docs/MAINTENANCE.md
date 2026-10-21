@@ -110,9 +110,12 @@ python _tools\audit_addon.py
 ```
 
 The audit checks manifest entries, Lua syntax, XML well-formedness, removed
-feature references, and undefined/unused KELA strings. It counts any KELA token
-in Lua/XML as a reference, so localization IDs passed indirectly are not
-reported as unused. It is a static check, not an in-game test.
+feature references, TODO/FIXME markers, unused virtual templates, and
+undefined/unused KELA strings. It counts any KELA token in Lua/XML as a
+reference, so localization IDs passed indirectly are not reported as unused.
+Virtual-template references are counted across add-on Lua/XML, including
+`inherits`, `CreateControlFromVirtual`, and template strings. It is a static
+check, not an in-game test.
 
 To parse-check every Lua file, use `luaparse` through Node:
 

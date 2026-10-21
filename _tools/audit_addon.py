@@ -18,6 +18,9 @@ LUA53 = Path(r"lua53.exe")
 SKIP_DIRS = {"_tools", "docs"}
 CYRILLIC = re.compile(r"[\u0400-\u04FF]")
 DEBUG_PATTERNS = re.compile(r"(?i)(CHAT_SYSTEM|AddMessage\(|--\s*(print|d|trace|debug)\b|\bDEBUG\b)")
+TODO_PATTERN = re.compile(r"\b(TODO|FIXME|HACK|XXX)\b")
+VIRTUAL_TAG = re.compile(r"<[^>]*\bvirtual=\"true\"[^>]*>", re.S)
+NAME_ATTR = re.compile(r'\bname="([^"]+)"')
 REMOVED_IDENTIFIERS = [
     "KELA_RESEARCH",
     "KELA_UNDAUNTED",
@@ -133,6 +136,38 @@ def check_removed_references():
     return errors
 
 
+def check_todo_markers():
+    errors = []
+    for path in iter_files({".lua", ".xml"}):
+        text = read_text(path)
+        for match in TODO_PATTERN.finditer(text):
+            line = text.count("\n", 0, match.start()) + 1
+            errors.append(
+                "TODO marker: {}:{}: {}".format(
+                    path.relative_to(ROOT), line, match.group(1)
+                )
+            )
+    return errors
+
+
+def virtual_template_report():
+    definitions = {}
+    for path in iter_files({".xml"}):
+        for tag in VIRTUAL_TAG.findall(read_text(path)):
+            match = NAME_ATTR.search(tag)
+            if match:
+                definitions.setdefault(match.group(1), path.relative_to(ROOT))
+
+    texts = [read_text(path) for path in iter_files({".lua", ".xml"})]
+    unused = []
+    for name, path in definitions.items():
+        pattern = re.compile(r"(?<![A-Za-z0-9_])" + re.escape(name) + r"(?![A-Za-z0-9_])")
+        references = sum(len(pattern.findall(text)) for text in texts)
+        if references <= 1:
+            unused.append((name, path))
+    return unused, len(definitions)
+
+
 def debug_line_report():
     report = {}
     for path in iter_files({".lua"}):
@@ -177,10 +212,17 @@ def main():
     errors.extend(xml_errors)
     errors.extend(check_cyrillic())
     errors.extend(check_removed_references())
+    errors.extend(check_todo_markers())
+    unused_virtual, virtual_count = virtual_template_report()
+    for name, path in unused_virtual:
+        errors.append("UNUSED VIRTUAL: {}: {}".format(path, name))
 
     print("Manifest entries:", len(entries))
     print("Lua files checked:", lua_count)
     print("XML files checked:", xml_count)
+    print("Virtual templates checked:", virtual_count)
+    for name, path in unused_virtual:
+        print("  UNUSED VIRTUAL", name, "({})".format(path))
     print("Debug comment count:")
     for path, count in debug_line_report().items():
         print("  {}: {}".format(path, count))

@@ -10,6 +10,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Removed dead settings callbacks, the unused `GetATTPriceAndStatus` helper, and commented-out implementations.
 - [x] Removed the empty `ru.lua`, the stale implementation/debug archives, and the commented-code archive.
 - [x] Re-ran the audit with zero undefined or unused KELA strings.
+- [x] Added audit checks for TODO/FIXME markers and unused virtual templates.
 
 ## Completed in the current maintenance pass
 - [x] Fixed settings navigation and removed obsolete support/donation/message settings.
@@ -65,7 +66,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Consider moving the custom settings entry into the core Options menu instead of a duplicate Settings submenu.
 
 ## XML
-- [ ] Audit the remaining virtual templates and remove unused ones.
+- [x] Audit the remaining virtual templates; all 27 are referenced.
 - [ ] Consolidate small XML files only if it reduces maintenance; do not convert controls to Lua blindly.
 - [ ] Keep `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and the trading-house compatibility XML until their replacements are tested.
 
@@ -73,16 +74,20 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Profile add-on load time and tooltip/trading-house hook overhead.
 - [ ] Cache frequently used strings and globals in hot paths.
 - [ ] Consider lazy-loading optional features (sets/trading house) if load time becomes an issue.
-- [ ] Remove any remaining per-frame scans or unnecessary deep table copies.
+- [x] Remove any remaining per-frame scans; no `OnUpdate`/`RegisterForUpdate` handlers remain.
 
 ## Constants and helper functions
 - [ ] Re-audit `kpuiConst` after future feature changes and remove data that loses its last caller.
 - [ ] Convert genuinely internal `kpui_utils.lua` helpers to locals after confirming no cross-file callers; keep tooltip-facing helpers global until then.
 - [ ] Review the `KELA_RESEARCH_COMPAT` read-only shim; remove it if the tooltip research section is retired or re-implemented with core APIs.
 
-## Settings UI\n- [ ] Design disabled-state colors for gamepad sliders.\n- [ ] If sliders or horizontal lists gain dependent controls, call `RefreshVisible` when their values change.\n\n## API / dependencies
-- [ ] Verify and update `## APIVersion` for the current live client.
-- [ ] Re-check `LibSets` API compatibility and required version.
+## Settings UI
+- [ ] Design disabled-state colors for gamepad sliders.
+- [ ] If sliders or horizontal lists gain dependent controls, call `RefreshVisible` when their values change.
+
+## API / dependencies
+- [x] Verify and update `## APIVersion` for the current live client (`101051`).
+- [x] Re-check `LibSets` API compatibility and required version (`0.9.4`, API `101051`/`101052`).
 - [ ] Remove obsolete compatibility shims after game updates.
 - [ ] Keep `LibCustomMenu` optional; do not make optional integrations hard dependencies.
 
