@@ -218,7 +218,7 @@ local function KelaOnTradingHistoryInventoryChanged(eventCode, bagId, slotIndex,
 	end
 end
 
-function KelaAddToListingTable(bagId, listingIndex, stackCount, desiredPrice, timeRemaining)
+function KelaAddToListingTable(bagId, listingIndex, stackCount, desiredPrice)
 	local listingTable = GetListingTable()
 	if not listingTable or not listingIndex then
 		return

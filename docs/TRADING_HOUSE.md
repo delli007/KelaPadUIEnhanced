@@ -48,10 +48,25 @@ templates at load time.
   stations.
 - Adds ATT statistics, guild statistics, listing rows, quality rows, production
   rows, and crafting-component rows to tooltips.
-- Tracks buying confirmation data for the history table through pre/post hooks;
-  core dialog text and narration remain ZOS-owned.
+- Tracks buying, listing, and removal history through the copied confirmation
+  dialogs; core dialog text and narration remain ZOS-owned.
 - Restores normal paginated search behavior; the old one-page search experiment
   was removed.
+
+#### Confirmation dialogs
+
+KelaPadUI keeps copies of `TRADING_HOUSE_CONFIRM_BUY_ITEM`,
+`TRADING_HOUSE_CONFIRM_SELL_ITEM`, and `TRADING_HOUSE_CONFIRM_REMOVE_LISTING`
+because their confirmation actions call C API functions that cannot be hooked
+for history updates. The copies mirror the current core fields, and the sell
+callback uses the current four-argument `RequestPostItemOnTradingHouse`
+signature.
+
+`ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` remains core-owned,
+so `mainTextParams`, `mainTextNarrationParams`, display quality, and icon
+handling stay intact. Core's `TRADING_HOUSE_CONFIRM_BUY_GUILD_SPECIFIC_ITEM` and
+`TRADING_HOUSE_DISPLAY_ERROR` dialogs are not copied; guild-specific-store
+purchases are not added to Kela buying history.
 
 ### `kpui_compat/kpui_trading_history.lua`
 

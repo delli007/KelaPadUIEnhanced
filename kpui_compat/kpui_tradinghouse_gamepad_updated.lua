@@ -947,12 +947,9 @@ function KelaSetupTradingHouse()
 			end)
 			SecurePostHook(GAMEPAD_TRADING_HOUSE_BROWSE_RESULTS, "FilterScrollList", function(control, ...)		
 				if IsKPUITradingHouseSettingEnabled() then
-					control.contentHeaderData.data1HeaderText = colors.COLOR_WHITE:Colorize(zo_iconFormat(kpuiConst.stringDDS.leftStickXBOne, 44, 44)).." Filter Known: "..KELA_KNOWN_ITEM_FILTER
+					control.contentHeaderData.data1HeaderText = colors.COLOR_WHITE:Colorize(zo_iconFormat(kpuiConst.stringDDS.leftStickXBOne, 44, 44)).." "..GetString(KELA_TRADING_FILTER_KNOWN)..KELA_KNOWN_ITEM_FILTER
 					control.contentHeaderData.data2HeaderText = ""
 					control.contentHeaderData.data3HeaderText = colors.COLOR_WHITE:Colorize(zo_iconFormat(kpuiConst.stringDDS.rightStickXBOne, 44, 44)).." "..KelaCreateColorizedResumePrice(KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX)
-					--control.contentHeaderData.data1HeaderText = colors.COLOR_WHITE:Colorize(zo_iconFormat(kpuiConst.stringDDS.rightStickXBOne, 44, 44)).." "..KelaCreateColorizedResumePrice(KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX)
-					--control.contentHeaderData.data2HeaderText = ""
-					--control.contentHeaderData.data3HeaderText = ""
 					ZO_GamepadGenericHeader_RefreshData(control.contentHeader, control.contentHeaderData)
 				end
 			end)
@@ -1119,6 +1116,13 @@ function KelaSetupTradingHouse()
 			ZO_PostHook("ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog", function()
 				pendingTradingDialog = nil
 			end)
+			-- These dialog tables mirror current core because the confirmation
+			-- actions are C API calls that cannot be hooked for history updates.
+			-- The display function remains core-owned and still supplies the
+			-- narration/main-text parameters. Guild-specific-item and display-error
+			-- dialogs remain core-owned because they have no Kela history side effects.
+			-- Keep these copies in sync with
+			-- ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog.
 			ESO_Dialogs["TRADING_HOUSE_CONFIRM_BUY_ITEM"] =
 			{
 				gamepadInfo =
@@ -1198,11 +1202,10 @@ function KelaSetupTradingHouse()
 							local stackCount = dialog.data.stackCount
 							local desiredPrice = dialog.data.price
 							local listingIndex = dialog.data.listingIndex
-							local timeRemaining = dialog.data.timeRemaining
-							RequestPostItemOnTradingHouse(BAG_BACKPACK, listingIndex, stackCount, desiredPrice, timeRemaining)
+							RequestPostItemOnTradingHouse(BAG_BACKPACK, listingIndex, stackCount, desiredPrice)
 							
 							if IsKPUITradingHouseSettingEnabled() then
-								KelaAddToListingTable(BAG_BACKPACK, listingIndex, stackCount, desiredPrice, timeRemaining)
+								KelaAddToListingTable(BAG_BACKPACK, listingIndex, stackCount, desiredPrice)
 							end
 							
 							exitOnFinished = true
@@ -1636,6 +1639,7 @@ function ZO_Tooltip:LayoutEnchantingTradingTooltip(tooltip, itemLink, maxIterati
 		-- basic information
 		if trueTTC or trueATT then
 			if not ctlEnchantingInfo then ctlEnchantingInfo = CreateControlFromVirtual("$(parent)Info", tooltip, "KPUI_MainInfo") end	
+			local _, isTwoRowFooter
 			lastControl, _, isTwoRowFooter = SetSmithTradingInfo(ctlEnchantingInfo, lastControl, priceInfoTTC, priceInfoATT, nil, nil, stackCount)
 			local offsetY = 15
 			if isTwoRowFooter and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO) then offsetY = 35 end
@@ -1706,6 +1710,7 @@ function ZO_Tooltip:LayoutAlchemyTradingTooltip(tooltip, itemLink, maxIterations
 		-- basic information
 		if trueTTC or trueATT then
 			if not ctlAlchemyInfo then ctlAlchemyInfo = CreateControlFromVirtual("$(parent)Info", tooltip, "KPUI_MainInfo") end	
+			local _, isTwoRowFooter
 			lastControl, _, isTwoRowFooter = SetSmithTradingInfo(ctlAlchemyInfo, lastControl, priceInfoTTC, priceInfoATT, nil, nil, stackCount)
 			local offsetY = 15
 			if isTwoRowFooter and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO) then offsetY = 35 end
@@ -1772,6 +1777,7 @@ function ZO_Tooltip:LayoutProvisionerTradingTooltip(tooltip, recipeListIndex, re
 		-- basic information
 		if trueTTC or trueATT then
 			if not ctlProvisionerInfo then ctlProvisionerInfo = CreateControlFromVirtual("$(parent)ProvInfo", tooltip, "KPUI_MainInfo") end	
+			local _, isTwoRowFooter
 			lastControl, _, isTwoRowFooter = SetSmithTradingInfo(ctlProvisionerInfo, lastControl, priceInfoTTC, priceInfoATT, nil, selectedData, stackCount)
 			local offsetY = 15
 			if isTwoRowFooter and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO) then offsetY = 35 end
@@ -2182,6 +2188,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 			local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemLink)
 			if trueTTC or trueATT then
 				if not ctlTradingInfo then ctlTradingInfo = CreateControlFromVirtual("$(parent)Info", self, "KPUI_MainInfo") end	
+				local isTwoRowFooter
 				lastControl, effectOfDeal, isTwoRowFooter = SetSmithTradingInfo(ctlTradingInfo, lastControl, priceInfoTTC, priceInfoATT, currentScene, selectedData, stackCount)
 				local offsetY = 15
 				if isTwoRowFooter and IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO) then offsetY = 35 end
@@ -2462,7 +2469,7 @@ function KelaGetCurrentATTCraftingInfo(itemLink)
     local days = KelaGetATTAnalysisPeriod()
     local itemType = GetItemLinkItemType(itemLink)
 
-	fromTimeStamp = GetTimeStamp() - days * seconds_in_day
+	local fromTimeStamp = GetTimeStamp() - days * seconds_in_day
 
 	local craftingComponentPrices = {}	
 
@@ -2916,8 +2923,8 @@ function KPUI_MainInfo_OnInitialize(control)
 
 		IsMasterWrit = (priceInfoATT.Vouchers ~= 0)
 		
+		local rowEntryCount = GetControl(control:GetName().."rowEntryCount")
 		if stackCount > 1 or IsMasterWrit then
-			rowEntryCount = GetControl(control:GetName().."rowEntryCount")
 			if not rowEntryCount then rowEntryCount = CreateControlFromVirtual("$(parent)rowEntryCount", control, "KPUI_MainRow") end
 			rowEntryCount:ClearAnchors()
 			rowEntryCount:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
@@ -2966,8 +2973,8 @@ function KPUI_MainInfo_OnInitialize(control)
 		rowMax:GetNamedChild("TTC"):SetText(formatProvider(priceInfoTTC, priceInfoTTC.Max))
 		lastControl = rowMax
 		
+		local rowVoucherPrice = GetControl(control:GetName().."rowVoucherPrice")
 		if IsMasterWrit then
-			rowVoucherPrice = GetControl(control:GetName().."rowVoucherPrice")
 			if not rowVoucherPrice then rowVoucherPrice = CreateControlFromVirtual("$(parent)rowVoucherPrice", control, "KPUI_MainRow") end
 			rowVoucherPrice:ClearAnchors()
 			rowVoucherPrice:SetAnchor(TOPLEFT, lastControl, BOTTOMLEFT)
