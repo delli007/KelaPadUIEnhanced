@@ -80,7 +80,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Convert genuinely internal `kpui_utils.lua` helpers to locals after confirming no cross-file callers; keep tooltip-facing helpers global until then.
 - [ ] Review the `KELA_RESEARCH_COMPAT` read-only shim; remove it if the tooltip research section is retired or re-implemented with core APIs.
 
-## API / dependencies
+## Settings UI\n- [ ] Design disabled-state colors for gamepad sliders.\n- [ ] If sliders or horizontal lists gain dependent controls, call `RefreshVisible` when their values change.\n\n## API / dependencies
 - [ ] Verify and update `## APIVersion` for the current live client.
 - [ ] Re-check `LibSets` API compatibility and required version.
 - [ ] Remove obsolete compatibility shims after game updates.

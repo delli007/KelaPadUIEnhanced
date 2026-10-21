@@ -1092,7 +1092,6 @@ function Kela_GamepadOptions:Select()
     if controlType == OPTIONS_CHECKBOX then
         ZO_CheckButton_OnClicked(control:GetNamedChild("Checkbox"))
         --When a checkbox is toggled that controls subsettings refreshVisible to show the dependent controls in their disabled state
-        --TODO: Call RefreshVisible when Sliders/Horizontal Lists change if ever needed.
         if control.data.gamepadHasEnabledDependencies then
 			KELA_OPTIONS:KelaOnOptionWithDependenciesChanged()
         end
@@ -1146,7 +1145,7 @@ function Kela_Options_SetupSlider(control, selected)
     local slider = GetControl(control, "Slider")
 
     if selected ~= nil then
-        slider:SetActive(selected and control.data.enabled ~= false)    --TODO: Added Gamepad Slider Disabled state colors, needs design
+        slider:SetActive(selected and control.data.enabled ~= false)
     end
 
     data.events = nil -- Sliders don't support events
