@@ -249,10 +249,10 @@ function kelaReplaceTooltips (tooltip)
 			end
 			
 		end
-		if MasterMerchant then 
+		if MasterMerchant and MasterMerchant.itemStats then
 			valueString = valueString..colors.COLOR_WHITE:Colorize(", ")
 			local tipStats = MasterMerchant:itemStats(itemLink, false)
-			if tipStats.avgPrice then -- and tipStats.avgPrice ~= nil
+			if tipStats and tipStats.avgPrice then
 				averageGuildPrice = averageGuildPrice + tipStats['avgPrice']
 				local valueMM = KelaLocalizedFormatNumber(tonumber(tipStats['avgPrice']), 0)
 				valueString = valueString..zo_strformat("|c7171d1MM: <<1>>|r", valueMM)
