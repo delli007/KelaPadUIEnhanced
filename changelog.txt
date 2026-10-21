@@ -1,5 +1,9 @@
 KelaPadUI changelog (newest first)
 
+10/21/2026 - Trading-house confirmation-dialog cleanup: the copied buy/sell/remove dialogs now match current core, the obsolete sell API argument was removed, and the documentation records narration and guild-specific-dialog coverage.
+
+10/21/2026 - Maintenance cleanup: fixed accidental globals in trading-tooltip and sets code, pruned unused constants, removed stale commented assignments, localized the known-item filter label, and stopped warning when optional LibCustomMenu is absent.
+
 10/20/2026 - TTC and ATT now work independently: either provider can enable trading, missing-provider tooltip rows show N/A, and ATT-only graph/guild features are hidden without ATT. The trading XML no longer requires ATT at load time.
 
 10/20/2026 - Trading-house confirmation dialogs now use core ZOS text and narration; KelaPadUI only decorates the dialog data needed for buying and listing history.

@@ -1,25 +1,11 @@
-kpuiConst = {
-	Name = "KelaPadUI",
-	Version = "0.0.0.1",
-}
+kpuiConst = {}
 
 
 kpuiConst.stringDDS = {
-	["horizontalDivider"] = "EsoUI/Art/Windows/Gamepad/gp_nav1_horDividerFlat.dds",
-	["rightShoulderXBOne"] = "EsoUI/Art/Buttons/Gamepad/Xbox/Nav_XBone_RB.dds",
-	["leftShoulderXBOne"] = "EsoUI/Art/Buttons/Gamepad/Xbox/Nav_XBone_LB.dds",
-	["rightPadXBOne"] = "esoui/art/buttons/gamepad/xbox/nav_xbone_dpadright.dds",
-	["leftPadXBOne"] = "esoui/art/buttons/gamepad/xbox/nav_xbone_dpadleft.dds",
 	["rightStickXBOne"] = "esoui/art/buttons/gamepad/xbox/nav_xbone_rs_press.dds",
 	["leftStickXBOne"] = "esoui/art/buttons/gamepad/xbox/nav_xbone_ls_press.dds",
 }
 
-
--- extra item groups
-WEAPONTYPE_BLACKSMITHING = 501				
-WEAPONTYPE_BOWGROUP = 502
-WEAPONTYPE_STAFF = 503
-JEWELRYTYPE_RING_NECK = 504		
 
 kpuiConst.Colors = {
 	COLOR_ORANGE 			= ZO_ColorDef:New(220/255, 129/255, 34/255),
@@ -34,10 +20,8 @@ kpuiConst.Colors = {
 	COLOR_SOON 				= ZO_ColorDef:New(16/255, 154/255, 184/255),
 	COLOR_NOTSOON 			= ZO_ColorDef:New(238/255, 202/255, 42/255),
 	GENERAL_COLOR_WHITE 	= GAMEPAD_TOOLTIP_COLOR_GENERAL_COLOR_1, 
-	GENERAL_COLOR_GREY 		= GAMEPAD_TOOLTIP_COLOR_GENERAL_COLOR_2, 
 	GENERAL_COLOR_OFF_WHITE = GAMEPAD_TOOLTIP_COLOR_GENERAL_COLOR_3, 
 	GENERAL_COLOR_NORMAL	= ZO_ColorDef:New(GetInterfaceColor(INTERFACE_COLOR_TYPE_TEXT_COLORS, INTERFACE_TEXT_COLOR_NORMAL)), 
-	GENERAL_COLOR_RED 		= GAMEPAD_TOOLTIP_COLOR_FAILED,
 	COLOR_HEALTH  			= ZO_ColorDef:New(GetInterfaceColor(INTERFACE_COLOR_TYPE_POWER, POWERTYPE_HEALTH)),
 	COLOR_MAGICKA 			= ZO_ColorDef:New(GetInterfaceColor(INTERFACE_COLOR_TYPE_POWER, POWERTYPE_MAGICKA)),
 	COLOR_STAMINA 			= ZO_ColorDef:New(GetInterfaceColor(INTERFACE_COLOR_TYPE_POWER, POWERTYPE_STAMINA)),

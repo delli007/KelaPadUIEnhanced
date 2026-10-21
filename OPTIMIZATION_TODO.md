@@ -30,6 +30,10 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Removed the retired pause-menu travel-notes feature; documented restoration notes.
 - [x] Added `docs/MAINTENANCE.md`, `docs/SETTINGS.md`, and `docs/TRADING_HOUSE.md`.
 - [x] Removed 47 dead KELA localization strings and tightened the audit's dynamic/unused detection.
+- [x] Aligned the copied buy/sell/remove confirmation dialogs with current core and removed the obsolete sell API argument.
+- [x] Fixed remaining accidental globals in trading-tooltip and sets code; removed stale commented assignments.
+- [x] Pruned unused `kpuiConst` fields with no remaining callers.
+- [x] Removed the optional `LibCustomMenu` absence warning and localized the trading known-item filter label.
 
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
@@ -51,6 +55,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Reviewed the graph/list/quality/production/crafting controls: they are custom layouts, so replacing them with core hooks would add risk without removing duplicated core code.
 - [x] Replaced the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with pre/post hooks; core text and narration now stay intact.
 - [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
+- [x] Audited the copied confirmation dialogs against current core; retained core-owned narration/display handling and left guild-specific-item/display-error dialogs core-owned.
+- [ ] Decide whether guild-specific-store purchases should appear in Kela buying history; the core dialog currently remains untouched.
 - [ ] Re-test TTC-only, ATT-only, and combined price tooltips, graphs, listings, and crafting-component rows after each ESO update.
 
 ## Tooltips and styles
@@ -79,7 +85,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Remove any remaining per-frame scans; no `OnUpdate`/`RegisterForUpdate` handlers remain.
 
 ## Constants and helper functions
-- [ ] Re-audit `kpuiConst` after future feature changes and remove data that loses its last caller.
+- [x] Re-audited `kpuiConst` and pruned fields with no remaining callers; re-check after future feature changes.
 - [x] Converted the internal `KelaGetLocalTimeShift` helper to a local; remaining helpers have cross-file callers.
 - [x] Reviewed the `KELA_RESEARCH_COMPAT` shim; retained as a read-only compatibility layer because no current writer populates its research data.
 
@@ -91,9 +97,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Verify and update `## APIVersion` for the current live client (`101051`).
 - [x] Re-check `LibSets` API compatibility and required version (`0.9.4`, API `101051`/`101052`).
 - [ ] Remove obsolete compatibility shims after game updates.
-- [ ] Keep `LibCustomMenu` optional; do not make optional integrations hard dependencies.
+- [x] Kept `LibCustomMenu` optional and removed the absence warning from the player-activation path.
 
 ## Localization / comments
-- [ ] Keep English as the single source of strings in `kpui_lang/en.lua`.
-- [ ] Remove any newly unused `KELA_*` strings.
-- [ ] Remove commented-out implementations instead of preserving them; document only non-obvious decisions in comments.
+- [x] Keep English as the single source of strings in `kpui_lang/en.lua`; the audit enforces zero undefined or unused KELA strings.
+- [x] Removed the remaining stale commented-out assignments; keep explanatory comments only.

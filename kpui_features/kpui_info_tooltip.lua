@@ -310,7 +310,7 @@ function kelaReplaceTooltips (tooltip)
 ------------------------------------------------------------------------------
 	-- replace enchant section	ESOUI/art/enchanting/enchanting_highlight.dds
 	tooltip.AddEnchant = function(control, itemLink, enchantDiffMode, equipSlot, ...) 
-		stringEnchant = ""
+		local stringEnchant = ""
 		enchantDiffMode = enchantDiffMode or ZO_ENCHANT_DIFF_NONE 
 		local enchantSection = control:AcquireSection(control:GetStyle("bodySection"))  
 		local hasEnchant, enchantHeader, enchantDescription = GetItemLinkEnchantInfo(itemLink) 
@@ -469,7 +469,7 @@ function kelaReplaceTooltips (tooltip)
 				kelaNewLine:AddLine("", control:GetStyle("bodyDescription"))
 
 
-				local traitResearchSourceDescription, traitMaterialSourceDescription
+				local _, traitResearchSourceDescription, traitMaterialSourceDescription
 
 				if researches then
 				for i, tradeSkill in pairs(researches) do

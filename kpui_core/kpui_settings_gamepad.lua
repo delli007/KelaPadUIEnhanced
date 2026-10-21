@@ -1165,10 +1165,6 @@ end
 function Kela_GamepadOptions:InitializeControl(control, selected)
     local label = control:GetNamedChild("Name")
 
-
-    -- control.data.enabled = true
-
-
     -- Determine if this control should be disabled because of a dependency
     if control.data.gamepadIsEnabledCallback then
         control.data.enabled = control.data.gamepadIsEnabledCallback()

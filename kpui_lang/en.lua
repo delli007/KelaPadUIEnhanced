@@ -194,6 +194,7 @@ do
 	Add("KELA_TRADING_BOUGHT",						"Bought ")
 	Add("KELA_TRADING_BOUGHT_FOR",					" for ")
 	Add("KELA_TRADING_VIEW_MODE",					"View mode")
+	Add("KELA_TRADING_FILTER_KNOWN",				"Filter Known: ")
 	Add("KELA_TRADING_TRADING_INFO",				"Trading info")
 	Add("KELA_TRADING_TRADING_NOTINFO",				"Trading information for this item was not found in the available TTC or ATT data")
 	Add("KELA_TRADING_TRADING_ITEMTYPE",			"Good type: ")

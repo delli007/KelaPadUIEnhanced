@@ -5,32 +5,32 @@ local function AddContextMenuItems()
 	EVENT_MANAGER:UnregisterForEvent("KelaPadUI", EVENT_PLAYER_ACTIVATED)
 
 	local LCM = LibCustomMenu or LibStub("LibCustomMenu", true)
-	if LCM then
-		LCM:RegisterPlayerContextMenu(
-			function (playerName, rawName)
-				AddCustomMenuItem(GetString(SI_SOCIAL_MENU_SEND_MAIL), function() MAIL_MANAGER_GAMEPAD:GetSend():ComposeMailTo(playerName) end)
-
-				AddCustomMenuItem(GetString(SI_SOCIAL_MENU_JUMP_TO_PLAYER), function()
-					if IsFriend(playerName) then
-						JumpToFriend(playerName)
-					elseif IsPlayerInGroup(rawName) then
-						JumpToGroupMember(playerName)
-					else
-						JumpToGuildMember(playerName)
-					end
-				end)
-
-			end
-			, LCM.CATEGORY_EARLY)
-		-- lib.CATEGORY_EARLY 		-- is before the first built-in menu entry.
-		-- lib.CATEGORY_PRIMARY 	-- is after the first built-in menu entry. And so on.
-		-- lib.CATEGORY_SECONDARY
-		-- lib.CATEGORY_TERTIARY
-		-- lib.CATEGORY_QUATERNARY
-		-- lib.CATEGORY_LATE		-- is after built-in menu and default.
-	else
-		CHAT_SYSTEM:AddMessage("LibCustomMenu is not available")
+	if not LCM then
+		return
 	end
+
+	LCM:RegisterPlayerContextMenu(
+		function (playerName, rawName)
+			AddCustomMenuItem(GetString(SI_SOCIAL_MENU_SEND_MAIL), function() MAIL_MANAGER_GAMEPAD:GetSend():ComposeMailTo(playerName) end)
+
+			AddCustomMenuItem(GetString(SI_SOCIAL_MENU_JUMP_TO_PLAYER), function()
+				if IsFriend(playerName) then
+					JumpToFriend(playerName)
+				elseif IsPlayerInGroup(rawName) then
+					JumpToGroupMember(playerName)
+				else
+					JumpToGuildMember(playerName)
+				end
+			end)
+
+		end
+		, LCM.CATEGORY_EARLY)
+	-- lib.CATEGORY_EARLY 		-- is before the first built-in menu entry.
+	-- lib.CATEGORY_PRIMARY 	-- is after the first built-in menu entry. And so on.
+	-- lib.CATEGORY_SECONDARY
+	-- lib.CATEGORY_TERTIARY
+	-- lib.CATEGORY_QUATERNARY
+	-- lib.CATEGORY_LATE		-- is after built-in menu and default.
 end
 
 local function AddChatCommands()

@@ -224,7 +224,7 @@ function Kela_Sets_List:InitializeHeader()
 end
 function Kela_Sets_List:InitializeKeybinds()
 
-    keybindDescriptor =
+    local keybindDescriptor =
     {
         alignment = KEYBIND_STRIP_ALIGN_LEFT,
         {
@@ -867,7 +867,6 @@ function Kela_Sets_List:CreateMultiSelectionSetsDropdown(basicType, multiSelecti
 								KelaSetValueIfNil(self.itemsIDToChat, dropdown.basicType, {})
 								KelaSetValueIfNil(self.itemsIDToChat[dropdown.basicType], k["equipType"], {})
 								self.itemsIDToChat[dropdown.basicType][k["equipType"]] = k["setItemId"]
-								getData = true
 							end
 						end
 						if next(self.itemsIDToChat) == nil then
@@ -1537,6 +1536,8 @@ function Kela_Sets_List:SetMasterSetsList()
 				local setBonusesTable = {}
 				local setDropMechanic = setData.dropMechanic
 				local setTypeName
+				local setTypeNameSort
+				local setZoneNames
 				local canTeleport
 				local setWayshrinesTrue = false
 				local setObtainableItemsSort, setObtainableItems, setObtainableItemsFull, setObtainableItemsTable, setBindType = GetSetTypeByKela(setID)
