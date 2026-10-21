@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/21/2026 - Fixed a Lua error when hovering armor, weapons, or glyphs in bank and trading-house tooltips. The other-quality price rows now guard access to the optional LibItemLink library, and LibItemLink is declared in OptionalDependsOn so it loads before KelaPadUI when installed.
+
 10/21/2026 - Set-name tooltips now override the core format through SafeAddString instead of replacing the SI_ITEM_FORMAT_STR_SET_NAME constant, preserving the numeric string ID for other add-ons. The static audit now rejects direct assignments to SI_* constants.
 
 10/21/2026 - Trading-house confirmation-dialog cleanup: the copied buy/sell/remove dialogs now match current core, the obsolete sell API argument was removed, and the documentation records narration and guild-specific-dialog coverage.

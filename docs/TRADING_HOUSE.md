@@ -29,6 +29,11 @@ the master checkbox when at least one provider is installed, and provider-specif
 settings are hidden when their provider is absent. Re-enabling trading after
 installing a provider requires a `/reload`.
 
+The other-quality price rows need valid item links for each quality. They use
+the optional `LibItemLink` library to build those links; the call is guarded, and
+the rows are skipped when the library is not installed. `LibItemLink` is listed
+in `OptionalDependsOn` so it loads before KelaPadUI when present.
+
 When only one provider is available, that provider supplies the recommended
 price and deal rating. When both are available, the recommended price uses their
 average where both have data. Tooltip columns for a missing provider show `N/A`.
@@ -170,6 +175,9 @@ provider installed:
 - Check a sold and a recalled listing when ATT data is available.
 - Open the bank, a vendor, a crafting station, and the guild store and confirm
   the enabled tooltip sections appear.
+- Hover an armor, weapon, or glyph in the bank and guild store and confirm the
+  other-quality rows appear without a Lua error when LibItemLink is installed;
+  confirm they are skipped cleanly when it is absent.
 - With TTC only, confirm TTC prices and ratings appear, ATT rows show `N/A`, and
   no ATT graph or guild-stat section is created.
 - With ATT only, confirm ATT prices and ratings appear, TTC and average rows show

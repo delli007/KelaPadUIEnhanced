@@ -12,7 +12,7 @@
 ## Description: This addon improves the gamepad's UI by adding additional information and features. Original author: @rkirgizov
 ## SavedVariables: kpuiSavedVariables
 ## DependsOn: LibSets
-## OptionalDependsOn: TamrielTradeCentre ArkadiusTradeTools LibCustomMenu
+## OptionalDependsOn: TamrielTradeCentre ArkadiusTradeTools LibCustomMenu LibItemLink
 
 kpui_lang/en.lua
 

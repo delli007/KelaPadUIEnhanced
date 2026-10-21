@@ -57,8 +57,9 @@ local function GetItemLinks(itemLink)
 
 	local function GetQualityItemLink(itemId, itemQuality, itemLevel, itemChampionPoints, enchantId)
 		if itemId == nil or itemId == 0 then return end
-		local tlink = lib:BuildItemLink(tonumber(itemId), tonumber(itemQuality), tonumber(itemLevel), tonumber(itemChampionPoints), nil, nil, tonumber(enchantId))
-		return tlink
+		-- LibItemLink is optional; skip the other-quality rows when it is absent.
+		if not LIB_ITEM_LINK then return end
+		return LIB_ITEM_LINK:BuildItemLink(tonumber(itemId), tonumber(itemQuality), tonumber(itemLevel), tonumber(itemChampionPoints), nil, nil, tonumber(enchantId))
 	end
 	
 	local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink
