@@ -39,7 +39,8 @@ absent. Re-enabling trading requires both add-ons and a `/reload`.
   stations.
 - Adds ATT statistics, guild statistics, listing rows, quality rows, production
   rows, and crafting-component rows to tooltips.
-- Tracks buying confirmation data for the history table.
+- Tracks buying confirmation data for the history table through pre/post hooks;
+  core dialog text and narration remain ZOS-owned.
 - Restores normal paginated search behavior; the old one-page search experiment
   was removed.
 
@@ -157,8 +158,6 @@ See `OPTIMIZATION_TODO.md` for the trading-house refactor backlog:
 
 - replace the copied trading-house XML with core XML plus a small custom file;
 - rebuild custom graph/list/quality/production/crafting controls with hooks;
-- replace the confirmation-dialog override with a hook;
-- audit deprecated `quality` fields;
 - re-test all price, sales, and category data after each ESO update.
 
 The old one-page search code was removed rather than repaired. If it is ever

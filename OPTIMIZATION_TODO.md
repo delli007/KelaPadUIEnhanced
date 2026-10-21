@@ -48,14 +48,14 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 ## Trading house (deferred, higher risk)
 - [ ] Replace `kpui_compat/kpui_tradinghouse_gamepad_updated.xml` with the core trading-house XML plus a small custom-control XML.
 - [ ] Rebuild `KPUI_Graph`, `KPUI_PreviousListings`, `KPUI_OtherQualityInfo`, `KPUI_ProductMaterialInfo`, and `KPUI_CraftingInfo` via core hooks instead of copied core templates.
-- [ ] Replace the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with a pre/post hook.
-- [ ] Audit the deprecated `quality` fields retained for add-on compatibility (`selectedData.quality`, `control.selectedItem.quality`, `itemData.quality`).
+- [x] Replaced the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with pre/post hooks; core text and narration now stay intact.
+- [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
 - [ ] Re-test TTC/ATT price tooltips, graphs, listings, and crafting-component rows after each ESO update.
 
 ## Tooltips and styles
 - [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
 - [ ] Verify the five active custom tooltip types and their remaining styles against new core styles after every game update.
-- [ ] Review the `ZO_CRAFTING_TOOLTIP_STYLES` copy/override and move it to a custom style namespace if possible.
+- [x] Reviewed the `ZO_CRAFTING_TOOLTIP_STYLES` copy; core's crafting consumer reads that global directly, so the copy is required and now documented.
 
 ## Sets
 - [ ] Validate LibSets metadata and set-browser entries after set/DLC updates.
@@ -83,7 +83,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Review the `KELA_RESEARCH_COMPAT` read-only shim; remove it if the tooltip research section is retired or re-implemented with core APIs.
 
 ## Settings UI
-- [ ] Design disabled-state colors for gamepad sliders.
+- [x] Disabled sliders already follow core's `ZO_GamepadMenuEntryTemplate_GetLabelColor` path; no separate palette is needed.
 - [ ] If sliders or horizontal lists gain dependent controls, call `RefreshVisible` when their values change.
 
 ## API / dependencies

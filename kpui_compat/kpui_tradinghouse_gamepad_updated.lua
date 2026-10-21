@@ -1085,46 +1085,34 @@ function KelaSetupTradingHouse()
 
 			end)
 			-- sell/purchase confirmation dialogs
-			function ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog(itemData, dialogName, displayPrice, iconFile)
-				local listingIndex = itemData.slotIndex
-				local stackCount = itemData.stackCount
-				local itemName = itemData.name
-				local price = displayPrice
-				-- itemData.quality is deprecated, included here for addon backwards compatibility
-				local displayQuality = itemData.displayQuality or itemData.quality
-				local nameColor = GetItemQualityColor(displayQuality)
-				local currencyType = itemData.currencyType or CURT_MONEY
-				local itemNameWithQuantity = nameColor:Colorize(zo_strformat(SI_TOOLTIP_ITEM_NAME_WITH_QUANTITY, itemName, stackCount))
-				local title = itemNameWithQuantity
-				if iconFile then
-					local iconMarkup = zo_iconFormat(iconFile, ZO_GAMEPAD_DEFAULT_LIST_ENTRY_ICON_FULL_SIZE_DIMENSION, ZO_GAMEPAD_DEFAULT_LIST_ENTRY_ICON_FULL_SIZE_DIMENSION)
-					title = string.format("%s %s", iconMarkup, itemNameWithQuantity)
+			local pendingTradingDialog
+
+			local function KelaDecorateTradingDialogData(dialogName, data)
+				if not pendingTradingDialog or pendingTradingDialog.dialogName ~= dialogName then
+					return
 				end
-				local priceText = zo_strformat(SI_GAMEPAD_TRADING_HOUSE_ITEM_AMOUNT, ZO_CurrencyControl_FormatCurrency(price), ZO_Currency_GetGamepadFormattedCurrencyIcon(currencyType))
-				local mainTextParams
-				if stackCount > 1 then
-					mainTextParams = 
-					{
-						title,
-						"|c" .. nameColor:ToHex(),
-						itemName,
-						stackCount,
-						priceText,
-					}
-				else
-					mainTextParams =
-					{
-						title,
-						nameColor:Colorize(itemName),
-						priceText,
-					}
+
+				local itemData = pendingTradingDialog.itemData
+				if data and IsKPUITradingHouseSettingEnabled() then
+					data.uniqueId = itemData.itemUniqueId
+					data.itemName = itemData.name
+					data.pricePerUnit = itemData.purchasePricePerUnit
+					data.displayQuality = itemData.displayQuality or itemData.quality
+					data.timeRemaining = itemData.timeRemaining
 				end
-				if IsKPUITradingHouseSettingEnabled() then
-					ZO_Dialogs_ShowGamepadDialog(dialogName, { listingIndex = listingIndex, stackCount = stackCount, uniqueId = itemData.itemUniqueId, itemName = itemName, price = price, pricePerUnit = itemData.purchasePricePerUnit, displayQuality = displayQuality, timeRemaining = itemData.timeRemaining }, { mainTextParams = mainTextParams })
-				else
-					ZO_Dialogs_ShowGamepadDialog(dialogName, { listingIndex = listingIndex, stackCount = stackCount, price = price }, { mainTextParams = mainTextParams })
-				end
+
+				pendingTradingDialog = nil
 			end
+
+			ZO_PreHook("ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog", function(itemData, dialogName)
+				pendingTradingDialog = { dialogName = dialogName, itemData = itemData }
+			end)
+			ZO_PreHook("ZO_Dialogs_ShowGamepadDialog", function(dialogName, data)
+				KelaDecorateTradingDialogData(dialogName, data)
+			end)
+			ZO_PostHook("ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog", function()
+				pendingTradingDialog = nil
+			end)
 			ESO_Dialogs["TRADING_HOUSE_CONFIRM_BUY_ITEM"] =
 			{
 				gamepadInfo =

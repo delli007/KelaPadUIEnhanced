@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - Trading-house confirmation dialogs now use core ZOS text and narration; KelaPadUI only decorates the dialog data needed for buying and listing history.
+
 10/20/2026 - Tooltip style cleanup: tooltip overrides now change only the properties that differ from core and inherit future core defaults; custom-only styles remain explicit. The static audit now also rejects TODO/FIXME markers and unused virtual templates, and validates LibSets API compatibility.
 
 10/20/2026 - Dead-code cleanup: removed unused set/research constants, utility helpers, settings callbacks, tooltip types/templates/styles, commented-out implementations, and the empty Russian locale; retained the active trading, tooltip, settings, sets, and map-rally features.
