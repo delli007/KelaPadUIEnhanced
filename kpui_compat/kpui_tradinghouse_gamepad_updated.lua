@@ -2,8 +2,12 @@
 -- for the cautious refactor phase. Rebuild it with core hooks and small custom
 -- controls in a future pass. See OPTIMIZATION_TODO.md before changing it.
 
-local lib = LIB_ITEM_LINK
 local colors = kpuiConst.Colors	
+local function KelaGetATTSalesSecondsPerDay(salesModule)
+	local tooltipExtension = salesModule and salesModule.TooltipExtension
+	return (tooltipExtension and tooltipExtension.SECONDS_IN_DAY) or 60 * 60 * 24
+end
+
 KELA_KNOWN_ITEM_FILTER = "ALL"
 KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX = 1
 
@@ -2285,7 +2289,7 @@ function GetATTPriceStats(itemLink)
 	end
 	
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
-    local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
+    local seconds_in_day = KelaGetATTSalesSecondsPerDay(ArkadiusTradeToolsSales)
     local days = KelaGetATTAnalysisPeriod()
 	local itemSales = ArkadiusTradeToolsSales:GetItemSalesInformation(itemLink, GetTimeStamp() - days * seconds_in_day) --	30 * 86400)
 
@@ -2340,10 +2344,8 @@ function KelaGetATTPriceInfo(itemLink)
 		return
 	end
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
-	local ArkadiusTradeToolsTooltipExtension = ArkadiusTradeToolsSales.TooltipExtension
 
-
-    local seconds_in_day = ArkadiusTradeToolsTooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
+    local seconds_in_day = KelaGetATTSalesSecondsPerDay(ArkadiusTradeToolsSales)
     local days = KelaGetATTAnalysisPeriod()
 
     itemLink = ArkadiusTradeToolsSales:NormalizeItemLink(itemLink)
@@ -2465,7 +2467,7 @@ function KelaGetCurrentATTCraftingInfo(itemLink)
 	end
 
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
-    local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
+    local seconds_in_day = KelaGetATTSalesSecondsPerDay(ArkadiusTradeToolsSales)
     local days = KelaGetATTAnalysisPeriod()
     local itemType = GetItemLinkItemType(itemLink)
 
@@ -2518,7 +2520,7 @@ function KelaUpdateATTGraph(itemLink, graphControl, priceInfoATTSuggestedPrice, 
 	local ArkadiusTradeToolsSales = ArkadiusTradeTools.Modules.Sales
 	local L = ArkadiusTradeToolsSales.Localization
 	local attRound = math.attRound
-    local seconds_in_day = ArkadiusTradeToolsSales.TooltipExtension.SECONDS_IN_DAY or 60 * 60 * 24
+    local seconds_in_day = KelaGetATTSalesSecondsPerDay(ArkadiusTradeToolsSales)
     local days = KelaGetATTAnalysisPeriod()
     itemLink = ArkadiusTradeToolsSales:NormalizeItemLink(itemLink)
     if itemLink == nil then return end

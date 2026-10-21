@@ -34,6 +34,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Fixed remaining accidental globals in trading-tooltip and sets code; removed stale commented assignments.
 - [x] Pruned unused `kpuiConst` fields with no remaining callers.
 - [x] Removed the optional `LibCustomMenu` absence warning and localized the trading known-item filter label.
+- [x] Guarded ATT tooltip-extension access with a one-day fallback when the optional extension is absent.
 
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
