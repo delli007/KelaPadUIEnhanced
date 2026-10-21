@@ -1,69 +1,66 @@
--- redefine styles	
+-- Apply only the properties that differ from the current core style so future
+-- ESO defaults are inherited. `removedKeys` preserves deliberate omissions.
+local function KelaOverrideTooltipStyle(styleName, overrides, removedKeys)
+    local style = ZO_TOOLTIP_STYLES[styleName]
+    if not style then
+        return
+    end
+
+    for key, value in pairs(overrides) do
+        style[key] = value
+    end
+
+    if removedKeys then
+        for _, key in ipairs(removedKeys) do
+            style[key] = nil
+        end
+    end
+end
+
+-- redefine styles
 function kelaTotalRedefineStyles ()
-	local colors = kpuiConst.Colors
     --General 
 
-    ZO_TOOLTIP_STYLES.title = { 
-        fontSize = KELA_TOOLTIPS_FONT_BIG, 
-        customSpacing = 8, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-		fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-    }
-    ZO_TOOLTIP_STYLES.statValuePairStat = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE,
-    }
-    ZO_TOOLTIP_STYLES.statValuePairValue = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
-	}
-    ZO_TOOLTIP_STYLES.championRequirements = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.fullWidth = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-    }
-    ZO_TOOLTIP_STYLES.statValueSlider = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,	
-        gradientColors = ZO_XP_BAR_GRADIENT_COLORS, 
-    }
-    ZO_TOOLTIP_STYLES.statValueSliderStat = { 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        fontColorType = INTERFACE_COLOR_TYPE_TEXT_COLORS, 
-        fontColorField = INTERFACE_TEXT_COLOR_NORMAL, 
-    }
-    ZO_TOOLTIP_STYLES.statValueSliderValue = { 
+    KelaOverrideTooltipStyle("title", {
+        fontSize = KELA_TOOLTIPS_FONT_BIG,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontFace = "$(GAMEPAD_MEDIUM_FONT)",
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("statValuePairStat", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("statValuePairValue", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("championRequirements", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("fullWidth", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("statValueSlider", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("statValueSliderStat", {
         fontSize = KELA_TOOLTIPS_FONT_SMALL,
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,		
-        gradientColors = ZO_XP_BAR_GRADIENT_COLORS, 
-    }
-    ZO_TOOLTIP_STYLES.succeeded = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_SUCCEEDED,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.failed = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_FAILED,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.bodySection = { 
-        customSpacing = 15, 
-        childSpacing = 10, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,	
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-    }
+    })
+    KelaOverrideTooltipStyle("statValueSliderValue", {
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("succeeded", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("failed", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("bodySection", {
+        customSpacing = 15,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
     ZO_TOOLTIP_STYLES.bodySection1 = { 
         widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
 		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
@@ -71,119 +68,72 @@ function kelaTotalRedefineStyles ()
 		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,	
         fontFace = "$(GAMEPAD_LIGHT_FONT)", 
     }
-    ZO_TOOLTIP_STYLES.bodyHeader = { 
-        fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,	
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-    }
-    ZO_TOOLTIP_STYLES.itemTagsSection = { 
-        customSpacing = 40, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-    }
-    ZO_TOOLTIP_STYLES.itemTradeBoPSection = { 
-        customSpacing = 80, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-    }
-    ZO_TOOLTIP_STYLES.itemTradeBoPHeader = { 
-        fontColor = ZO_TRADE_BOP_COLOR,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,	
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 		
-    }
-    ZO_TOOLTIP_STYLES.bodyDescription = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    }
-    ZO_TOOLTIP_STYLES.enchantIrreplaceable = { 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-    }
+    KelaOverrideTooltipStyle("bodyHeader", {
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("itemTagsSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("itemTradeBoPSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("itemTradeBoPHeader", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("bodyDescription", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("enchantIrreplaceable", {
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+    })
     --Character Attribute Tooltip 
-    ZO_TOOLTIP_STYLES.attributeBody = {    
-        customSpacing = 30, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
+    KelaOverrideTooltipStyle("attributeBody", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    }
-    ZO_TOOLTIP_STYLES.equipmentBonusValue = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("equipmentBonusValue", {
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.equipmentBonusLowestPieceHeader = { 
-        uppercase = true, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-    }
+    })
+    KelaOverrideTooltipStyle("equipmentBonusLowestPieceHeader", {
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+    })
     --Item Tooltip 
-    ZO_TOOLTIP_STYLES.baseStatsSection = { 
-        layoutPrimaryDirection = "right", 
-        layoutSecondaryDirection = "down", 
-        statValuePairSpacing = 3, 
-        childSpacing = 10, 
-        childSecondarySpacing = 3, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-    }
-    ZO_TOOLTIP_STYLES.valueStatsSection = { 
-        layoutPrimaryDirection = "right", 
-        layoutSecondaryDirection = "down", 
-        paddingTop = 15, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-    }
-    ZO_TOOLTIP_STYLES.conditionOrChargeBarSection = { 
-        layoutPrimaryDirection = "right", 
-        layoutSecondaryDirection = "down", 
-        statValuePairSpacing = 6, 
-        childSpacing = 10, 
-        customSpacing = 10, 
-        childSecondarySpacing = 3, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-    }
-    ZO_TOOLTIP_STYLES.conditionOrChargeBar = { 
-        statusBarTemplate = "ZO_GamepadArrowStatusBarWithBGMedium", 
-        statusBarTemplateOverrideName = "ArrowBar", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        statusBarGradientColors = ZO_XP_BAR_GRADIENT_COLORS, 
-    }
-    ZO_TOOLTIP_STYLES.itemImprovementConditionOrChargeBar = { 
-        statusBarTemplate = "ZO_ItemImproveBar_Gamepad", 
-        statusBarTemplateOverrideName = "ImproveBar", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        statusBarGradientColors = ZO_XP_BAR_GRADIENT_COLORS, 
-    }
-    ZO_TOOLTIP_STYLES.ridingTrainingChargeBar = { 
-        statusBarTemplate = "ZO_StableTrainingBar_Gamepad", 
-        statusBarTemplateOverrideName = "TrainBar", 
-        customSpacing = 4, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,    
-        statusBarGradientColors = ZO_XP_BAR_GRADIENT_COLORS, 
-    }
-    ZO_TOOLTIP_STYLES.enchantDiff = { 
-        customSpacing = 30, 
-        childSpacing = 10, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,    
-    }
-    ZO_TOOLTIP_STYLES.enchantDiffAdd =  { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_ABILITY_UPGRADE, 
+    KelaOverrideTooltipStyle("baseStatsSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("valueStatsSection", {
+        paddingTop = 15,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("conditionOrChargeBarSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("conditionOrChargeBar", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("itemImprovementConditionOrChargeBar", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("ridingTrainingChargeBar", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("enchantDiff", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("enchantDiffAdd", {
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.enchantDiffRemove = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_FAILED, 
+    })
+    KelaOverrideTooltipStyle("enchantDiffRemove", {
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    })
     ZO_TOOLTIP_STYLES.enchantDiffTextureContainer = { 
         layoutPrimaryDirection = "right", 
         layoutSecondaryDirection = "down", 
@@ -196,601 +146,388 @@ function kelaTotalRedefineStyles ()
         width = 32, 
         height = 32 
     } 
-    ZO_TOOLTIP_STYLES.topSection = { 
-        layoutPrimaryDirection = "up", 
-        layoutSecondaryDirection = "right", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        childSpacing = 1, 
-		fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
+    KelaOverrideTooltipStyle("topSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontFace = "$(GAMEPAD_MEDIUM_FONT)",
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.topSubsection = { 
-        layoutPrimaryDirection = "right", 
-        layoutSecondaryDirection = "up", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,    
-        childSpacing = 8, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-    }
-    ZO_TOOLTIP_STYLES.collectionsTopSection = { 
-        layoutPrimaryDirection = "up", 
-        layoutSecondaryDirection = "right", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        childSpacing = 1, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
+    })
+    KelaOverrideTooltipStyle("topSubsection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+    }, { "height" })
+    KelaOverrideTooltipStyle("collectionsTopSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
-    ZO_TOOLTIP_STYLES.topSubsectionItemDetails = { 
-        layoutPrimaryDirection = "right", 
-        layoutSecondaryDirection = "up", 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        childSpacing = 15, 
-        customSpacing = -4, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        height = 32, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
+    }, { "dimensionConstraints" })
+    KelaOverrideTooltipStyle("topSubsectionItemDetails", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        customSpacing = -4,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        height = 32,
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.flavorText = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    } 
-	ZO_TOOLTIP_STYLES.prioritySellText =
-    {
+    })
+    KelaOverrideTooltipStyle("flavorText", {
         fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
-    }
-	ZO_TOOLTIP_STYLES.inactiveBonus = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_INACTIVE, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.activeBonus = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.degradedStat = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_FAILED, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.qualityTrash = { 
-        fontColorType = INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, 
-        fontColorField = ITEM_QUALITY_TRASH, 
-    }
-    ZO_TOOLTIP_STYLES.qualityNormal = { 
-        fontColorType = INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, 
-        fontColorField = ITEM_QUALITY_NORMAL, 
-    }
-    ZO_TOOLTIP_STYLES.qualityMagic = { 
-        fontColorType = INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, 
-        fontColorField = ITEM_QUALITY_MAGIC, 
-    }
-    ZO_TOOLTIP_STYLES.qualityArcane = { 
-        fontColorType = INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, 
-        fontColorField = ITEM_QUALITY_ARCANE, 
-    }
-    ZO_TOOLTIP_STYLES.qualityArtifact = { 
-        fontColorType = INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, 
-        fontColorField = ITEM_QUALITY_ARTIFACT, 
-    }
-    ZO_TOOLTIP_STYLES.qualityLegendary = { 
-        fontColorType = INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, 
-        fontColorField = ITEM_QUALITY_LEGENDARY, 
-    }
-    ZO_TOOLTIP_STYLES.bind =  { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.stolen =  { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_RED, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
-    ZO_TOOLTIP_STYLES.bagCountSection = { 
-        layoutPrimaryDirection = "down", 
-        layoutSecondaryDirection = "right", 
-        customSpacing = 30, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    }
-    ZO_TOOLTIP_STYLES.itemTagTitle = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        uppercase = true, 
-    }
-    ZO_TOOLTIP_STYLES.itemTagDescription = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    }
+    })
+    KelaOverrideTooltipStyle("prioritySellText", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("inactiveBonus", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("activeBonus", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("degradedStat", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("qualityTrash", {
+        fontColorField = ITEM_QUALITY_TRASH,
+    })
+    KelaOverrideTooltipStyle("qualityNormal", {
+        fontColorField = ITEM_QUALITY_NORMAL,
+    })
+    KelaOverrideTooltipStyle("qualityMagic", {
+        fontColorField = ITEM_QUALITY_MAGIC,
+    })
+    KelaOverrideTooltipStyle("qualityArcane", {
+        fontColorField = ITEM_QUALITY_ARCANE,
+    })
+    KelaOverrideTooltipStyle("qualityArtifact", {
+        fontColorField = ITEM_QUALITY_ARTIFACT,
+    })
+    KelaOverrideTooltipStyle("qualityLegendary", {
+        fontColorField = ITEM_QUALITY_LEGENDARY,
+    })
+    KelaOverrideTooltipStyle("bind", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("stolen", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("bagCountSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("itemTagTitle", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("itemTagDescription", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
 
     --Gamepad Stable Tooltip 
-    ZO_TOOLTIP_STYLES.stableGamepadTooltip = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-        customSpacing = 50, 
-        fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_GREY, 
-        fontStyle = "soft-shadow-thick", 
-    }
-    ZO_TOOLTIP_STYLES.stableGamepadFlavor = { 
-        customSpacing = 30, 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    } 
-    ZO_TOOLTIP_STYLES.stableGamepadTitle = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        customSpacing = 8, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        uppercase = false, 
-    }
-    ZO_TOOLTIP_STYLES.poisonCount = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.equippedPoisonSection = { 
-        customSpacing = 15, 
-        paddingBottom = -20, 
-    }
+    KelaOverrideTooltipStyle("stableGamepadTooltip", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("stableGamepadFlavor", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("stableGamepadTitle", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("poisonCount", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("equippedPoisonSection", {
+        customSpacing = 15,
+    })
 
     --Ability Tooltip 
-    ZO_TOOLTIP_STYLES.abilityStatsSection = { 
-        statValuePairSpacing = 10, 
-        childSpacing = 3, 
-        customSpacing = 20, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
-    ZO_TOOLTIP_STYLES.abilityUpgrade = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_ABILITY_UPGRADE, 
-        uppercase = true, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
-    ZO_TOOLTIP_STYLES.newEffectTitle = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_ABILITY_UPGRADE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        uppercase = true, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
-    ZO_TOOLTIP_STYLES.newEffectBody = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_ABILITY_UPGRADE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
-    ZO_TOOLTIP_STYLES.abilityProgressBar = { 
-        statusBarTemplate = "ZO_GamepadArrowStatusBarWithBGMedium", 
-        statusBarTemplateOverrideName = "ArrowBar", 
-        customSpacing = 10, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-        statusBarGradientColors = ZO_XP_BAR_GRADIENT_COLORS, 
-    }
+    KelaOverrideTooltipStyle("abilityStatsSection", {
+        childSpacing = 3,
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("abilityUpgrade", {
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("newEffectTitle", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("newEffectBody", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("abilityProgressBar", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
 	-- Traits, Ingredient
-    ZO_TOOLTIP_STYLES.hasIngredient = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_ACTIVE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.doesntHaveIngredient = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_INACTIVE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.traitKnown = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_ACTIVE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.traitUnknown = { 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_INACTIVE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
+    KelaOverrideTooltipStyle("hasIngredient", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("doesntHaveIngredient", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("traitKnown", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("traitUnknown", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 
 
-    ZO_TOOLTIP_STYLES.keepBaseTooltipContent = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    KelaOverrideTooltipStyle("keepBaseTooltipContent", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
         width = KELA_TOOLTIPS_CONTENT_WIDTH - 120,
-    }
-    ZO_TOOLTIP_STYLES.keepUpgradeTooltipContent = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-    } 
-    ZO_TOOLTIP_STYLES.gamepadElderScrollTooltipContent = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        uppercase = true, 
-    }	
+    })
+    KelaOverrideTooltipStyle("keepUpgradeTooltipContent", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("gamepadElderScrollTooltipContent", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
 	
 	
     -- Achievement Tooltip 
-    ZO_TOOLTIP_STYLES.achievementRewardsSection = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,   
-        paddingTop = 10, 
-        uppercase = true, 
-        childSpacing = 10, 
-        layoutPrimaryDirection = "down", 
-        layoutSecondaryDirection = "right", 
-    }
-    ZO_TOOLTIP_STYLES.achievementSummaryCategorySection = { 
-        paddingBottom = 10, 
-        uppercase = true, 
-        layoutPrimaryDirection = "down", 
-        layoutSecondaryDirection = "right", 
-    } 
-    ZO_TOOLTIP_STYLES.achievementCriteriaSection = { 
-        paddingTop = 10, 
-        paddingBottom = 7, 
-        childSpacing = 7, 
-        uppercase = true, 
-        layoutPrimaryDirection = "down", 
-        layoutSecondaryDirection = "right", 
-    } 
-    ZO_TOOLTIP_STYLES.achievementCriteriaBar = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH - 20,  
-        statusBarTemplate = "ZO_GamepadArrowStatusBarWithBGMedium", 
-        customSpacing = 4, 
-        statusBarGradientColors = ZO_SKILL_XP_BAR_GRADIENT_COLORS, 
-    }
-    ZO_TOOLTIP_STYLES.achievementDescriptionComplete = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH - 40,  
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_GENERAL_COLOR_3, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.achievementDescriptionIncomplete = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH - 40, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_INACTIVE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
-    ZO_TOOLTIP_STYLES.achievementName = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH - 60, 
-        fontSize = KELA_TOOLTIPS_FONT_SMALL, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.achievementComplete = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.achievementIncomplete = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("achievementRewardsSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        paddingTop = 10,
+        childSpacing = 10,
+    })
+    KelaOverrideTooltipStyle("achievementSummaryCategorySection", {
+        paddingBottom = 10,
+    })
+    KelaOverrideTooltipStyle("achievementCriteriaSection", {
+        paddingTop = 10,
+        paddingBottom = 7,
+        childSpacing = 7,
+    })
+    KelaOverrideTooltipStyle("achievementCriteriaBar", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH - 20,
+    }, { "statusBarTemplateOverrideName" })
+    KelaOverrideTooltipStyle("achievementDescriptionComplete", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH - 40,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("achievementDescriptionIncomplete", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH - 40,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("achievementName", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH - 60,
+        fontSize = KELA_TOOLTIPS_FONT_SMALL,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    }, { "fontColorField" })
+    KelaOverrideTooltipStyle("achievementComplete", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("achievementIncomplete", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 
 
     -- Loot tooltip 
-    ZO_TOOLTIP_STYLES.lootTooltip = { 
-        width = 100, --295, 
-        fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
-        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_GREY, 
-        fontStyle = "soft-shadow-thick", 
-    } 
+    KelaOverrideTooltipStyle("lootTooltip", {
+        width = 100,
+    })
     -- Gamepad Social Tooltip 
-    ZO_TOOLTIP_STYLES.socialTitle = { 
-        customSpacing = 3, 
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontStyle = "soft-shadow-thick", 
-        fontColorType = INTERFACE_COLOR_TYPE_TEXT_COLORS, 
-        fontColorField = INTERFACE_TEXT_COLOR_NORMAL, 
-    }
-    ZO_TOOLTIP_STYLES.socialStatsSection = { 
-        statValuePairSpacing = 10, 
-        childSpacing = 3, 
-        customSpacing = 15, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,      
-	} 
-    ZO_TOOLTIP_STYLES.socialStatsValue = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
-    ZO_TOOLTIP_STYLES.socialOffline = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_GREY, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("socialTitle", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("socialStatsSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("socialStatsValue", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("socialOffline", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
     -- Gamepad Collections  
-	ZO_TOOLTIP_STYLES.collectionsInfoSection = { 
-        customSpacing = 25, 
-        childSpacing = 25, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-    }
+    KelaOverrideTooltipStyle("collectionsInfoSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 
-    ZO_TOOLTIP_STYLES.collectionsStatsSection = { 
-        statValuePairSpacing = 10, 
-        childSpacing = 20, 
-        customSpacing = 20, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
+    KelaOverrideTooltipStyle("collectionsStatsSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
 
-    ZO_TOOLTIP_STYLES.collectionsRestrictionsSection = { 
-        statValuePairSpacing = 10, 
-        childSpacing = 10, 
-        customSpacing = 20, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
+    KelaOverrideTooltipStyle("collectionsRestrictionsSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
 
-    ZO_TOOLTIP_STYLES.collectionsStatsValue = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        customSpacing = 8, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("collectionsStatsValue", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 
-    ZO_TOOLTIP_STYLES.collectionsPersonality = { 
-        fontColor = ZO_PERSONALITY_EMOTES_COLOR, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("collectionsPersonality", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 
-    ZO_TOOLTIP_STYLES.collectionsEmoteGranted = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("collectionsEmoteGranted", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
     -- Gamepad Crown Store Market 
-    ZO_TOOLTIP_STYLES.instantUnlockIneligibilitySection = { 
-        customSpacing = 25, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_RED, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-    }
-    ZO_TOOLTIP_STYLES.instantUnlockIneligibilityLine = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    } 
+    KelaOverrideTooltipStyle("instantUnlockIneligibilitySection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("instantUnlockIneligibilityLine", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
     -- Gamepad Keep Information 
-    ZO_TOOLTIP_STYLES.keepInfoSection = { 
-        paddingTop = 20, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    } 
+    KelaOverrideTooltipStyle("keepInfoSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
     --Gamepad Voice Chat 
-    ZO_TOOLTIP_STYLES.voiceChatBodyHeader = { 
-        fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
+    KelaOverrideTooltipStyle("voiceChatBodyHeader", {
         fontSize = KELA_TOOLTIPS_FONT_SMALL,
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
-    ZO_TOOLTIP_STYLES.voiceChatPairLabel = { 
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("voiceChatPairLabel", {
         fontSize = KELA_TOOLTIPS_FONT_SMALL,
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.voiceChatPairText = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.voiceChatGamepadReputation = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_RED, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        uppercase = false, 
-    }
-    ZO_TOOLTIP_STYLES.voiceChatGamepadSpeaker = { 
-        height = 43, 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        layoutPrimaryDirection = "right", 
-        childSpacing = 10, 
-        customSpacing = 15,         
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,  
-    }
-    ZO_TOOLTIP_STYLES.voiceChatGamepadSpeakerTitle = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,  
-        customSpacing = 8, 
-        uppercase = false, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.voiceChatGamepadSpeakerText = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT - 10, 
-    }
-    ZO_TOOLTIP_STYLES.voiceChatGamepadStatValuePair = { 
-        height = 40, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
-    }
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("voiceChatPairText", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("voiceChatGamepadReputation", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("voiceChatGamepadSpeaker", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("voiceChatGamepadSpeakerTitle", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("voiceChatGamepadSpeakerText", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("voiceChatGamepadStatValuePair", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
 
-    ZO_TOOLTIP_STYLES.groupTitleSection = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,  
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.groupDescription = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-    }
-    ZO_TOOLTIP_STYLES.groupDescriptionError = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_RED, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
-    ZO_TOOLTIP_STYLES.groupRolesTitleSection = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,  
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        paddingTop = 70, 
-    }
-    ZO_TOOLTIP_STYLES.groupRolesStatValuePairValue = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        uppercase = false, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("groupTitleSection", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("groupDescription", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("groupDescriptionError", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("groupRolesTitleSection", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("groupRolesStatValuePairValue", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 	-- Gamepad Champion Screen 
-	ZO_TOOLTIP_STYLES.championTitleSection = { 
-		customSpacing = 15, 
-		widthPercent = 100, 
-		width = 390, 
-		uppercase = true, 
-	} 
-	ZO_TOOLTIP_STYLES.championTitle = { 
-		widthPercent = 100, 
-		width = 390, 
-		horizontalAlignment = TEXT_ALIGN_CENTER, 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-		fontFace = "$(GAMEPAD_MEDIUM_FONT)", 
-	} 
-	ZO_TOOLTIP_STYLES.dividerLine = { 
-		textureCoordinateLeft = 0.25, 
-		textureCoordinateRight = 0.75, 
-		textureCoordinateTop = 0.25, 
-		textureCoordinateBottom = 0.75, 
-		widthPercent = 100, 
-		width = 390, 
-		height = 8, 
-	}
+    KelaOverrideTooltipStyle("championTitleSection", {
+        width = 390,
+        uppercase = true,
+    })
+    KelaOverrideTooltipStyle("championTitle", {
+        width = 390,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontFace = "$(GAMEPAD_MEDIUM_FONT)",
+    })
+    KelaOverrideTooltipStyle("dividerLine", {
+        width = 390,
+    })
 	-- Comparison
-    ZO_TOOLTIP_STYLES.itemComparisonStatSection = { 
-        customSpacing = 25, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-    } 
-    ZO_TOOLTIP_STYLES.itemComparisonStatValuePair = { 
-        height = 40, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-    } 
-    ZO_TOOLTIP_STYLES.itemComparisonStatValuePairValue = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        horizontalAlignment = TEXT_ALIGN_RIGHT, 
-    }
-    ZO_TOOLTIP_STYLES.itemComparisonStatValuePairDefaultColor = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    }
+    KelaOverrideTooltipStyle("itemComparisonStatSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("itemComparisonStatValuePair", {
+        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT,
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("itemComparisonStatValuePairValue", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
+    KelaOverrideTooltipStyle("itemComparisonStatValuePairDefaultColor", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
     -- Dyes 
-    ZO_TOOLTIP_STYLES.dyesSection = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH, 
-        paddingTop = 30, 
-        childSpacing = 10, 
-        layoutPrimaryDirection = "down", 
-        layoutSecondaryDirection = "right", 
-    } 
-    ZO_TOOLTIP_STYLES.dyeSwatchStyle = { 
-        customSpacing = 2, 
-        width = 38, 
-        height = 38, 
-        edgeTextureFile = "EsoUI/Art/Miscellaneous/Gamepad/gp_emptyFrame_gold_edge.dds", 
-        edgeTextureWidth = 128, 
-        edgeTextureHeight = 16, 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,  
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
-    ZO_TOOLTIP_STYLES.dyeSwatchEntrySection = { 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-        layoutPrimaryDirection = "right", 
-        layoutSecondaryDirection = "down", 
-    } 
-    ZO_TOOLTIP_STYLES.dyeStampError = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_FAILED,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
+    KelaOverrideTooltipStyle("dyesSection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("dyeSwatchStyle", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("dyeSwatchEntrySection", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("dyeStampError", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
     -- Housing Tooltips 
-    ZO_TOOLTIP_STYLES.defaultAccessTopSection = { 
-        customSpacing = 10, 
-        paddingTop = 30, 
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-    } 
-    ZO_TOOLTIP_STYLES.defaultAccessTitle = { 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
-    ZO_TOOLTIP_STYLES.defaultAccessBody = {    
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
+    KelaOverrideTooltipStyle("defaultAccessTopSection", {
         fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
-    } 
+    })
+    KelaOverrideTooltipStyle("defaultAccessTitle", {
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("defaultAccessBody", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+    })
     --Gamepad Currency Tooltip 
-    ZO_TOOLTIP_STYLES.currencyStatValuePair = { 
-        height = 40, 
-        widthPercent = KELA_TOOLTIPS_CONTENT_WIDTH_PERCENT - 2, 
-		width = KELA_TOOLTIPS_CONTENT_WIDTH,
-    } 
-    ZO_TOOLTIP_STYLES.currencyStatValuePairStat = { 
+    KelaOverrideTooltipStyle("currencyStatValuePair", {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+    })
+    KelaOverrideTooltipStyle("currencyStatValuePairStat", {
         fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        uppercase = true, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_OFF_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
-    } 
-    ZO_TOOLTIP_STYLES.currencyStatValuePairValue = { 
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("currencyStatValuePairValue", {
         fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
-        fontFace = "$(GAMEPAD_LIGHT_FONT)", 
-        horizontalAlignment = TEXT_ALIGN_RIGHT, 
-        fontColorField = kpuiConst.Colors.GENERAL_COLOR_WHITE,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    } 
-    ZO_TOOLTIP_STYLES.requirementPass = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_SUCCEEDED,
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 		
-    } 
-    ZO_TOOLTIP_STYLES.requirementFail = { 
-        fontSize = KELA_TOOLTIPS_FONT_MEDIUM, 
-        fontColorField = GAMEPAD_TOOLTIP_COLOR_FAILED, 
-		fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP, 
-    }
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("requirementPass", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
+    KelaOverrideTooltipStyle("requirementFail", {
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+    })
 
 	-- Kela Styles
 	ZO_TOOLTIP_STYLES.kelaTrade = {

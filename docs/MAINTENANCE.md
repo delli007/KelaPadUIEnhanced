@@ -101,6 +101,17 @@ trading master setting is enabled. It includes:
 
 See `docs/TRADING_HOUSE.md` for module details and test notes.
 
+## Tooltip styles
+
+`kpui_core/kpui_tooltip_styles.lua` applies only properties that differ from the
+current core `ZO_TOOLTIP_STYLES` table through `KelaOverrideTooltipStyle`. This
+keeps future ESO default properties unless the old override deliberately omitted
+them; those four omissions are passed as `removedKeys`. Add-on-only styles
+(`kelaTrade`, `QUAD1*`, and `InfoTooltip*`) remain complete tables.
+
+When updating for a new ESO version, compare the helper calls with core
+`tooltipstyles.lua` and re-test the five active tooltip types.
+
 ## Validation workflow
 
 Run these checks after a change:
@@ -170,7 +181,7 @@ Python, build, editor, and OS artifacts.
 `OPTIMIZATION_TODO.md` is the source of truth. The largest remaining areas are:
 
 - replacing copied trading-house XML/templates with core hooks;
-- reducing the full tooltip-style override to additive custom styles;
+- verifying tooltip overrides against new core styles after each ESO update;
 - validating LibSets metadata after set/DLC updates;
 - reviewing remaining trading display edge cases and numeric fallbacks.
 

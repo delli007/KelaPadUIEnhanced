@@ -11,6 +11,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Removed the empty `ru.lua`, the stale implementation/debug archives, and the commented-code archive.
 - [x] Re-ran the audit with zero undefined or unused KELA strings.
 - [x] Added audit checks for TODO/FIXME markers and unused virtual templates.
+- [x] Consolidated 121 tooltip style overrides so they now change only differing properties and inherit the rest from core.
 
 ## Completed in the current maintenance pass
 - [x] Fixed settings navigation and removed obsolete support/donation/message settings.
@@ -51,8 +52,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Audit the deprecated `quality` fields retained for add-on compatibility (`selectedData.quality`, `control.selectedItem.quality`, `itemData.quality`).
 - [ ] Re-test TTC/ATT price tooltips, graphs, listings, and crafting-component rows after each ESO update.
 
-## Tooltips and styles (deferred)
-- [ ] Replace the full `ZO_TOOLTIP_STYLES` redefinition in `kpui_tooltip_styles.lua` with additive custom keys plus a minimal, documented core-override table.
+## Tooltips and styles
+- [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
 - [ ] Verify the five active custom tooltip types and their remaining styles against new core styles after every game update.
 - [ ] Review the `ZO_CRAFTING_TOOLTIP_STYLES` copy/override and move it to a custom style namespace if possible.
 
