@@ -1,3 +1,0 @@
--- Russian localization retired.
--- KelaPadUI now uses English strings from kpui_lang/en.lua.
--- This file remains in the manifest so the language loader has a valid entry.

@@ -78,8 +78,6 @@ def check_manifest():
         if "$(language)" in entry:
             if not (ROOT / "kpui_lang" / "en.lua").exists():
                 errors.append("MANIFEST missing file: kpui_lang/en.lua")
-            if not (ROOT / "kpui_lang" / "ru.lua").exists():
-                errors.append("MANIFEST missing file: kpui_lang/ru.lua")
             continue
         path = ROOT / entry
         if not path.exists():
@@ -154,7 +152,7 @@ def string_report():
     identifiers = set()
     for path in iter_files({".lua", ".xml"}):
         text = read_text(path)
-        if path.name in ("en.lua", "ru.lua"):
+        if path.name == "en.lua":
             defined.update(re.findall(r"Add\(\"(KELA_[A-Z0-9_]+)\"", text))
             continue
         used.update(LOCALIZATION_USE.findall(text))
@@ -187,7 +185,7 @@ def main():
     for path, count in debug_line_report().items():
         print("  {}: {}".format(path, count))
     undefined, unused = string_report()
-    print("KELA strings used but not defined in en.lua/ru.lua:", len(undefined))
+    print("KELA strings used but not defined in en.lua:", len(undefined))
     for name in undefined:
         print("  UNDEFINED", name)
     print("KELA strings defined but not used:", len(unused))

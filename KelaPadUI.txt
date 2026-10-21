@@ -15,7 +15,6 @@
 ## OptionalDependsOn: TamrielTradeCentre ArkadiusTradeTools LibCustomMenu
 
 kpui_lang/en.lua
-kpui_lang/$(language).lua
 
 kpui_core/kpui_constants.lua
 kpui_core/kpui_utils.lua

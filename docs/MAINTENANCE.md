@@ -23,9 +23,9 @@ update.
 | `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, and the main menu. |
 | `kpui_compat/` | Trading-house compatibility code and trading history. |
-| `kpui_lang/` | English strings and the English-fallback `ru.lua`. |
+| `kpui_lang/` | English strings; `en.lua` is the only locale file. |
 | `kpui_data/` | Static set/category data. |
-| `docs/` | Maintenance notes, settings notes, trading-house notes, and archived decisions. |
+| `docs/` | Maintenance, settings, trading-house, and main-menu notes. |
 | `_tools/audit_addon.py` | Static manifest, XML, string, and removed-reference audit. |
 | `OPTIMIZATION_TODO.md` | Deferred refactors and known higher-risk work. |
 | `changelog.txt` | Release-facing change history. |
@@ -34,7 +34,7 @@ update.
 
 Keep the manifest order in mind when adding code that runs at file scope:
 
-1. `kpui_lang/en.lua` and the selected language file.
+1. `kpui_lang/en.lua`.
 2. Core constants, utilities, and tooltip styles.
 3. Core templates XML.
 4. Settings Lua and XML.
@@ -120,9 +120,8 @@ To parse-check every Lua file, use `luaparse` through Node:
 npx.cmd --yes luaparse path\to\file.lua > $null
 ```
 
-`kpui_lang/en.lua` begins with a UTF-8 BOM, which `luaparse` rejects. Strip the
-BOM before parsing it, or treat a BOM-only failure as a tooling limitation
-rather than a syntax error. All other Lua files should parse without errors.
+`kpui_lang/en.lua` is stored as UTF-8 without a BOM, so it can be passed to
+`luaparse` directly. All Lua files should parse without errors.
 
 Manual in-game checks are still required for:
 
@@ -169,7 +168,7 @@ Python, build, editor, and OS artifacts.
 
 - replacing copied trading-house XML/templates with core hooks;
 - reducing the full tooltip-style override to additive custom styles;
-- replacing hardcoded set metadata with LibSets data where practical;
+- validating LibSets metadata after set/DLC updates;
 - reviewing remaining trading display edge cases and numeric fallbacks.
 
 ## Documentation map
@@ -178,5 +177,3 @@ Python, build, editor, and OS artifacts.
 - `docs/TRADING_HOUSE.md` - trading dependencies, modules, and history data.
 - `docs/main_menu_notes.md` - removed pause-menu notes feature and restoration
   guidance.
-- `docs/commented_code_archive.md` - archived code kept for reference.
-- `DEBUG_NOTES.md` - debugging notes retained during cleanup.

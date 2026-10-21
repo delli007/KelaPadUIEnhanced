@@ -1,4 +1,4 @@
-﻿do
+do
    local Add = ZO_CreateStringId
 
     -- Main Menu
@@ -6,12 +6,6 @@
 	Add("KELA_MAINMENU_SETS",												"Sets")
 
 	-- Main info tooltip
-	Add("KELA_ITEM_IN_BANK",						"in the bank")
-	Add("KELA_ITEM_IN_BACKPACK",					"in the backpack")
-	Add("KELA_ITEM_WORN",							"worn")
-	Add("KELA_ITEM_LOCKED",							"locked")	
-	Add("KELA_TOOLTIP_INTERESTING_INFORMATION_NO",	"No interesting information.")	
-	Add("KELA_FORMAT_DATE",							"<<2>>/<<1>>/<<3>>")	
 
 	-- Item tooltip
 	Add("KELA_THOUSANDS_SEPARATOR",					",")	
@@ -19,8 +13,6 @@
 	Add("KELA_TRAIT_KNOWN",							"known")	
 	Add("KELA_TRAIT_KNOWN_IN_PROGRESS",				"in progress...")	
 	Add("KELA_PRODUCT",								"product: ")	
-	Add("KELA_MM_PRICE_XLISTINGSYITEMS",			"sales - %s/%s")	
-	Add("KELA_MM_PRICE_XLISTINGS",					"sales - %s")	
 	Add("KELA_TOOLTIP_TRAIT_USE", 					"Used on the following equipment:")	
 	Add("KELA_TOOLTIP_TRAIT_SEARCH", 				"Where to search:")	
 
@@ -161,21 +153,20 @@
 	Add("KELA_SETTING_TRADE_TOOLTIP_GUILDSTAT_HEADER",		"Trading tooltips modules")
 	Add("KELA_SETTING_TRADE_TOOLTIP_GUILDSTAT",				"Guilds statistic")
 	Add("KELA_SETTING_TRADE_TOOLTIP_GUILDSTAT_TOOLTIP",		"Display guild statistics for the selected item type. \n\nStatistic includes information about the quantity of goods sold, the total price and the profit ratio of sales of this type of product in the guild. \n\nSorting is done by the profit ratio.")
-	Add("KELA_SETTING_TRADE_TOOLTIP_ATTINFO",				"Sales by guilds ATT")
-	Add("KELA_SETTING_TRADE_TOOLTIP_ATTINFO_TOOLTIP",		"Display the trading information of the ATT  by the your guilds. \n\nInformation includes a sales graph and sales statistics for guilds. \n\nThe tracked sales period can be set in the settings or in the change guild menu.")
+	Add("KELA_SETTING_TRADE_TOOLTIP_ATTINFO",				"Sales by guilds [ATT]")
+	Add("KELA_SETTING_TRADE_TOOLTIP_ATTINFO_TOOLTIP",		"Display the trading information from your guilds using data from ATT. \n\nInformation includes a sales graph and sales statistics for guilds. \n\nThe tracked sales period can be set in the settings or in the change guild menu.")
 	Add("KELA_SETTING_TRADE_TOOLTIP_LISTINGS",				"Previous listings")
 	Add("KELA_SETTING_TRADE_TOOLTIP_LISTINGS_TOOLTIP",		"Includes a module with information about your previous attempts to sell the selected item. \n\nInformation about sales attempts is stored for 30 days.")
 	Add("KELA_SETTING_TRADE_TOOLTIP_QUALITY",				"Other quality")
-	Add("KELA_SETTING_TRADE_TOOLTIP_QUALITY_TOOLTIP",		"Shows sales of the selected item in a different quality \n\nOnly for equipments.")
+	Add("KELA_SETTING_TRADE_TOOLTIP_QUALITY_TOOLTIP",		"Shows sales of the selected item in a different quality \n\nOnly for equipment.")
 	Add("KELA_SETTING_TRADE_TOOLTIP_PRODUCTION",			"Production")
-	Add("KELA_SETTING_TRADE_TOOLTIP_PRODUCTION_TOOLTIP",	"This block shows the trade information about the products that can be created based on the selected item. \n\nFor recipes/drawings and raw materials.")
+	Add("KELA_SETTING_TRADE_TOOLTIP_PRODUCTION_TOOLTIP",	"This block shows the trade information about the products that can be created based on the selected item. \n\nFor recipes, drawings and raw materials.")
 	Add("KELA_SETTING_TRADE_TOOLTIP_COMPONENTS",			"Components")
-	Add("KELA_SETTING_TRADE_TOOLTIP_COMPONENTS_TOOLTIP",	"A block with information about the necessary components to create a product based on the selected item. \n\nFor recipes/drawings and master writs.")
+	Add("KELA_SETTING_TRADE_TOOLTIP_COMPONENTS_TOOLTIP",	"A block with information about the necessary components to create a product based on the selected item. \n\nFor recipes, drawings and master writs.")
 	Add("KELA_OPTIONS_CANCEL_TITLE",				"Undo unsaved changes")
 	Add("KELA_OPTIONS_CANCEL_ALL_PROMPT",			"Are you sure you want to undo the last unsaved changes?")	
 	
 	-- Trade Scene 
-	Add("KELA_TRADING_TTC_TITLE",					"Tamriel Trade Centre")
 	Add("KELA_TRADING_PRICE_TITLE",					"Price")
 	Add("KELA_TRADING_INDICATOR_SALES_OFFERS",		"Sales/Offers indicator")
 	Add("KELA_TRADING_ENTRYCOUNT",					"Number of lots")

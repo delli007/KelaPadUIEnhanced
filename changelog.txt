@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/20/2026 - Dead-code cleanup: removed unused set/research constants, utility helpers, settings callbacks, tooltip types/templates/styles, commented-out implementations, and the empty Russian locale; retained the active trading, tooltip, settings, sets, and map-rally features.
+
 10/20/2026 - Changed the gamepad map rally keybind to QUINARY and made it available on the main map instead of only the map options panel.
 
 10/20/2026 - Fixed the gamepad map rally keybind failing because it called the private ESOUI IsShowingCosmicMap helper instead of GetMapType().

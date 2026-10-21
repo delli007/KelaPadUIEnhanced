@@ -143,9 +143,8 @@ checkboxes, opens color pickers, or invokes callbacks.
    - optional `visible`, `enabled`, `requiresReload`, `requiresText`, and
      dependency flags.
 4. **Add a default.** Add the value to `KELA_SETTINGS_DEFAULTS` as a string.
-5. **Add English text.** Add every new `KELA_*` string to `kpui_lang/en.lua`.
-   `ru.lua` is an English no-op and should not be edited unless the fallback
-   policy changes.
+5. **Add English text.** Add every new `KELA_*` string to `kpui_lang/en.lua`;
+   it is the add-on's only locale file.
 6. **Gate load-time code.** If the setting is checked once during
    `KelaPadUI_OnLoaded()`, add the check to the bootstrap and set
    `requiresReload = true`.

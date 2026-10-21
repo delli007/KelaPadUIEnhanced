@@ -2,6 +2,15 @@
 
 This file tracks deferred, higher-risk work. Keep it updated after each refactor phase.
 
+## Completed in the dead-code cleanup
+- [x] Removed the four unused hardcoded set tables and dead Researching/Quick Access constants.
+- [x] Removed dead `kpui_utils.lua` helpers and fixed accidental globals.
+- [x] Pruned unused custom tooltip types, methods, XML controls/templates, and status-label UI; kept the five active tooltip types.
+- [x] Removed 65 unused or core-identical tooltip styles and the commented style archive; kept active overrides.
+- [x] Removed dead settings callbacks, the unused `GetATTPriceAndStatus` helper, and commented-out implementations.
+- [x] Removed the empty `ru.lua`, the stale implementation/debug archives, and the commented-code archive.
+- [x] Re-ran the audit with zero undefined or unused KELA strings.
+
 ## Completed in the current maintenance pass
 - [x] Fixed settings navigation and removed obsolete support/donation/message settings.
 - [x] Added selected-setting information, defaults, apply behavior, and requirement text.
@@ -26,8 +35,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Split companion, dungeon-finder/pledge, chat, and trial-link code out of `KelaPadUI.lua`.
 - [x] Added a gamepad group-rally-point control in the map info screen.
 - [x] Trimmed dead settings/templates/sets XML controls.
-- [x] Retired Russian localization text (English fallback retained in `ru.lua`).
-- [x] Preserved commented debugging code and archived debug snippets from removed files.
+- [x] Retired Russian localization text; English is the single source of strings.
+- [x] Removed preserved commented code and the debug archive during the dead-code cleanup.
 - [x] Reorganized retained modules into `kpui_core/`, `kpui_features/`, `kpui_data/`, and `kpui_compat/`.
 - [x] Made the KelaPadUI main-menu entry append-only (no re-indexing of core entries).
 - [x] Removed the retired settings panels and unused settings XML/templates.
@@ -43,14 +52,12 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 
 ## Tooltips and styles (deferred)
 - [ ] Replace the full `ZO_TOOLTIP_STYLES` redefinition in `kpui_tooltip_styles.lua` with additive custom keys plus a minimal, documented core-override table.
-- [ ] Audit `kpui_tooltip_gamepad.xml` for templates/controls that duplicate core tooltip XML; extract only the KPUI additions.
-- [ ] Verify custom tooltip styles against new core styles after every game update.
+- [ ] Verify the five active custom tooltip types and their remaining styles against new core styles after every game update.
 - [ ] Review the `ZO_CRAFTING_TOOLTIP_STYLES` copy/override and move it to a custom style namespace if possible.
 
 ## Sets
-- [ ] Replace hardcoded `SetsCrafting`/`SetsOverland`/`SetsDungeon`/`SetsMonster` metadata with LibSets APIs where practical.
-- [ ] Remove set entries that are obsolete or superseded; update new DLC sets.
-- [ ] Add a build-time validation check comparing hardcoded set IDs with LibSets.
+- [ ] Validate LibSets metadata and set-browser entries after set/DLC updates.
+- [ ] Add a build-time validation check comparing the sets browser's LibSets assumptions with the installed LibSets version.
 
 ## Main menu
 - [ ] Use a supported ZOS menu-extension API if one is added; the current approach appends to `ZO_MENU_ENTRIES`.
@@ -69,8 +76,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Remove any remaining per-frame scans or unnecessary deep table copies.
 
 ## Constants and helper functions
-- [ ] Audit `kpuiConst` tables and remove data used only by the retired Researching/Quick Access modules.
-- [ ] Convert genuinely internal `kpui_utils.lua` helpers to locals after confirming no cross-file callers (keep `getTraitHeaderLine`, `KelaGetAvailableResearchLines`, and other tooltip-facing helpers global until then).
+- [ ] Re-audit `kpuiConst` after future feature changes and remove data that loses its last caller.
+- [ ] Convert genuinely internal `kpui_utils.lua` helpers to locals after confirming no cross-file callers; keep tooltip-facing helpers global until then.
 - [ ] Review the `KELA_RESEARCH_COMPAT` read-only shim; remove it if the tooltip research section is retired or re-implemented with core APIs.
 
 ## API / dependencies
@@ -80,6 +87,6 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Keep `LibCustomMenu` optional; do not make optional integrations hard dependencies.
 
 ## Localization / comments
-- [ ] Keep English as the single source of strings; `ru.lua` is an English no-op.
+- [ ] Keep English as the single source of strings in `kpui_lang/en.lua`.
 - [ ] Remove any newly unused `KELA_*` strings.
-- [ ] Preserve commented debug statements; add new debug notes to `DEBUG_NOTES.md` only when code is removed.
+- [ ] Remove commented-out implementations instead of preserving them; document only non-obvious decisions in comments.
