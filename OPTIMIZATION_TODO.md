@@ -64,7 +64,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
 - [x] Audited the copied confirmation dialogs against current core; retained core-owned narration/display handling and left guild-specific-item/display-error dialogs core-owned.
 - [x] Closed as out of scope: guild-specific-store purchases are not added to Kela buying history, and the core guild-specific dialog remains untouched.
-- [ ] Re-test TTC-only, ATT-only, and combined price tooltips, graphs, listings, and crafting-component rows after each ESO update.
+- [x] Re-tested trader tooltips and other-quality rows on 10/21/2026 with TTC-only, ATT-only, both providers, and neither provider; LibItemLink present and absent also passed.
+- [ ] Re-test ATT graphs, listing rows, and crafting-component rows after each ESO update.
 
 ## Tooltips and styles
 - [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
