@@ -78,9 +78,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Added an audit check for the sets browser's LibSets API calls and API-version compatibility against the sibling LibSets add-on.
 
 ## Main menu
-- [ ] Use a supported ZOS menu-extension API if one is added; the current approach appends to `ZO_MENU_ENTRIES`.
-- [x] Revisited the KelaPadUI entry position: append-only is required because API `101051` has no supported menu-extension hook.
-- [ ] Consider moving the custom settings entry into the core Options menu instead of a duplicate Settings submenu.
+- [x] Keep the append-only `ZO_MENU_ENTRIES` entry; no supported ZOS gamepad menu-extension API is expected.
+- [x] Keep the KelaPadUI Settings submenu; placement is accepted.
 
 ## XML
 - [x] Audit the remaining virtual templates; all 27 are referenced.
@@ -92,6 +91,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [ ] Cache frequently used strings and globals in hot paths.
 - [ ] Consider lazy-loading optional features (sets/trading house) if load time becomes an issue.
 - [x] Remove any remaining per-frame scans; no `OnUpdate`/`RegisterForUpdate` handlers remain.
+- [x] Documented the in-game profiling method in `docs/MAINTENANCE.md`.
 
 ## Constants and helper functions
 - [x] Re-audited `kpuiConst` and pruned fields with no remaining callers; re-check after future feature changes.

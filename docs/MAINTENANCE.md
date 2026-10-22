@@ -160,6 +160,40 @@ Manual in-game checks are still required for:
 - verifying purchased listings disappear without duplicate or misaligned rows;
 - switching between gamepad and keyboard UI modes.
 
+## Performance profiling
+
+ESO does not expose per-add-on CPU time, so profile with elapsed-time checks
+inside the add-on. `GetFrameTimeMilliseconds()` is suitable for elapsed time,
+and `collectgarbage("count")` returns Lua memory in kilobytes.
+
+Use these measurements before changing caching or lazy-loading:
+
+- **Load time:** temporarily record `GetFrameTimeMilliseconds()` before and
+  after each initialization step in `KelaPadUI_OnLoaded()`, then log the
+  differences with `d()`. Remove the instrumentation after measuring.
+- **Hot paths:** after `/reloadui`, wrap a tooltip or search function at runtime
+  and log only slow calls. For example, this reports trading-tooltip layouts
+  that take at least 2 ms:
+
+  ```lua
+  /script local f=ZO_Tooltip.LayoutTradingTooltip; ZO_Tooltip.LayoutTradingTooltip=function(self,...) local t=GetFrameTimeMilliseconds(); local r=f(self,...); local e=GetFrameTimeMilliseconds()-t; if e>=2 then d(string.format("Kela trading tooltip: %d ms",e)) end; return r end
+  ```
+
+  `/reloadui` removes the wrapper.
+- **FPS and memory:** sample `GetFramerate()` and
+  `collectgarbage("count")/1024` once per second while repeating the same
+  camera movement and tooltip interaction:
+
+  ```lua
+  /script local n=0; local function s() n=n+1; d(string.format("%d fps, %.1f MB",GetFramerate(),collectgarbage("count")/1024)); if n<30 then zo_callLater(s,1000) end end; s()
+  ```
+
+  Compare the same location and interaction with the feature enabled and
+  disabled. Lua memory is only the add-on/runtime Lua heap, not total UI or GPU
+  memory.
+- **External profiler:** `ESO Profiler` exists, but its last public build
+  targets an old API. Verify compatibility before relying on it.
+
 ## Git workflow
 
 Git is not on `PATH` on this machine. Use:
