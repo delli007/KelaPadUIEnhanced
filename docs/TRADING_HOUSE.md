@@ -171,7 +171,7 @@ provider installed:
 - Confirm the price-effect/deal filter cycles and does not hide the page
   controls.
 - Buy an item and confirm it disappears from the current page, appears in buying
-  history, and survives a reload. For armour and weapons, confirm the purchase
+  history, and survives a reload. For armor and weapons, confirm the purchase
   note shows the item quality without a Lua error.
 - List an item, then confirm it appears in listing history.
 - Check a sold and a recalled listing when ATT data is available.
