@@ -179,7 +179,6 @@ function Kela_Sets_List:Initialize(control)
     ZO_GamepadInteractiveSortFilterList.Initialize(self, control)
     self:SetEmptyText(GetString(KELA_SETS_LIST_EMPTYTEXT))
 	ZO_ScrollList_AddDataType(self.list, KELA_LIST_DATA, KELA_LIST_TEMPLATE, 38, function(control, data) self:SetupKelaListEntry(control, data) end)
-	self:SetMasterSetsList() 
 	self.comparedSetData = false
 	self.showInfoTooltip = true
     self:SetupSort(KELA_LIST_ENTRY_SORT_KEYS, "setName", ZO_SORT_ORDER_UP)
@@ -2144,8 +2143,8 @@ function Kela_Sets:OnSelectionChanged(list, selectedData, oldSelectedData)
 end
 
 function Kela_Sets:OnShowing()
-    ZO_Gamepad_ParametricList_Screen.OnShowing(self)
 	if KelaSetsMasterListInitialized == false then KELA_SETS_LIST:SetMasterSetsList() end
+    ZO_Gamepad_ParametricList_Screen.OnShowing(self)
 
 	if KELA_SETS_FIRST_SHOW then 
 		KELA_SETS_LIST:Deactivate()

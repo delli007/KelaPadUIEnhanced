@@ -87,11 +87,11 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Retained `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and the trading-house compatibility XML because their replacements are not yet tested.
 
 ## Performance
-- [ ] Profile add-on load time and tooltip/trading-house hook overhead.
-- [ ] Cache frequently used strings and globals in hot paths.
-- [ ] Consider lazy-loading optional features (sets/trading house) if load time becomes an issue.
+- [x] Profiling is not required; current in-game performance is acceptable.
+- [x] Caching is not required unless a specific hot path is reported.
+- [x] Lazy-load set data and trading history until first use; keep hook registration at load because ESO requires it before the relevant scene opens.
 - [x] Remove any remaining per-frame scans; no `OnUpdate`/`RegisterForUpdate` handlers remain.
-- [x] Documented the in-game profiling method in `docs/MAINTENANCE.md`.
+- [x] Documented the optional in-game profiling method in `docs/MAINTENANCE.md`.
 
 ## Constants and helper functions
 - [x] Re-audited `kpuiConst` and pruned fields with no remaining callers; re-check after future feature changes.
