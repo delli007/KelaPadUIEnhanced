@@ -1,7 +1,7 @@
 # KelaPadUI Development Notes
 
 This is the quick reference for future updates, additions, and fixes. Use it
-with `docs/MAINTENANCE.md` and `OPTIMIZATION_TODO.md`.
+with `docs/MAINTENANCE.md`, `TODO.md`, and `docs/GAMEPAD_ENHANCEMENTS.md`.
 
 ## Current architecture
 
@@ -15,6 +15,8 @@ with `docs/MAINTENANCE.md` and `OPTIMIZATION_TODO.md`.
   - `kpui_tradinghouse_gamepad.lua`
   - `kpui_tradinghouse_gamepad.xml`
   - `kpui_trading_history.lua`
+- Static trial and companion data lives in `kpui_data/kpui_data.lua`; keep
+  large data tables out of feature modules.
 - Keep the manifest order. Trading-house modules load before
   `kpui_features/kpui_info_tooltip.lua`.
 
@@ -47,19 +49,17 @@ with `docs/MAINTENANCE.md` and `OPTIMIZATION_TODO.md`.
   buy/sell/remove confirmation dialogs remain because their C API callbacks
   cannot be hooked for history updates.
 - Other core overrides should be replaced only where a supported hook exists.
-- The future split and custom-control replacement are tracked in
-  `OPTIMIZATION_TODO.md`.
+- The future split and custom-control replacement are tracked in `TODO.md`.
 
 ## Standard change workflow
 
-1. Read this file, `docs/MAINTENANCE.md`, and the relevant section of
-   `OPTIMIZATION_TODO.md`.
+1. Read this file, `docs/MAINTENANCE.md`, and the relevant section of `TODO.md`.
 2. Search for existing patterns before adding a new helper, setting, string, or
    tooltip style.
 3. Keep the change focused. Do not mix cleanup, behavior changes, and
    main-menu color changes in one commit.
 4. Update `changelog.txt` and any affected docs.
-5. Add deferred or risky work to `OPTIMIZATION_TODO.md`; do not leave untracked
+5. Add deferred or risky work to `TODO.md`; do not leave untracked
    `TODO`/`FIXME` markers in Lua/XML.
 6. Run the static audit:
 
@@ -90,4 +90,5 @@ feature plus the shared tooltip path.
 - `docs/SETTINGS.md` - settings storage, IDs, and adding settings.
 - `docs/TRADING_HOUSE.md` - trading dependencies, modules, and history data.
 - `docs/main_menu_notes.md` - removed pause-menu notes and restoration guidance.
-- `OPTIMIZATION_TODO.md` - open work and completed cleanup history.
+- `TODO.md` - open work and completed cleanup history.
+- `docs/GAMEPAD_ENHANCEMENTS.md` - rated gamepad enhancement and addon-integration candidates.

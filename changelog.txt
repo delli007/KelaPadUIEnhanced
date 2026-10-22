@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/22/2026 - Renamed `OPTIMIZATION_TODO.md` to `TODO.md`, updated the `kpui_data` documentation for the merged trial/companion data, and added `docs/GAMEPAD_ENHANCEMENTS.md` with rated gamepad and addon-integration candidates. No behavior change.
+
 10/22/2026 - Refreshed maintenance documentation, added `docs/DEVELOPMENT_NOTES.md` for future maintenance consistency, and added the trading-house file split and custom-control replacement to the future TODO list.
 
 10/22/2026 - Removed a dead trait-tooltip replacement block and the unused research compatibility shim, constants, strings, and write-only globals. No behavior change because the replacement was never assigned.

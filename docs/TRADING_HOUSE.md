@@ -197,7 +197,7 @@ provider installed:
 
 ## Known deferred work
 
-See `OPTIMIZATION_TODO.md` for the open trading-house work: splitting the large
+See `TODO.md` for the open trading-house work: splitting the large
 gamepad module and replacing custom `KPUI_*` controls/XML with supported core
 hooks or templates where feasible. The `KPUI_*` XML templates are
 bespoke gamepad tooltip layouts. `KPUI_Graph` no longer inherits an ATT template:

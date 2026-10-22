@@ -1,6 +1,6 @@
 <!-- Tooltip Templates -->
 <GuiXml>
-    <!-- COMPATIBILITY COPY: retained for the cautious refactor phase. See OPTIMIZATION_TODO.md. -->
+    <!-- Custom trading-house tooltip controls. See the repository backlog file for the future replacement work. -->
     <Controls>
 
 		<!-- ANALYSIS PERIOD SELECTOR FOR ATT -->

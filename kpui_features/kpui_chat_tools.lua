@@ -1,5 +1,5 @@
 -- KelaPadUI chat context-menu and slash-command additions.
--- Extracted from KelaPadUI.lua; uses KELA_TRIALS_DATA from kpui_data/kpui_trials_data.lua.
+-- Extracted from KelaPadUI.lua; uses KELA_TRIALS_DATA from kpui_data/kpui_data.lua.
 
 local function AddContextMenuItems()
 	EVENT_MANAGER:UnregisterForEvent("KelaPadUI", EVENT_PLAYER_ACTIVATED)

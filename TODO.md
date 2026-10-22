@@ -1,9 +1,10 @@
-# KelaPadUI Optimization Backlog
+# KelaPadUI TODO
 
-This file tracks open and completed deferred work. Keep it updated after each refactor phase.
+This file tracks open and completed deferred work. Keep it updated after each refactor phase. Candidate gamepad enhancements and addon integrations are rated in `docs/GAMEPAD_ENHANCEMENTS.md`.
 
 ## Open work
 
+- [ ] Review `docs/GAMEPAD_ENHANCEMENTS.md` and promote accepted candidates into focused tasks.
 - [ ] Split `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua` into focused modules for hooks, tooltip layouts, TTC/ATT data helpers, and dialog/history integration.
 - [ ] Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
 - [ ] Revalidate TTC-only, ATT-only, both-provider, and no-provider modes after the trading-house split or custom-control replacement.

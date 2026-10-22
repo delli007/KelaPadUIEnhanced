@@ -28,10 +28,10 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
 | `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
 | `kpui_lang/` | English strings; `en.lua` is the only locale file. |
-| `kpui_data/` | Trial data used by the chat tools. |
-| `docs/` | Maintenance, development, settings, trading-house, and main-menu notes. |
+| `kpui_data/` | Static trial and companion data used by feature modules. |
+| `docs/` | Maintenance, development, research, settings, trading-house, and main-menu notes. |
 | `_tools/audit_addon.py` | Static manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
-| `OPTIMIZATION_TODO.md` | Open refactors and completed cleanup history. |
+| `TODO.md` | Open refactors, rated enhancement candidates, and completed cleanup history. |
 | `changelog.txt` | Release-facing change history. |
 
 ## Load order
@@ -219,14 +219,15 @@ Python, build, editor, and OS artifacts.
 4. Run the audit and Lua parse check.
 5. Perform the relevant in-game checks.
 6. Update `changelog.txt`.
-7. Add deferred or risky work to `OPTIMIZATION_TODO.md` rather than leaving
-   untracked TODOs in code.
+7. Add deferred or risky work to `TODO.md` rather than leaving untracked TODOs
+   in code.
 
 ## Known deferred work
 
-`OPTIMIZATION_TODO.md` is the source of truth. The current open items are the
-trading-house file split and the replacement of custom controls with supported
-core hooks/templates where feasible. Ongoing maintenance also includes:
+`TODO.md` is the source of truth. The current open items are the trading-house
+file split and the replacement of custom controls with supported core
+hooks/templates where feasible. Rated enhancement candidates are in
+`docs/GAMEPAD_ENHANCEMENTS.md`. Ongoing maintenance also includes:
 
 - verifying tooltip overrides against new core styles after each ESO update;
 - validating LibSets metadata after set/DLC updates;
@@ -237,6 +238,8 @@ core hooks/templates where feasible. Ongoing maintenance also includes:
 
 - `docs/DEVELOPMENT_NOTES.md` - recurring conventions, validation matrix, and
   pitfalls for future updates, additions, and fixes.
+- `docs/GAMEPAD_ENHANCEMENTS.md` - researched gamepad features and addon
+  integrations with usefulness/difficulty ratings.
 - `docs/SETTINGS.md` - settings storage, IDs, and adding settings.
 - `docs/TRADING_HOUSE.md` - trading dependencies, modules, and history data.
 - `docs/main_menu_notes.md` - removed pause-menu notes feature and restoration
