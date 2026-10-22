@@ -33,6 +33,7 @@ KELA_SMITHING_IMPROVED_TOOLTIP_TYPE = 0
 
 local function KelaCreateColorizedResumePrice(index)
 	local label = GetString("KELA_TRADING_RESUMEPRICE", index)
+	local color
 	if index == 5 then 
 		color = colors.COLOR_DEALGREAT
 	elseif index == 4 then 
@@ -53,7 +54,7 @@ function KelaIsSceneTradingHouse(currentScene)
 end
 
 
-local function GetItemLinks(itemLink)
+local function GetItemLinks(itemLink, includeQualityLinks)
 
 	local function GetQualityItemLink(itemId, itemQuality, itemLevel, itemChampionPoints, enchantId)
 		if itemId == nil or itemId == 0 then return end
@@ -83,7 +84,7 @@ local function GetItemLinks(itemLink)
 		referenceEnchantID = GetItemLinkFinalEnchantId(itemLink)
 	end
 
-	if itemType == ITEMTYPE_ARMOR or itemType == ITEMTYPE_GLYPH_ARMOR or itemType == ITEMTYPE_GLYPH_JEWELRY or itemType == ITEMTYPE_GLYPH_WEAPON or itemType == ITEMTYPE_WEAPON then		
+	if includeQualityLinks and (itemType == ITEMTYPE_ARMOR or itemType == ITEMTYPE_GLYPH_ARMOR or itemType == ITEMTYPE_GLYPH_JEWELRY or itemType == ITEMTYPE_GLYPH_WEAPON or itemType == ITEMTYPE_WEAPON) then
 		if referenceQuality ~= ITEM_QUALITY_NORMAL then normalItemLink = GetQualityItemLink(itemId, ITEM_QUALITY_NORMAL, minLevel, minChampionPoints, referenceEnchantID) end
 		if referenceQuality ~= ITEM_QUALITY_MAGIC then fineItemLink = GetQualityItemLink(itemId, ITEM_QUALITY_MAGIC, minLevel, minChampionPoints, referenceEnchantID) end
 		if referenceQuality ~= ITEM_QUALITY_ARCANE then superiorItemLink = GetQualityItemLink(itemId, ITEM_QUALITY_ARCANE, minLevel, minChampionPoints, referenceEnchantID) end
@@ -102,7 +103,7 @@ local function GetItemLinks(itemLink)
 	return resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink
 
 end
-local function GetBuyInfo(tblBuyingItems, itemUID)
+local function GetBuyInfo(tblBuyingItems, itemUID, itemLink)
 	local strBuyInfo = ""
 	local guildName = tblBuyingItems[itemUID]["guildName"]
 	local buyingTime = colors.COLOR_WHITE:Colorize(KelaTimeStampToDateTimeString(tblBuyingItems[itemUID]["buyingTimeStamp"]))
@@ -122,9 +123,8 @@ local function GetBuyInfo(tblBuyingItems, itemUID)
 	end
 
 	local colorQuality
-	local strQuality = ""
 	local displayQuality = tblBuyingItems[itemUID]["displayQuality"]
-	local itemType = GetItemLinkItemType(itemLink)
+	local itemType = itemLink and GetItemLinkItemType(itemLink)
 	if displayQuality and (itemType == ITEMTYPE_ARMOR or itemType == ITEMTYPE_WEAPON) then 
 		colorQuality = GetItemQualityColor(displayQuality) 
 		strBuyInfo = strBuyInfo.." ("..colorQuality:Colorize(GetString("SI_ITEMDISPLAYQUALITY", displayQuality))..")"
@@ -1669,7 +1669,7 @@ function ZO_Tooltip:LayoutEnchantingTradingTooltip(tooltip, itemLink, maxIterati
 		end
 		-- Purchased item information
 		if isByingItem then
-			local strBuyInfo = GetBuyInfo(tblBuyingItems, itemUID)
+			local strBuyInfo = GetBuyInfo(tblBuyingItems, itemUID, itemLink)
 			lastControl = SetSmithNotes(tooltip, lastControl, strBuyInfo)			
 		end	
 		-- Previous sales
@@ -1836,7 +1836,7 @@ function ZO_Tooltip:LayoutSmithingCreationTooltip(tooltip, itemLink)
             tooltip.icon:SetHidden(false)
         end
 
-		local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink)
+		local _, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink, IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_QUALITY))
 		local listingItemsTable = KelaGetItemLinkListingTable(itemLink)
 		local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemLink)
 
@@ -1937,7 +1937,7 @@ function ZO_Tooltip:LayoutSmithingTradingTooltip(tooltip, itemBagId, itemSlotInd
 			end			
 		elseif KELA_SMITHING_IMPROVED_TOOLTIP_TYPE == 1 then
 		
-			local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink)
+			local _, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink, IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_QUALITY))
 			local listingItemsTable = KelaGetItemLinkListingTable(itemLink)
 			local trueTTC, trueATT, priceInfoTTC, priceInfoATT = KelaGetPriceInfoTTCATT(itemLink)
 
@@ -2004,7 +2004,7 @@ function ZO_Tooltip:LayoutSmithingTradingTooltip(tooltip, itemBagId, itemSlotInd
 			end
 			-- Purchased item information
 			if isByingItem then
-				local strBuyInfo = GetBuyInfo(tblBuyingItems, itemUID)
+				local strBuyInfo = GetBuyInfo(tblBuyingItems, itemUID, itemLink)
 				lastControl = SetSmithNotes(tooltip, lastControl, strBuyInfo)			
 			end					
 			-- Previous sales
@@ -2139,7 +2139,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 		local lastControl
 		if itemLink then
 			local listingItemsTable = KelaGetItemLinkListingTable(itemLink)
-			local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink)
+			local resultItemLink, normalItemLink, fineItemLink, superiorItemLink, epicItemLink, legendaryItemLink = GetItemLinks(itemLink, IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_QUALITY))
 			-- the name of the thing
 			local name = zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(itemLink))
 			local nameColor = GetItemQualityColor(GetItemLinkDisplayQuality(itemLink))
@@ -2223,7 +2223,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 
 			-- Information about the purchased item
 			if isByingItem then
-				local strBuyInfo = GetBuyInfo(tblBuyingItems, itemUID)
+				local strBuyInfo = GetBuyInfo(tblBuyingItems, itemUID, itemLink)
 				lastControl = SetSmithNotes(self, lastControl, strBuyInfo)			
 			end
 
