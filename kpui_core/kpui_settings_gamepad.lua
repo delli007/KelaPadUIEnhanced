@@ -2,7 +2,6 @@
 kpuiSVSettingsDefault = {}
 kpuiSVSettingsSaved = {}
 kpuiSVSettingsCurrent = {}
-kpuiSVCharData = {}
 KELA_SAVE_CURRENT 	= 1
 KELA_RESTORE_SAVED 	= 2
 KELA_LOAD_DEFAULT 	= 3

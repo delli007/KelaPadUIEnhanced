@@ -96,7 +96,6 @@ local KelaSetsSourceToType = {
 	},
 }
 local KelaSetObtainable = {
-	ALLITEMS = 0,
 	ARMOR_LIGHT = 1,
 	ARMOR_MEDIUM = 2,
 	ARMOR_HEAVY = 3,
@@ -107,7 +106,6 @@ local KelaSetObtainable = {
 	JEWELRY = 8,
 }
 local KelaSetBonusGroup = {
-	ALLBONUSES = 0,
 	MAGICKA = 1,
 	HEALTH = 2,
 	STAMINA = 3,

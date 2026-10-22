@@ -41,6 +41,9 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Guarded the optional `LibItemLink` quality-link path, declared the library in `OptionalDependsOn`, and added an audit check for undeclared library globals.
 - [x] Removed the remaining accidental trading-tooltip global and passed the item link into purchase-history rendering.
 - [x] Deferred other-quality link construction until the quality tooltip option is enabled.
+- [x] Moved the trading-house modules under `kpui_features/tradinghouse/` and removed the compatibility naming.
+- [x] Removed the unused trait-tooltip replacement block, `KELA_RESEARCH_COMPAT`, `kpuiSVCharData`, and the research-only constants/tables/strings.
+- [x] Removed unused `kpuiFunctions`, write-only `KELA_TRADINGHOUSE_CURRENTSCENE`, and unused set enum keys.
 
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
@@ -50,7 +53,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Trimmed dead settings/templates/sets XML controls.
 - [x] Retired Russian localization text; English is the single source of strings.
 - [x] Removed preserved commented code and the debug archive during the dead-code cleanup.
-- [x] Reorganized retained modules into `kpui_core/`, `kpui_features/`, `kpui_data/`, and `kpui_compat/`.
+- [x] Reorganized retained modules into `kpui_core/`, `kpui_features/`, and `kpui_data/`; trading-house modules now live under `kpui_features/tradinghouse/`.
 - [x] Made the KelaPadUI main-menu entry append-only (no re-indexing of core entries).
 - [x] Removed the retired settings panels and unused settings XML/templates.
 - [x] Added the gamepad map-info rally-point keybind.
@@ -84,12 +87,12 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 ## XML
 - [x] Audit the remaining virtual templates; all 27 are referenced.
 - [x] Reviewed XML consolidation: kept the module-scoped settings, template, tooltip, sets, and trading XML files because merging them would not reduce maintenance and could change load order.
-- [x] Retained `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and the trading-house compatibility XML because their replacements are not yet tested.
+- [x] Retained `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.xml` because their replacements are not yet tested.
 
 ## Constants and helper functions
 - [x] Re-audited `kpuiConst` and pruned fields with no remaining callers; re-check after future feature changes.
 - [x] Converted the internal `KelaGetLocalTimeShift` helper to a local; remaining helpers have cross-file callers.
-- [x] Reviewed the `KELA_RESEARCH_COMPAT` shim; retained as a read-only compatibility layer because no current writer populates its research data.
+- [x] Confirmed that no writer populated the research data, then removed the unused `KELA_RESEARCH_COMPAT` shim and its dependent code.
 
 ## Settings UI
 - [x] Disabled sliders already follow core's `ZO_GamepadMenuEntryTemplate_GetLabelColor` path; no separate palette is needed.
@@ -98,7 +101,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 ## API / dependencies
 - [x] Verify and update `## APIVersion` for the current live client (`101051`).
 - [x] Re-check `LibSets` API compatibility and required version (`0.9.4`, API `101051`/`101052`).
-- [x] Reviewed compatibility shims for API `101051`: no obsolete shims remain; `KELA_RESEARCH_COMPAT` and the trading compatibility copy are intentionally retained. Recheck after future game updates.
+- [x] Reviewed compatibility shims for API `101051`: no obsolete shims remain; the remaining trading-house custom controls are tracked as future work. Recheck after future game updates.
 - [x] Kept `LibCustomMenu` optional and removed the absence warning from the player-activation path.
 
 ## Localization / comments

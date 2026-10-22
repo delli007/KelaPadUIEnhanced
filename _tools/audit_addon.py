@@ -27,6 +27,7 @@ VIRTUAL_TAG = re.compile(r"<[^>]*\bvirtual=\"true\"[^>]*>", re.S)
 NAME_ATTR = re.compile(r'\bname="([^"]+)"')
 REMOVED_IDENTIFIERS = [
     "KELA_RESEARCH",
+    "KELA_RESEARCH_COMPAT",
     "KELA_UNDAUNTED",
     "KELA_QUICKACCESS",
     "Kela_QuickAccess",
@@ -51,7 +52,6 @@ LOCALIZATION_USE = re.compile(
     r"(?:GetString\(\s*[\"']?|(?:text|tooltipText|header|name|stringId)\s*=\s*[\"']?)(KELA_[A-Z0-9_]+)"
 )
 DYNAMIC_STRING_PREFIXES = (
-    "KELA_RESEARCH_TYPE",  # GetString("KELA_RESEARCH_TYPE", index)
     "KELA_SETTINGSYSTEMPANEL",  # categories build keys with the panel id
     "KELA_SETSBONUSGROUP",
     "KELA_SETSBOUND",
@@ -199,8 +199,8 @@ def check_removed_references():
     for path in iter_files({".lua", ".xml"}):
         text = read_text(path)
         for identifier in REMOVED_IDENTIFIERS:
-            # Exact identifier only: KELA_RESEARCH_COMPAT and
-            # kelaAddInfoTooltipMain are intentional retained names.
+            # Exact identifier only: kelaAddInfoTooltipMain is an intentional
+            # retained name.
             pattern = r"(?<![A-Za-z0-9_])" + re.escape(identifier) + r"(?![A-Za-z0-9_])"
             if re.search(pattern, text):
                 errors.append("REMOVED REF: {}: {}".format(path.relative_to(ROOT), identifier))

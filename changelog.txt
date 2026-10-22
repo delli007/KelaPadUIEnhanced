@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/22/2026 - Removed a dead trait-tooltip replacement block and the unused research compatibility shim, constants, strings, and write-only globals. No behavior change because the replacement was never assigned.
+
 10/22/2026 - Moved the trading-house modules under `kpui_features/tradinghouse`, removed the compatibility naming and `_updated` suffix, and updated the manifest/docs paths. No behavior change.
 
 10/21/2026 - Trading-tooltip cleanup: fixed an accidental global in the deal-rating formatter, passed the hovered item link into purchase-history rendering so armor/weapon quality is evaluated correctly, and limited other-quality link construction to when that tooltip option is enabled.

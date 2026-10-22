@@ -9,24 +9,10 @@ do
 
 	-- Item tooltip
 	Add("KELA_THOUSANDS_SEPARATOR",					",")	
-	Add("KELA_TRAIT_RESEARCHABLE",					"researchable")	
-	Add("KELA_TRAIT_KNOWN",							"known")	
-	Add("KELA_TRAIT_KNOWN_IN_PROGRESS",				"in progress...")	
 	Add("KELA_PRODUCT",								"product: ")	
-	Add("KELA_TOOLTIP_TRAIT_USE", 					"Used on the following equipment:")	
-	Add("KELA_TOOLTIP_TRAIT_SEARCH", 				"Where to search:")	
 
 	-- Achievement Scene
-		
-	-- Research Scene
-	Add("KELA_RESEARCH_TYPE1",												"Steel arms")
-	Add("KELA_RESEARCH_TYPE2",												"Heavy armor")
-	Add("KELA_RESEARCH_TYPE3",												"Cloth robes")
-	Add("KELA_RESEARCH_TYPE4",												"Leather armor")
-	Add("KELA_RESEARCH_TYPE5",												"Bows and staffs")
-	Add("KELA_RESEARCH_TYPE6",												"Shields")
-	Add("KELA_RESEARCH_TYPE7",												"Necklaces and rings")
-	
+
 	-- Set's Scene
 	Add("KELA_SETS_SOURCEDROPDOWN_HEADER",			"Sources")
 	Add("KELA_SETS_OBTAINABLEDROPDOWN_HEADER",		"Obtainable items")

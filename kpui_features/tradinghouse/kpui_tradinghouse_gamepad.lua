@@ -11,7 +11,6 @@ end
 KELA_KNOWN_ITEM_FILTER = "ALL"
 KELA_CURRENT_EFFECTDEAL_SELECTION_INDEX = 1
 
-KELA_TRADINGHOUSE_CURRENTSCENE = ""
 KELA_TRADINGHOUSE_CURRENT_SELECTEDDATA = {}
 
 local hookCraftingStationAlready = false
@@ -2071,7 +2070,6 @@ end
 function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, tooltipType, parentControl, leftAnchor, offsetX, offsetY, itemUniqueId)
 
 
-	KELA_TRADINGHOUSE_CURRENTSCENE = currentScene
 	KELA_TRADINGHOUSE_CURRENT_SELECTEDDATA = selectedData
 	
 	local isCrafting

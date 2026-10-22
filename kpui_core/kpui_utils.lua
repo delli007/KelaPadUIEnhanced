@@ -1,44 +1,4 @@
-kpuiFunctions = {}
 KELA_CLOCK_FORMAT = (GetCVar("Language.2") == "en") and TIME_FORMAT_PRECISION_TWELVE_HOUR or TIME_FORMAT_PRECISION_TWENTY_FOUR_HOUR
-
--- Compatibility shim for the retired Researching module. The tooltip code only
--- needs read access; if no research data was collected, return nil.
-KELA_RESEARCH_COMPAT = KELA_RESEARCH_COMPAT or {}
-function KELA_RESEARCH_COMPAT:GetItemLinkResearchStatus(link)
-    if not kpuiSVCharData or not kpuiSVCharData["researches"] then
-        return nil
-    end
-
-    local traitType = GetItemLinkTraitInfo(link)
-    if kpuiConst.UnknowableTraitTypes[traitType] then
-        return nil
-    end
-
-    local itemType = GetItemLinkItemType(link)
-    local tradeSkill
-    local resIndex
-    if itemType == ITEMTYPE_ARMOR then
-        local armorType = GetItemLinkArmorType(link)
-        local equipType = GetItemLinkEquipType(link)
-        local resLines = kpuiConst.ArmorTypeAndEquipTypeToResearchLineIndex[armorType]
-        tradeSkill = kpuiConst.TradeskillForArmorType[armorType]
-        resIndex = resLines and resLines[equipType]
-    elseif itemType == ITEMTYPE_WEAPON then
-        local weaponType = GetItemLinkWeaponType(link)
-        tradeSkill = kpuiConst.TradeskillForWeaponType[weaponType]
-        resIndex = kpuiConst.WeaponTypeToResearchLineIndex[weaponType]
-    end
-
-    if not tradeSkill or not resIndex then
-        return nil
-    end
-    if not (kpuiSVCharData["researches"][tradeSkill] and resIndex) then
-        return nil
-    end
-
-    return kpuiSVCharData["researches"][tradeSkill][resIndex][traitType]
-end
-
 
 local WEAPON_TYPE_TO_CATEGORY_MAP = {
     [WEAPONTYPE_AXE] = GAMEPAD_ITEM_CATEGORY_AXE,
@@ -87,64 +47,6 @@ function getStyleHeaderLine(styleIndex)
 
 	return color, style
 end
-function getTraitHeaderLine(researchStatus, countBank, countPack, countWorn)
-	
-	local colors = kpuiConst.Colors
-	
-	local parts = {}
-	local icon = "ESOUI/art/crafting/smithing_tabicon_research_down.dds"
-	local color = ZO_TOOLTIP_DEFAULT_COLOR
-		if researchStatus == TRAIT_RESEARCHABLE then
-			icon = "ESOUI/art/crafting/smithing_tabicon_research_disabled.dds"
-			if countBank + countPack + countWorn > 1 then
-				color = colors.COLOR_ORANGE
-			else
-				color = colors.COLOR_RED
-			end
-		elseif researchStatus == TRAIT_RESEARCH_IN_PROGRESS then
-			icon = "ESOUI/art/crafting/smithing_tabicon_research_over.dds"
-			color = colors.COLOR_ORANGE
-		end
-
-		if researchStatus == 0 then
-			parts[#parts + 1] = GetString(KELA_TRAIT_RESEARCHABLE)
-		elseif researchStatus == 1 then
-			parts[#parts + 1] = GetString(KELA_TRAIT_KNOWN)
-		elseif researchStatus == 2 then
-			parts[#parts + 1] = GetString(KELA_TRAIT_KNOWN_IN_PROGRESS)
-		end
-
-	if researchStatus == TRAIT_RESEARCHABLE then
-		if countBank > 0 or countPack > 0 or countWorn > 0 then
-			parts[#parts + 1] = ", "
-			if countBank > 0 then
-				parts[#parts + 1] = "|u2:2::"
-				parts[#parts + 1] = countBank
-				parts[#parts + 1] = "|u"
-				parts[#parts + 1] = "|t30:30:esoui/art/icons/servicemappins/servicepin_bank.dds:inheritColor|t"
-				parts[#parts + 1] = "|u4:0::|u" -- padding
-			end
-			if countPack > 0 then
-				parts[#parts + 1] = "|u2:0::"
-				parts[#parts + 1] = countPack
-				parts[#parts + 1] = "|u"
-				parts[#parts + 1] = "|t30:30:EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_inventory.dds:inheritColor|t"
-			end
-			if countWorn > 0 then
-				parts[#parts + 1] = "|u2:0::"
-				parts[#parts + 1] = countWorn
-				parts[#parts + 1] = "|u"
-				parts[#parts + 1] = "|t30:30:EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_character.dds:inheritColor|t"
-			end
-		end
-	end
-	if #parts > 0 then
-		local text = table.concat(parts, "")
-		return icon, color, text
-	end
-	return color
-end
-
 function KelaGetTableCopy(t)
 	local t2 = {}
 	for k,v in pairs(t) do
@@ -267,23 +169,6 @@ function KelaTimeStampToDateTimeString(timeStamp)
 	else
 		return "", ""
 	end
-end
-
-
-function kelaGetSameTraitCount(bagId, armorType, weaponType, equipType, trait)
-	local count = 0
-	for slotIndex = 0, GetBagSize(bagId) - 1 do
-		local itemType = GetItemType(bagId, slotIndex)
-		if itemType == ITEMTYPE_ARMOR or itemType == ITEMTYPE_WEAPON then
-			if armorType == GetItemArmorType(bagId, slotIndex) and weaponType == GetItemWeaponType(bagId, slotIndex) and GetItemTrait(bagId, slotIndex) == trait then
-				local _,_,_,_,_, otherEquipType = GetItemInfo(bagId, slotIndex)
-				if otherEquipType == equipType then
-					count = count + 1
-				end
-			end
-		end
-	end
-	return count
 end
 
 
