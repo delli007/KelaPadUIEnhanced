@@ -24,8 +24,8 @@ update.
 | `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
 | `KelaPadUI.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
-| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, and the main menu. |
-| `kpui_compat/` | Trading-house compatibility code and trading history. |
+| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
+| `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
 | `kpui_lang/` | English strings; `en.lua` is the only locale file. |
 | `kpui_data/` | Static set/category data. |
 | `docs/` | Maintenance, settings, trading-house, and main-menu notes. |
@@ -42,7 +42,7 @@ Keep the manifest order in mind when adding code that runs at file scope:
 3. Core templates XML.
 4. Settings Lua and XML.
 5. Tooltip Lua and XML.
-6. Sets, antiquities, trading history, and trading-house compatibility.
+6. Sets, antiquities, and trading-house history/UI modules.
 7. Feature modules.
 8. `KelaPadUI.lua` bootstrap, which initializes settings and enabled features.
 

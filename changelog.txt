@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/22/2026 - Moved the trading-house modules under `kpui_features/tradinghouse`, removed the compatibility naming and `_updated` suffix, and updated the manifest/docs paths. No behavior change.
+
 10/21/2026 - Trading-tooltip cleanup: fixed an accidental global in the deal-rating formatter, passed the hovered item link into purchase-history rendering so armor/weapon quality is evaluated correctly, and limited other-quality link construction to when that tooltip option is enabled.
 
 10/21/2026 - Fixed a Lua error when hovering armor, weapons, or glyphs in bank and trading-house tooltips. The other-quality price rows now guard access to the optional LibItemLink library, and LibItemLink is declared in OptionalDependsOn so it loads before KelaPadUI when installed.

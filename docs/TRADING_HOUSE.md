@@ -1,8 +1,7 @@
 # KelaPadUI Trading House
 
-This document covers the trading-house compatibility layer, its dependencies,
-stored history, settings, and the areas that need re-testing after an ESO
-update.
+This document covers the trading-house modules, their dependencies, stored
+history, settings, and the areas that need re-testing after an ESO update.
 
 ## Dependencies and startup gate
 
@@ -45,7 +44,7 @@ templates at load time.
 
 ## Main modules
 
-### `kpui_compat/kpui_tradinghouse_gamepad_updated.lua`
+### `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua`
 
 - Replaces or hooks the gamepad trading-house search-result filtering.
 - Adds the known-item filter and price-effect/deal rating.
@@ -74,7 +73,7 @@ handling stay intact. Core's `TRADING_HOUSE_CONFIRM_BUY_GUILD_SPECIFIC_ITEM` and
 purchases are not added to Kela buying history. This is intentional: the core
 guild-specific item data has no item unique ID to key a history row.
 
-### `kpui_compat/kpui_trading_history.lua`
+### `kpui_features/tradinghouse/kpui_trading_history.lua`
 
 - Owns `kpuiSavedVariables.buyingData` and `kpuiSavedVariables.listingData`.
 - Tracks purchased items and player listings.

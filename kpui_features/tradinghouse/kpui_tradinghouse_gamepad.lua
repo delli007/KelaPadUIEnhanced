@@ -1,6 +1,6 @@
--- COMPATIBILITY COPY: This is the copied trading-house implementation retained
--- for the cautious refactor phase. Rebuild it with core hooks and small custom
--- controls in a future pass. See OPTIMIZATION_TODO.md before changing it.
+-- Trading-house gamepad integration. Hooks core trading-house search/filtering
+-- and adds KelaPadUI tooltip sections. The custom KPUI_* controls are retained;
+-- see OPTIMIZATION_TODO.md for the future hook/XML replacement work.
 
 local colors = kpuiConst.Colors	
 local function KelaGetATTSalesSecondsPerDay(salesModule)

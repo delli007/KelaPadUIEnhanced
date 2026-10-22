@@ -35,9 +35,9 @@ kpui_features/sets/kpui_sets_list_gamepad.xml
 kpui_features/antiquities/kpui_antiquityfilters_gamepad.lua
 kpui_features/antiquities/kpui_antiquityleads_gamepad.lua
 
-kpui_compat/kpui_trading_history.lua
-kpui_compat/kpui_tradinghouse_gamepad_updated.lua
-kpui_compat/kpui_tradinghouse_gamepad_updated.xml
+kpui_features/tradinghouse/kpui_trading_history.lua
+kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua
+kpui_features/tradinghouse/kpui_tradinghouse_gamepad.xml
 
 kpui_data/kpui_trials_data.lua
 kpui_features/kpui_info_tooltip.lua
