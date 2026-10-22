@@ -166,7 +166,7 @@ ESO does not expose per-add-on CPU time, so profile with elapsed-time checks
 inside the add-on. `GetFrameTimeMilliseconds()` is suitable for elapsed time,
 and `collectgarbage("count")` returns Lua memory in kilobytes.
 
-Use these measurements before changing caching or lazy-loading:
+Use these measurements if a future performance regression is reported:
 
 - **Load time:** temporarily record `GetFrameTimeMilliseconds()` before and
   after each initialization step in `KelaPadUI_OnLoaded()`, then log the

@@ -86,13 +86,6 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Reviewed XML consolidation: kept the module-scoped settings, template, tooltip, sets, and trading XML files because merging them would not reduce maintenance and could change load order.
 - [x] Retained `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and the trading-house compatibility XML because their replacements are not yet tested.
 
-## Performance
-- [ ] Profile add-on load time and tooltip/trading-house hook overhead.
-- [ ] Cache frequently used strings and globals in hot paths.
-- [ ] Consider lazy-loading optional features (sets/trading house) if load time becomes an issue.
-- [x] Remove any remaining per-frame scans; no `OnUpdate`/`RegisterForUpdate` handlers remain.
-- [x] Documented the in-game profiling method in `docs/MAINTENANCE.md`.
-
 ## Constants and helper functions
 - [x] Re-audited `kpuiConst` and pruned fields with no remaining callers; re-check after future feature changes.
 - [x] Converted the internal `KelaGetLocalTimeShift` helper to a local; remaining helpers have cross-file callers.
