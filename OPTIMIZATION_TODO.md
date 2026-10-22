@@ -38,6 +38,9 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Guarded optional MasterMerchant tooltip data access.
 - [x] Replaced the direct `SI_ITEM_FORMAT_STR_SET_NAME` assignment with a `SafeAddString` override; verify set-name tooltips in game.
 - [x] Added an audit check that rejects direct assignments to `SI_*` constants.
+- [x] Guarded the optional `LibItemLink` quality-link path, declared the library in `OptionalDependsOn`, and added an audit check for undeclared library globals.
+- [x] Removed the remaining accidental trading-tooltip global and passed the item link into purchase-history rendering.
+- [x] Deferred other-quality link construction until the quality tooltip option is enabled.
 
 ## Completed in the initial cleanup
 - [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
@@ -80,8 +83,8 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 
 ## XML
 - [x] Audit the remaining virtual templates; all 27 are referenced.
-- [ ] Consolidate small XML files only if it reduces maintenance; do not convert controls to Lua blindly.
-- [ ] Keep `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and the trading-house compatibility XML until their replacements are tested.
+- [x] Reviewed XML consolidation: kept the module-scoped settings, template, tooltip, sets, and trading XML files because merging them would not reduce maintenance and could change load order.
+- [x] Retained `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and the trading-house compatibility XML because their replacements are not yet tested.
 
 ## Performance
 - [ ] Profile add-on load time and tooltip/trading-house hook overhead.
@@ -101,7 +104,7 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 ## API / dependencies
 - [x] Verify and update `## APIVersion` for the current live client (`101051`).
 - [x] Re-check `LibSets` API compatibility and required version (`0.9.4`, API `101051`/`101052`).
-- [ ] Remove obsolete compatibility shims after game updates.
+- [x] Reviewed compatibility shims for API `101051`: no obsolete shims remain; `KELA_RESEARCH_COMPAT` and the trading compatibility copy are intentionally retained. Recheck after future game updates.
 - [x] Kept `LibCustomMenu` optional and removed the absence warning from the player-activation path.
 
 ## Localization / comments

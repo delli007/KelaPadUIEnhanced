@@ -3,8 +3,9 @@
 
 Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text,
 removed references, commented debug lines, TODO markers, direct SI constant
-assignments, unused virtual templates, and LibSets API compatibility. This is
-a build/development helper only; ESO does not load it.
+assignments, optional library dependencies, unused virtual templates, and
+LibSets API compatibility. This is a build/development helper only; ESO does
+not load it.
 """
 
 import re
@@ -40,6 +41,9 @@ REMOVED_IDENTIFIERS = [
     "KELA_SETTING_PANEL_MAININFO_ACHIVTRACK",
     "KelaPadUI.donations",
 ]
+LIBRARY_GLOBAL_ADDONS = {
+    "LIB_ITEM_LINK": "LibItemLink",
+}
 LIBSETS_USE = re.compile(r"\bLibSets\.([A-Za-z_]\w*)")
 LIBSETS_GLOBAL_USE = re.compile(r"\b(LIBSETS_[A-Z0-9_]+)\b")
 KELA_STRING = re.compile(r"\b(KELA_[A-Z0-9_]+)\b")
@@ -135,6 +139,24 @@ def check_manifest():
         if not path.exists():
             errors.append("MANIFEST missing file: {}".format(entry))
     return errors, entries
+
+
+def check_library_dependencies():
+    metadata = manifest_metadata(MANIFEST)
+    declared = set(
+        (metadata.get("DependsOn", "") + " " + metadata.get("OptionalDependsOn", "")).split()
+    )
+    errors = []
+    for path in iter_files({".lua"}):
+        text = strip_lua_comments(read_text(path))
+        for global_name, addon_name in LIBRARY_GLOBAL_ADDONS.items():
+            if re.search(r"\b{}\b".format(global_name), text) and addon_name not in declared:
+                errors.append(
+                    "LIBRARY {} used in {} but {} is not in DependsOn/OptionalDependsOn".format(
+                        global_name, path.relative_to(ROOT), addon_name
+                    )
+                )
+    return errors
 
 
 def check_lua_syntax():
@@ -321,6 +343,7 @@ def main():
     errors.extend(check_removed_references())
     errors.extend(check_todo_markers())
     errors.extend(check_si_global_assignments())
+    errors.extend(check_library_dependencies())
     unused_virtual, virtual_count = virtual_template_report()
     for name, path in unused_virtual:
         errors.append("UNUSED VIRTUAL: {}: {}".format(path, name))
