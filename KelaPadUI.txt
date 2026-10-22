@@ -39,7 +39,7 @@ kpui_features/tradinghouse/kpui_trading_history.lua
 kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua
 kpui_features/tradinghouse/kpui_tradinghouse_gamepad.xml
 
-kpui_data/kpui_trials_data.lua
+kpui_data/kpui_data.lua
 kpui_features/kpui_info_tooltip.lua
 kpui_features/kpui_main_menu.lua
 kpui_features/kpui_companion.lua
