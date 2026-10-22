@@ -16,18 +16,13 @@ Trading features use either or both of these optional data providers:
 ```lua
 local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
 if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
+    KelaInitializeTradingHistory()
     KelaSetupTradingHouse()
     KelaSetupCraftingStation()
 elseif not hasTradingProvider then
     KelaSetSetting(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ENABLED, false)
 end
 ```
-
-Trading history is initialized lazily the first time a trading-house, bank,
-vendor, or crafting tooltip needs it. Hook registration stays in the bootstrap
-because ESO requires the hooks before the relevant scene opens; only the saved
-history cleanup and event registration are deferred. This keeps the trading
-master setting and provider gate unchanged.
 
 TTC-only and ATT-only modes are supported. The trading settings panel enables
 the master checkbox when at least one provider is installed, and provider-specific
@@ -144,8 +139,7 @@ Trading history lives in the existing `kpuiSavedVariables` file:
 
 - Buying history is retained for 30 days.
 - Listing history is retained for 30 days.
-- Cleanup runs in `KelaInitializeTradingHistory()` when trading history is first
-  initialized.
+- Cleanup runs in `KelaInitializeTradingHistory()`.
 - ATT sales are used to mark listings as sold/recalled and to rebuild guild
   statistics.
 

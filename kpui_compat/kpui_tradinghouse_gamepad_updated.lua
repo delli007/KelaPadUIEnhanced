@@ -657,6 +657,9 @@ function KelaSetupCraftingStation()
 end	
 
 function KelaSetupTradingHouse()
+	if not kpuiSVBuyingData or not kpuiSVListingData then
+		return
+	end
 	if KelaPadUI.KelaTradingHouseSetupStarted then
 		return
 	end
@@ -664,7 +667,6 @@ function KelaSetupTradingHouse()
 
 	-- set up the guild store
 	SecurePostHook(ZO_GamepadTradingHouse, "OpenTradingHouse", function()
-		KelaInitializeTradingHistory()
 		if not hookTradingHouseAlready then
 			-- hide when switching pages
 			SecurePostHook(ZO_GamepadTradingHouse, "SetCurrentListObject", function(control, listObject, ...)
@@ -1264,7 +1266,6 @@ function KelaSetupTradingHouse()
 	
 	-- set up banking when the regular bank opens
 	SecurePostHook(ZO_GamepadBanking, "OnOpenBank", function(control, bankBag, ...)
-		KelaInitializeTradingHistory()
 		if not hookBankingAlready then
 			SecurePostHook(ZO_BankingCommon_Gamepad, "LayoutBankingEntryTooltip", function(control, inventoryData, ...)
 				if IsKPUITradingHouseSettingEnabled(KELA_SETTING_PANEL_TRADE_TOOLTIP_BANK) then
@@ -1292,9 +1293,6 @@ function KelaSetupTradingHouse()
 	
 	-- set up banking when the guild bank opens
 	SecurePostHook(ZO_BankingCommon_Gamepad, "OnStateChanged", function(control, oldState, newState, ...)
-		if newState == SCENE_SHOWING then
-			KelaInitializeTradingHistory()
-		end
 		if not hookBankingAlready then
 			if newState == SCENE_SHOWING then
 				SecurePostHook(ZO_BankingCommon_Gamepad, "LayoutBankingEntryTooltip", function(control, inventoryData, ...)
@@ -1329,9 +1327,6 @@ function KelaSetupTradingHouse()
 
 	-- set up stores
 	SecurePostHook(ZO_GamepadStoreManager, "OnStateChanged", function(control, oldState, newState, ...)
-		if newState == SCENE_SHOWING then
-			KelaInitializeTradingHistory()
-		end
 		if not hookStoregAlready then
 			if newState == SCENE_SHOWING then
 				SecurePostHook(ZO_GamepadStoreBuy, "OnSelectedItemChanged", function(control, buyData, ...)
@@ -1611,7 +1606,6 @@ end
 
 
 function ZO_Tooltip:LayoutEnchantingTradingTooltip(tooltip, itemLink, maxIterations, itemUniqueId)
-    KelaInitializeTradingHistory()
     local icon = GetItemLinkIcon(itemLink)
 
 	tooltip.scrollTooltip:ResetToTop()
@@ -1693,7 +1687,6 @@ function ZO_Tooltip:LayoutEnchantingTradingTooltip(tooltip, itemLink, maxIterati
 end
 
 function ZO_Tooltip:LayoutAlchemyTradingTooltip(tooltip, itemLink, maxIterations)
-    KelaInitializeTradingHistory()
     local icon = GetItemLinkIcon(itemLink)
 
 	tooltip.scrollTooltip:ResetToTop()
@@ -1760,7 +1753,6 @@ function ZO_Tooltip:LayoutAlchemyTradingTooltip(tooltip, itemLink, maxIterations
 end
 
 function ZO_Tooltip:LayoutProvisionerTradingTooltip(tooltip, recipeListIndex, recipeIndex, selectedData)
-    KelaInitializeTradingHistory()
     local _, icon = GetRecipeResultItemInfo(recipeListIndex, recipeIndex)
     local itemLink = GetRecipeResultItemLink(recipeListIndex, recipeIndex)
 
@@ -1829,7 +1821,6 @@ end
 
 function ZO_Tooltip:LayoutSmithingCreationTooltip(tooltip, itemLink)
 
-	KelaInitializeTradingHistory()
 	tooltip.scrollTooltip:ResetToTop()
 	tooltip.tip:ClearLines()
 	tooltip = tooltip.tip
@@ -1908,7 +1899,6 @@ end
 
 function ZO_Tooltip:LayoutSmithingTradingTooltip(tooltip, itemBagId, itemSlotIndex, craftingSkillType, itemUniqueId, selectedData)
 
-	KelaInitializeTradingHistory()
 	tooltip.scrollTooltip:ResetToTop()
 	tooltip.tip:ClearLines()
 	tooltip = tooltip.tip
@@ -2080,7 +2070,7 @@ end
 
 function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, tooltipType, parentControl, leftAnchor, offsetX, offsetY, itemUniqueId)
 
-	KelaInitializeTradingHistory()
+
 	KELA_TRADINGHOUSE_CURRENTSCENE = currentScene
 	KELA_TRADINGHOUSE_CURRENT_SELECTEDDATA = selectedData
 	

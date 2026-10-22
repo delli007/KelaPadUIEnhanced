@@ -97,10 +97,11 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 		KelaSetupAntiquityLeadInfo()
 	end
 
-	-- Sets data and trading history are built on first use. Hook registration
-	-- stays here because ESO requires the hooks before the relevant scene opens.
+	KELA_SETS_LIST:SetMasterSetsList()
+
 	local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
 	if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
+		KelaInitializeTradingHistory()
 		KelaSetupTradingHouse()
 		KelaSetupCraftingStation()
 	elseif not hasTradingProvider then

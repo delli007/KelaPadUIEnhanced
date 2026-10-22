@@ -102,13 +102,6 @@ the trading master setting is enabled. It includes:
 - ATT-based guild statistics and category mapping when ATT is available;
 - crafting-station tooltip integration.
 
-The expensive data setup is lazy. The sets master list is built the first time
-the `kelaSets` scene is shown, and trading history is initialized the first time
-a trading-house, bank, vendor, or crafting tooltip needs it. Hook registration
-stays in `KelaPadUI_OnLoaded()` because ESO requires the hooks before the
-relevant scene opens; deferring the data avoids doing that work for players who
-never open those features.
-
 Provider-specific tooltip rows show `N/A` for a missing source. The ATT sales
 graph and guild-statistics section are omitted without ATT; TTC-only use keeps
 the core guild-selection dialog. The custom `KPUI_Graph` control does not inherit
@@ -169,14 +162,11 @@ Manual in-game checks are still required for:
 
 ## Performance profiling
 
-Profiling is optional. Current in-game performance is acceptable, so this
-section is a reference for a future regression rather than a required step.
-
 ESO does not expose per-add-on CPU time, so profile with elapsed-time checks
 inside the add-on. `GetFrameTimeMilliseconds()` is suitable for elapsed time,
 and `collectgarbage("count")` returns Lua memory in kilobytes.
 
-Use these measurements if a future performance regression is reported:
+Use these measurements before changing caching or lazy-loading:
 
 - **Load time:** temporarily record `GetFrameTimeMilliseconds()` before and
   after each initialization step in `KelaPadUI_OnLoaded()`, then log the
