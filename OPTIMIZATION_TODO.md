@@ -65,16 +65,16 @@ This file tracks deferred, higher-risk work. Keep it updated after each refactor
 - [x] Audited the copied confirmation dialogs against current core; retained core-owned narration/display handling and left guild-specific-item/display-error dialogs core-owned.
 - [x] Closed as out of scope: guild-specific-store purchases are not added to Kela buying history, and the core guild-specific dialog remains untouched.
 - [x] Re-tested trader tooltips and other-quality rows on 10/21/2026 with TTC-only, ATT-only, both providers, and neither provider; LibItemLink present and absent also passed.
-- [ ] Re-test ATT graphs, listing rows, and crafting-component rows after each ESO update.
+- [x] Validated ATT graphs, listing rows, and crafting-component rows on 10/21/2026.
 
 ## Tooltips and styles
 - [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
-- [ ] Verify the five active custom tooltip types and their remaining styles against new core styles after every game update.
-- [ ] Verify the shortened set-name format in item tooltips after the `SafeAddString` change.
+- [x] Validated the five active custom tooltip types and their remaining styles on 10/21/2026; recheck after future core style changes.
+- [x] Validated the shortened set-name format in item tooltips on 10/21/2026.
 - [x] Reviewed the `ZO_CRAFTING_TOOLTIP_STYLES` copy; core's crafting consumer reads that global directly, so the copy is required and now documented.
 
 ## Sets
-- [ ] Validate LibSets metadata and set-browser entries after set/DLC updates.
+- [x] Validated LibSets metadata and set-browser entries on 10/21/2026; recheck after future set/DLC updates.
 - [x] Added an audit check for the sets browser's LibSets API calls and API-version compatibility against the sibling LibSets add-on.
 
 ## Main menu

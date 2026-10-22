@@ -161,9 +161,9 @@ available yet, the update returns false and the setup retry handles it later.
 
 ## Testing checklist
 
-Validated on 2026-10-21: trader tooltips and other-quality rows with
-`LibItemLink` present and absent, plus TTC-only, ATT-only, both-provider, and
-no-provider setups.
+Validated on 2026-10-21: bank and trader tooltips, other-quality rows, ATT
+graphs, listing rows, and crafting-component rows with `LibItemLink` present
+and absent, plus TTC-only, ATT-only, both-provider, and no-provider setups.
 
 Test the same flows with TTC only, ATT only, both providers, and neither
 provider installed:
