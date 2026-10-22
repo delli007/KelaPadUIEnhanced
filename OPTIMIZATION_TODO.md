@@ -1,6 +1,12 @@
 # KelaPadUI Optimization Backlog
 
-This file tracks deferred, higher-risk work. Keep it updated after each refactor phase.
+This file tracks open and completed deferred work. Keep it updated after each refactor phase.
+
+## Open work
+
+- [ ] Split `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua` into focused modules for hooks, tooltip layouts, TTC/ATT data helpers, and dialog/history integration.
+- [ ] Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
+- [ ] Revalidate TTC-only, ATT-only, both-provider, and no-provider modes after the trading-house split or custom-control replacement.
 
 ## Completed in the dead-code cleanup
 - [x] Removed the four unused hardcoded set tables and dead Researching/Quick Access constants.

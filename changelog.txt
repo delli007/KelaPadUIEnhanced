@@ -1,5 +1,7 @@
 KelaPadUI changelog (newest first)
 
+10/22/2026 - Refreshed maintenance documentation, added `docs/DEVELOPMENT_NOTES.md` for future maintenance consistency, and added the trading-house file split and custom-control replacement to the future TODO list.
+
 10/22/2026 - Removed a dead trait-tooltip replacement block and the unused research compatibility shim, constants, strings, and write-only globals. No behavior change because the replacement was never assigned.
 
 10/22/2026 - Moved the trading-house modules under `kpui_features/tradinghouse`, removed the compatibility naming and `_updated` suffix, and updated the manifest/docs paths. No behavior change.

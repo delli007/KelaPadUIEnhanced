@@ -197,15 +197,17 @@ provider installed:
 
 ## Known deferred work
 
-See `OPTIMIZATION_TODO.md` for the trading-house backlog. The `KPUI_*` XML
-templates are bespoke gamepad tooltip layouts. `KPUI_Graph` no longer inherits an
-ATT template: it creates an ATT graph child at runtime only when ATT is present.
-The remaining work is to:
+See `OPTIMIZATION_TODO.md` for the open trading-house work: splitting the large
+gamepad module and replacing custom `KPUI_*` controls/XML with supported core
+hooks or templates where feasible. The `KPUI_*` XML templates are
+bespoke gamepad tooltip layouts. `KPUI_Graph` no longer inherits an ATT template:
+it creates an ATT graph child at runtime only when ATT is present. Ongoing
+maintenance also includes:
 
-- re-test all price, sales, category, and graph data after each ESO update;
-- keep the ATT graph child creation under review if ATT adds a supported
+- re-testing all price, sales, category, and graph data after each ESO update;
+- keeping the ATT graph child creation under review if ATT adds a supported
   extension point;
-- replace other core overrides only where a supported hook exists.
+- replacing other core overrides only where a supported hook exists.
 
 The old one-page search code was removed rather than repaired. If it is ever
 reintroduced, design it as an explicit opt-in feature with its own tested search

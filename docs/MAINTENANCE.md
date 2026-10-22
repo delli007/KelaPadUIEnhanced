@@ -2,7 +2,8 @@
 
 This guide describes the current add-on structure, load order, validation
 workflow, and the areas that are most likely to need attention after an ESO
-update.
+update. For the compact maintenance checklist and recurring pitfalls, see
+`docs/DEVELOPMENT_NOTES.md`.
 
 ## Runtime requirements
 
@@ -27,10 +28,10 @@ update.
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
 | `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
 | `kpui_lang/` | English strings; `en.lua` is the only locale file. |
-| `kpui_data/` | Static set/category data. |
-| `docs/` | Maintenance, settings, trading-house, and main-menu notes. |
+| `kpui_data/` | Trial data used by the chat tools. |
+| `docs/` | Maintenance, development, settings, trading-house, and main-menu notes. |
 | `_tools/audit_addon.py` | Static manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
-| `OPTIMIZATION_TODO.md` | Deferred refactors and known higher-risk work. |
+| `OPTIMIZATION_TODO.md` | Open refactors and completed cleanup history. |
 | `changelog.txt` | Release-facing change history. |
 
 ## Load order
@@ -223,7 +224,9 @@ Python, build, editor, and OS artifacts.
 
 ## Known deferred work
 
-`OPTIMIZATION_TODO.md` is the source of truth. The largest remaining areas are:
+`OPTIMIZATION_TODO.md` is the source of truth. The current open items are the
+trading-house file split and the replacement of custom controls with supported
+core hooks/templates where feasible. Ongoing maintenance also includes:
 
 - verifying tooltip overrides against new core styles after each ESO update;
 - validating LibSets metadata after set/DLC updates;
@@ -232,6 +235,8 @@ Python, build, editor, and OS artifacts.
 
 ## Documentation map
 
+- `docs/DEVELOPMENT_NOTES.md` - recurring conventions, validation matrix, and
+  pitfalls for future updates, additions, and fixes.
 - `docs/SETTINGS.md` - settings storage, IDs, and adding settings.
 - `docs/TRADING_HOUSE.md` - trading dependencies, modules, and history data.
 - `docs/main_menu_notes.md` - removed pause-menu notes feature and restoration
