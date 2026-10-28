@@ -125,6 +125,11 @@ archive, and pledge rows share one journal scan and clear after the daily reset.
   inventory actions prompt when PersonalAssistant is installed.
 - Enabled by default when PersonalAssistant is present.
 
+### PS5 button map
+
+- Replaces Xbox controller button icons with PlayStation 5 icons.
+- Off by default; the setting applies without a reload.
+
 ## Settings
 
 All settings live in the KelaPadUI section of the gamepad settings menu. They are
@@ -132,7 +137,7 @@ stored account-wide in `kpuiSavedVariables`.
 
 - Feature toggles for companion info, dungeon finder, chat tools, map rally,
   antiquity filters, antiquity lead details, main-menu quick access, the
-  dashboard, and PersonalAssistant junk marking.
+  dashboard, PersonalAssistant junk marking, and the PS5 button map.
 - Sets interface toggle.
 - Trading master toggle, ATT analysis period, and per-surface tooltip toggles for
   the guild store, bank, vendors, and crafting stations.

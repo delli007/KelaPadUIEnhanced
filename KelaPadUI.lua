@@ -115,6 +115,7 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 
 	-- Extra functions added
 	KelaSetupTooltips()
+	KelaSetupPS5ButtonMap()
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_COMPANION) then
 		KelaSetupCompanionInfo()
 	end

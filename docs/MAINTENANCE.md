@@ -85,6 +85,10 @@ The Features category contains reload-gated toggles:
 | Main-menu quick access | on |
 | Main-menu daily dashboard | on |
 | PersonalAssistant junk integration | on |
+| PS5 button map | off |
+
+The PS5 button map is the exception: it is not reload-gated, and its settings
+checkbox applies or reverses the texture redirects immediately.
 
 `KelaPadUI_OnLoaded()` checks these settings before calling the corresponding
 setup function. Changing a toggle therefore requires `/reload`; the setting

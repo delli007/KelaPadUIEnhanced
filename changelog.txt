@@ -1,6 +1,7 @@
 KelaPadUI changelog (newest first)
 
 10/28/2026
+- Added an optional PS5 button map setting, off by default, so controller hints can use PlayStation 5 icons without a reload.
 - The dashboard's Events section now lists additional active promotional campaigns alongside Golden Pursuit and Tamriel Tomes.
 - Campaigns are sorted by time remaining, and extra campaigns are shown as a +N count on the last row.
 - The Events section stays visible when only a promotional campaign is running.

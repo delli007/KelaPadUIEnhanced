@@ -66,9 +66,13 @@ The base setting type is `SETTING_TYPE_KELA = 7000`.
 | `7408` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS` | `true` |
 | `7409` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD` | `true` |
 | `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
+| `7411` | `KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS` | `false` |
 
-All Features toggles are reload-gated. Leaving the KelaPadUI options after
-changing one of them shows a "reload required" dialog
+All Features toggles except the PS5 button map are reload-gated. The PS5 button
+map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
+and the bootstrap also applies the saved value during `KelaPadUI_OnLoaded()`.
+Leaving the KelaPadUI options after changing a reload-gated toggle shows a
+"reload required" dialog
 (`KELA_OPTIONS_RELOAD_REQUIRED`) with Reload UI and Later, so the reload is
 requested only once the player is done with the options; the prompt is deferred
 off the scene-transition callstack. The PersonalAssistant junk toggle is on by

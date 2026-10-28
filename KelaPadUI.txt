@@ -54,6 +54,7 @@ kpui_features/kpui_companion.lua
 kpui_features/kpui_dungeon_finder.lua
 kpui_features/kpui_chat_tools.lua
 kpui_features/kpui_map_rally.lua
+kpui_features/kpui_controller_buttons.lua
 
 KelaPadUI.lua
 

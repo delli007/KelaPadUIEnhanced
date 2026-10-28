@@ -182,6 +182,8 @@ do
 	Add("KELA_SETTINGS_FEATURES_MAIN_MENU_DASHBOARD_TOOLTIP",	"Adds the KELAPAD dashboard next to the main menu with daily activities, events, character progression, and capacity.")
 	Add("KELA_SETTINGS_FEATURES_PA_JUNK",				"PersonalAssistant junk integration")
 	Add("KELA_SETTINGS_FEATURES_PA_JUNK_TOOLTIP",		"Adds mark/unmark as permanent junk actions to the gamepad inventory actions prompt when PersonalAssistant is installed.")
+	Add("KELA_SETTINGS_FEATURES_PS5_BUTTONS",			"PS5 button map")
+	Add("KELA_SETTINGS_FEATURES_PS5_BUTTONS_TOOLTIP",	"Replaces Xbox controller button icons with PlayStation 5 icons.")
 	Add("KELA_SETTINGSYSTEMPANEL7300",				"Item sets")
 	Add("KELA_SETTINGS_SETS_ENABLED",				"Sets interface")
 	Add("KELA_SETTINGS_SETS_ENABLED_TOOLTIP",		"Adds the KelaPadUI sets browser to the main menu. Turn this off to hide the Sets menu entry.")
