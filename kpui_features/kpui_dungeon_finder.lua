@@ -1,7 +1,7 @@
 -- KelaPadUI dungeon-finder and pledge enhancements.
 -- Extracted from KelaPadUI.lua; this is the retained working Undaunted/pledge functionality.
 
-local function GetGoalPledges()
+function GetGoalPledges()
 	local pledgeQuests = {}
 
 	for i = 1, MAX_JOURNAL_QUESTS do
@@ -19,7 +19,10 @@ local function GetGoalPledges()
 	return pledgeQuests
 end
 
-local function show_pledges()
+-- Today's pledge rotation for the dashboard: an ordered list of
+-- { giver, dungeon, status } where status is the player's current pledge state
+-- string (nil when the pledge is not in the journal).
+function KelaGetPledgeReport(skipJournalScan)
 	local DailyPledges={
 		[1]={	--Maj
 			name = "Maj",
@@ -98,29 +101,39 @@ local function show_pledges()
 	local pledgecyclestartday = 1509962399 -- 2017-11-06
 	local currentdaystart = GetTimeStamp() + GetTimeUntilNextDailyLoginRewardClaimS() - 86400
 	local day = math.floor(GetDiffBetweenTimeStamps(currentdaystart, pledgecyclestartday) / 86400)
-	local pledgeQuests=GetGoalPledges() -- Get active pledges
+	local pledgeQuests = skipJournalScan and {} or GetGoalPledges() -- Get active pledges
+	local report = {}
+
+	for npc=1,3 do
+		local dp = DailyPledges[npc]
+		local pledge = dp[1 + ((day + dp.shift) % #dp)].en
+		report[npc] = { giver = dp.name, dungeon = pledge, status = pledgeQuests[pledge] }
+	end
+
+	return report, pledgeQuests
+end
+
+-- /pledges chat output, unchanged.
+local function show_pledges()
+	local report, pledgeQuests = KelaGetPledgeReport()
 	local todaysPledges = {}
 
 	CHAT_SYSTEM:AddMessage("|cFFD700Today's Daily Pledges|r")
-	for npc=1,3 do
-		local dp = DailyPledges[npc]
-		local n = 1 + ((day + dp.shift) % #dp)
-		local pledge = dp[n].en
-		todaysPledges[pledge] = dp.name
-		CHAT_SYSTEM:AddMessage("|cAAAAAA  " .. dp.name .. ":|r |cFFFFFF" .. pledge .. "|r" .. (pledgeQuests[pledge] or ""))
+	for _, entry in ipairs(report) do
+		todaysPledges[entry.dungeon] = entry.giver
+		CHAT_SYSTEM:AddMessage("|cAAAAAA  " .. entry.giver .. ":|r |cFFFFFF" .. entry.dungeon .. "|r" .. (entry.status or ""))
 	end
 
 	local printedHeader = false
 	for key, value in pairs(pledgeQuests) do
 		if not todaysPledges[key] then
-			if not printedHeader then 
+			if not printedHeader then
 				CHAT_SYSTEM:AddMessage("|c66FF66Active Pledges not from Today|r")
 				printedHeader = true
 			end
 			CHAT_SYSTEM:AddMessage("|cFFFFFF  " .. key .. "|r" .. value)
 		end
 	end
-
 end
 
 

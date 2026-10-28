@@ -1,52 +1,97 @@
 KelaPadUI changelog (newest first)
 
-10/22/2026 - Renamed `OPTIMIZATION_TODO.md` to `TODO.md`, updated the `kpui_data` documentation for the merged trial/companion data, and added `docs/GAMEPAD_ENHANCEMENTS.md` with rated gamepad and addon-integration candidates. No behavior change.
+10/27/2026
+- Fixed dashboard value colors, including a refresh bug that dropped the color from rows returning text and color.
+- Pledge statuses, maxed character values, and capacity now use the intended blue, teal, green, orange, and red colors.
+- Random Dungeon and Battleground are green for both Ready and Complete.
+- Populated the dashboard on player activation so the first main-menu open already shows data.
+- Fixed the daily tracker wiping itself when the reset timer wobbled by one second.
+- Daily state now stores an absolute reset boundary that clears only after it has passed.
+- Reset boundaries are snapped to five minutes, and the reset time is learned from the first valid timer.
+- The writ, archive, and pledge rows share one clock reading and boundary per refresh.
 
-10/22/2026 - Refreshed maintenance documentation, added `docs/DEVELOPMENT_NOTES.md` for future maintenance consistency, and added the trading-house file split and custom-control replacement to the future TODO list.
+10/26/2026
+- Extended per-character daily tracking to Infinite Archive and Undaunted pledges.
+- All three daily rows now use one journal scan, with turn-ins recorded from quest removal.
+- The pledge total counts only completed pledges, and its sub-rows show Ready, Active, Turn In, or Complete.
+- Added a Daily reset countdown row and extra space before each dashboard section.
+- Random Dungeon and Battleground now show exactly Ready or Complete.
+- Renamed Daily undaunted to Undaunted Pledges.
+- Fixed the crafting-writ counter so it no longer counts the permanent completed-quest archive.
+- Writs now combine finished journal quests with per-character turn-ins for the current reset day.
 
-10/22/2026 - Removed a dead trait-tooltip replacement block and the unused research compatibility shim, constants, strings, and write-only globals. No behavior change because the replacement was never assigned.
+10/23/2026
+- Fixed the dashboard's daily rows and added the Undaunted pledges.
+- Daily writ and Infinite Archive counts now include handed-in quests instead of dropping to zero.
+- Random Dungeon and Battleground now use the reward cooldown APIs.
+- Added pledge sub-rows with giver, dungeon, and status, and added dashboard scrolling.
+- Added the main-menu Quick Access panel and the KELAPAD dashboard.
+- The dashboard fills once when the gamepad main menu is first opened instead of refreshing every five seconds.
+- Fixed dashboard layout, completion colors, and the Quick Access header error after in-game testing.
+- Removed dead trading confirmation-dialog hooks that broke Activity Finder dialog buttons.
+- Trading buy and listing history decoration remains inactive until it can be restored through a dialog-owned path.
+- Added a reload-required prompt for reload-gated settings.
+- PersonalAssistant junk marking now defaults on when installed and works in gamepad mode.
 
-10/22/2026 - Moved the trading-house modules under `kpui_features/tradinghouse`, removed the compatibility naming and `_updated` suffix, and updated the manifest/docs paths. No behavior change.
+10/22/2026
+- Fixed a Too many anchors processed warning after closing alchemy recipe and provisioning tooltips.
+- Added implementation notes and a controller-glyph migration plan to the gamepad enhancements document.
+- Renamed OPTIMIZATION_TODO.md to TODO.md and refreshed the maintenance and development documentation.
+- Removed a dead trait-tooltip replacement block and unused research compatibility code.
+- Moved the trading-house modules under kpui_features/tradinghouse.
 
-10/21/2026 - Trading-tooltip cleanup: fixed an accidental global in the deal-rating formatter, passed the hovered item link into purchase-history rendering so armor/weapon quality is evaluated correctly, and limited other-quality link construction to when that tooltip option is enabled.
+10/21/2026
+- Cleaned up trading tooltips, fixed an accidental global, and corrected purchase-history quality handling.
+- Fixed a Lua error when hovering armor, weapons, or glyphs in bank and trading-house tooltips.
+- Set-name tooltips now use SafeAddString instead of replacing the core string constant.
+- Updated the copied trading-house confirmation dialogs to match current core.
+- Removed unused constants and commented-out code, localized the known-item filter, and guarded optional libraries.
 
-10/21/2026 - Fixed a Lua error when hovering armor, weapons, or glyphs in bank and trading-house tooltips. The other-quality price rows now guard access to the optional LibItemLink library, and LibItemLink is declared in OptionalDependsOn so it loads before KelaPadUI when installed.
+10/20/2026
+- TTC and ATT now work independently, and missing-provider tooltip rows show N/A.
+- Trading-house confirmation dialogs now use core ZOS text and narration.
+- Tooltip overrides now change only properties that differ from core.
+- The audit now rejects TODO markers and unused templates and validates LibSets compatibility.
+- Removed unused constants, helpers, settings callbacks, tooltip types, templates, styles, and the empty Russian locale.
+- Changed the gamepad map rally keybind to QUINARY and fixed it to use GetMapType.
+- Fixed the trading-house known-item filter for combination-fragment collectibles.
+- Removed 47 dead localization strings and tightened the audit's string detection.
+- Companion rapport notifications now use a dedicated event namespace.
+- Flattened the settings list, added reload-gated feature toggles, and restored trading history, retention cleanup, guild statistics, and history icons.
+- Removed the nonfunctional one-page trading search.
+- Branded the KELAPADUI main-menu entry with a purple champion icon and text tint.
+- Added maintenance, settings, and trading-house documentation.
 
-10/21/2026 - Set-name tooltips now override the core format through SafeAddString instead of replacing the SI_ITEM_FORMAT_STR_SET_NAME constant, preserving the numeric string ID for other add-ons. The static audit now rejects direct assignments to SI_* constants.
+10/19/2026
+- Refactor phase 2 reorganized the code into kpui_core, kpui_features, kpui_data, and kpui_compat.
+- Made the main-menu entry append-only and completed the static manifest, syntax, and XML audit.
+- Removed retired panels and unused templates, and added the gamepad map-info rally-point keybind.
 
-10/21/2026 - Trading-house confirmation-dialog cleanup: the copied buy/sell/remove dialogs now match current core, the obsolete sell API argument was removed, and the documentation records narration and guild-specific-dialog coverage.
+10/18/2026
+- Refactor phase 1 removed retired features and split companion, dungeon-finder, chat, and trial-link code into feature modules.
+- Added a gamepad group-rally-point button and trimmed dead XML and settings.
+- Retired Russian text in favor of English and added developer notes and the deferred-work TODO list.
 
-10/21/2026 - Maintenance cleanup: fixed accidental globals in trading-tooltip and sets code, pruned unused constants, removed stale commented assignments, localized the known-item filter label, and stopped warning when optional LibCustomMenu is absent. ATT tooltip-extension access now falls back to a one-day window instead of erroring when the optional extension is missing, and optional MasterMerchant tooltip data is nil-guarded.
+04/15/2023
+- Added a guild store search filter for known and unknown items.
 
-10/20/2026 - TTC and ATT now work independently: either provider can enable trading, missing-provider tooltip rows show N/A, and ATT-only graph/guild features are hidden without ATT. The trading XML no longer requires ATT at load time.
+04/01/2023
+- Added companion rapport numbers, stages, and sources.
 
-10/20/2026 - Trading-house confirmation dialogs now use core ZOS text and narration; KelaPadUI only decorates the dialog data needed for buying and listing history.
+03/20/2023
+- Added /achievementsearch and /keyboardmap chat commands.
 
-10/20/2026 - Tooltip style cleanup: tooltip overrides now change only the properties that differ from core and inherit future core defaults; custom-only styles remain explicit. The static audit now also rejects TODO/FIXME markers and unused virtual templates, and validates LibSets API compatibility.
+07/15/2022
+- Fixed trading-house display and duplicate another-quality listings.
 
-10/20/2026 - Dead-code cleanup: removed unused set/research constants, utility helpers, settings callbacks, tooltip types/templates/styles, commented-out implementations, and the empty Russian locale; retained the active trading, tooltip, settings, sets, and map-rally features.
+06/20/2022
+- Added a Link in Chat option for achievements and other fixes.
 
-10/20/2026 - Changed the gamepad map rally keybind to QUINARY and made it available on the main map instead of only the map options panel.
+03/23/2022
+- Slimmed down the main-menu code and moved the KelaPadUI entry next to Options.
 
-10/20/2026 - Fixed the gamepad map rally keybind failing because it called the private ESOUI IsShowingCosmicMap helper instead of GetMapType().
+03/20/2022
+- Fixed a crash when selling grouped items whose individual cost exceeded 999.
 
-10/20/2026 - Fixed the trading-house known-item filter for combination-fragment collectibles.
-
-10/20/2026 - Removed 47 dead localization strings and tightened the static audit to recognize indirect KELA string references and dynamic string prefixes.
-
-10/20/2026 - Companion rapport notifications now use a dedicated event namespace; removed the unused companion event cleanup function.
-
-10/20/2026 - Maintenance pass: flattened KelaPadUI settings into one list with category headings and removed the category submenu; added reload-gated feature toggles with defaults and requirement tooltips; removed obsolete support/donation/message settings; restored trading buying/listing history, retention cleanup, guild statistics, and history icons; centralized the ATT analysis-period fallback and clamped it to 1-30 days; fixed the trading-house setup retry and listing-retention cleanup; removed the nonfunctional one-page trading search; branded the KELAPADUI main-menu entry with a purple champion icon and text tint; cleaned chat-tool registration and research guards; removed the dead crafting-panel file and retired pause-menu notes; added maintenance, settings, and trading-house documentation.
-
-10/19/2026 - Refactor phase 2: reorganized retained Lua/XML into kpui_core, kpui_features, kpui_data, and kpui_compat; made the main-menu entry append-only; removed the retired settings panels and unused settings XML; trimmed unused templates; translated all remaining Russian text to English; kept ru.lua as an English no-op; added the gamepad map-info rally-point keybind; and completed the static manifest/syntax/XML audit.
-
-10/18/2026 - Refactor phase 1: removed Quick Access, old Researching, old Undaunted scene, broken rally experiment, KelaPadUIBuyingData, and KelaPadUIListingData; split companion, dungeon-finder/pledge, chat, and trial-link code into feature modules; added a gamepad group-rally-point button in the map info screen; trimmed dead XML/settings/templates; retired Russian text in favor of English while keeping ru.lua; preserved commented debugging code and added DEBUG_NOTES.md; added OPTIMIZATION_TODO.md for deferred trading-house/tooltip work.
-
-07/15/2022 - Fixed Tradinghouse display and duplicate "another quality" listings
-06/20/2022 - Added a "Link in Chat" option for achievements and various other fixes and improvements
-03/23/2022 - Slimmed down the main menu code so it doesn't re-create the entire menu, only places KelapadUI in the existing menu. Also moved the menu placement next to the Options menu
-03/20/2022 - Fixed crash when trying to sell grouped items whose individual cost was over 999
-03/01/2022 - Fixed crashes on load
-03/20/2023 - Added 2 chat switches. "/achievementsearch [string]" will open the achievement window in keyboard layout and search for the string. "/keyboardmap" will open the map in keyboard layout to access map addon features that don't have gamepad support.
-04/01/2023 - Added additional companion information such as rapport numbers, stages, and sources of rapport
-04/15/2023 - Added a guild store search feature to filter by known or unknown items. This includes motifs, style pages, rune boxes, recipe's, and item sets.
+03/01/2022
+- Fixed crashes on load.

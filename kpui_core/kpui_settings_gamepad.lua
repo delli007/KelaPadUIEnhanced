@@ -22,6 +22,9 @@ KELA_SETTING_PANEL_FEATURES_CHAT_TOOLS 			= 7403
 KELA_SETTING_PANEL_FEATURES_MAP_RALLY 			= 7404
 KELA_SETTING_PANEL_FEATURES_ANTIQUITY_FILTERS 	= 7405
 KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS 	= 7406
+KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS = 7408
+KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD = 7409
+KELA_SETTING_PANEL_FEATURES_PA_JUNK = 7410
 -- TRADING
 KELA_SETTING_PANEL_TRADE 						= 7500 
 KELA_SETTING_PANEL_TRADE_ENABLED 				= 7501
@@ -72,6 +75,21 @@ KELA_SETTINGS_DATA =
             panel = KELA_SETTING_PANEL_FEATURES,
             system = SETTING_TYPE_KELA,
             settingId = KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS,
+        },
+        {
+            panel = KELA_SETTING_PANEL_FEATURES,
+            system = SETTING_TYPE_KELA,
+            settingId = KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS,
+        },
+        {
+            panel = KELA_SETTING_PANEL_FEATURES,
+            system = SETTING_TYPE_KELA,
+            settingId = KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD,
+        },
+        {
+            panel = KELA_SETTING_PANEL_FEATURES,
+            system = SETTING_TYPE_KELA,
+            settingId = KELA_SETTING_PANEL_FEATURES_PA_JUNK,
         },
     },
 	-- SETS
@@ -234,6 +252,36 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS,
 				text = KELA_SETTINGS_FEATURES_ANTIQUITY_LEADS,
 				tooltipText = KELA_SETTINGS_FEATURES_ANTIQUITY_LEADS_TOOLTIP,
+				requiresReload = true,
+			},
+			[KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_FEATURES,
+				settingId = KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS,
+				text = KELA_SETTINGS_FEATURES_MAIN_MENU_SHORTCUTS,
+				tooltipText = KELA_SETTINGS_FEATURES_MAIN_MENU_SHORTCUTS_TOOLTIP,
+				requiresReload = true,
+			},
+			[KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_FEATURES,
+				settingId = KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD,
+				text = KELA_SETTINGS_FEATURES_MAIN_MENU_DASHBOARD,
+				tooltipText = KELA_SETTINGS_FEATURES_MAIN_MENU_DASHBOARD_TOOLTIP,
+				requiresReload = true,
+			},
+			[KELA_SETTING_PANEL_FEATURES_PA_JUNK] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_FEATURES,
+				settingId = KELA_SETTING_PANEL_FEATURES_PA_JUNK,
+				text = KELA_SETTINGS_FEATURES_PA_JUNK,
+				tooltipText = KELA_SETTINGS_FEATURES_PA_JUNK_TOOLTIP,
 				requiresReload = true,
 			},
 		},
@@ -415,6 +463,9 @@ KELA_SETTINGS_DEFAULTS =
 		[KELA_SETTING_PANEL_FEATURES_MAP_RALLY] 		= "true",
 		[KELA_SETTING_PANEL_FEATURES_ANTIQUITY_FILTERS] = "true",
 		[KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS] 	= "true",
+		[KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS] = "true",
+		[KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD] = "true",
+		[KELA_SETTING_PANEL_FEATURES_PA_JUNK] 			= "true",
 		-- TRADING
 		[KELA_SETTING_PANEL_TRADE_ENABLED] 				= "true",
 		[KELA_SETTING_PANEL_TRADE_ATT_PERIOD] 			= "15",
@@ -492,6 +543,29 @@ local function SaveSettings (whatDo)
 		kpuiSVSettingsCurrent = KelaGetTableCopy(kpuiSavedVariables["settingsAccountWide"])
 	end
 end
+
+-- True when a setting that requires a reload differs from the saved value.
+-- Evaluated before the options scene saves, so leaving the options can prompt
+-- the player to reload the UI.
+local function KelaSettingsNeedReload()
+	for _, settings in pairs(kela_SettingsData) do
+		for _, setting in ipairs(settings) do
+			local panelData = kela_SettingsData[setting.panel]
+			local data = panelData and panelData[setting.system] and panelData[setting.system][setting.settingId]
+			if data and data.requiresReload then
+				local currentSystem = kpuiSVSettingsCurrent[data.system]
+				local savedSystem = kpuiSVSettingsSaved[data.system]
+				local currentValue = currentSystem and currentSystem[data.settingId]
+				local savedValue = savedSystem and savedSystem[data.settingId]
+				if currentValue ~= savedValue then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
+
 function KelaGetSetting(system, settingId)
 	local systemSettings = kpuiSVSettingsCurrent[system]
 	return systemSettings and systemSettings[settingId]
@@ -752,7 +826,13 @@ function Kela_GamepadOptions:InitializeScenes()
             self:SaveCachedSettings()
             ZO_SavePlayerConsoleProfile()
             SetCameraOptionsPreviewModeEnabled(false, CAMERA_OPTIONS_PREVIEW_NONE)
+            local reloadRequired = KelaSettingsNeedReload()
             SaveSettings(KELA_SAVE_CURRENT)
+            if reloadRequired then
+                -- Deferred so the prompt is never shown inside the scene
+                -- transition callstack.
+                zo_callLater(function() ZO_Dialogs_ShowPlatformDialog("KELA_OPTIONS_RELOAD_REQUIRED") end, 50)
+            end
         end
     end)
 end
@@ -1383,6 +1463,36 @@ function Kela_GamepadOptions:InitializeSaveReloadDialog()
 				text = SI_DIALOG_CANCEL,
 			},
 		},
+    })
+
+    ZO_Dialogs_RegisterCustomDialog("KELA_OPTIONS_RELOAD_REQUIRED",
+    {
+        gamepadInfo =
+        {
+            dialogType = GAMEPAD_DIALOGS.BASIC,
+        },
+        title =
+        {
+            text = KELA_OPTIONS_RELOAD_TITLE,
+        },
+        mainText =
+        {
+            text = KELA_OPTIONS_RELOAD_MESSAGE,
+        },
+        buttons =
+        {
+            [1] =
+            {
+                text = KELA_OPTIONS_RELOAD_NOW,
+                callback =  function(dialog)
+                                ReloadUI("ingame")
+                            end
+            },
+            [2] =
+            {
+                text = KELA_OPTIONS_RELOAD_LATER,
+            },
+        },
     })
 
 end

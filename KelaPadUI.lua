@@ -3,6 +3,11 @@ KelaPadUI = {
 	displayName = "|cFF00FF" .. "KelaPadUI interface for Gamepad UI" .. "|r",
 }
 
+-- Optional diagnostics channel.  LibDebugLogger writes to the saved variables
+-- file, which is the only way to read add-on output on a gamepad UI where chat
+-- text cannot be copied out.  Nil when the library is not installed.
+KelaPadUI.log = LibDebugLogger and LibDebugLogger:Create(KelaPadUI.name)
+
 local _initialized = false
 
 --KelaPadUI scenes
@@ -122,6 +127,15 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_MAP_RALLY) then
 		KelaSetupMapRally()
 	end
+	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS) then
+		KelaSetupMainMenuShortcuts()
+	end
+	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD) then
+		KelaSetupMainMenuDashboard()
+	end
+	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_PA_JUNK) then
+		KelaSetupPAJunk()
+	end
 
 	_initialized = true
 
@@ -136,4 +150,3 @@ end
 
 EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_ADD_ON_LOADED, KelaPadUI_OnLoaded)
 EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_GAMEPAD_PREFERRED_MODE_CHANGED, function(code, inGamepad)  OnGamepadPreferredModeChanged(EVENT_GAMEPAD_PREFERRED_MODE_CHANGED, KelaPadUI.name) end)
-

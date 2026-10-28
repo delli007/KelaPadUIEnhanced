@@ -63,8 +63,17 @@ The base setting type is `SETTING_TYPE_KELA = 7000`.
 | `7404` | `KELA_SETTING_PANEL_FEATURES_MAP_RALLY` | `true` |
 | `7405` | `KELA_SETTING_PANEL_FEATURES_ANTIQUITY_FILTERS` | `true` |
 | `7406` | `KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS` | `true` |
+| `7408` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS` | `true` |
+| `7409` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD` | `true` |
+| `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
 
-All Features toggles are reload-gated.
+All Features toggles are reload-gated. Leaving the KelaPadUI options after
+changing one of them shows a "reload required" dialog
+(`KELA_OPTIONS_RELOAD_REQUIRED`) with Reload UI and Later, so the reload is
+requested only once the player is done with the options; the prompt is deferred
+off the scene-transition callstack. The PersonalAssistant junk toggle is on by
+default and does nothing when PersonalAssistant is not installed or PA's custom
+junk rules are disabled.
 
 ### Trading Interface
 
@@ -88,7 +97,7 @@ All Features toggles are reload-gated.
 been removed. Do not reuse that ID.
 
 The old pause-menu notes feature used `7100`-`7104`; those IDs are also retired.
-See `docs/main_menu_notes.md` before considering a replacement.
+Do not reuse them.
 
 ## Screen structure
 

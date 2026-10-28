@@ -829,9 +829,9 @@ local function GetLeadSourceLines(source)
     end
 
     for line in source:gmatch("[^\r\n]+") do
-        line = line:gsub("^%s+", ""):gsub("%s+$", "")
-        if line ~= "" then
-            table.insert(lines, line)
+        local trimmed = line:gsub("^%s+", ""):gsub("%s+$", "")
+        if trimmed ~= "" then
+            table.insert(lines, trimmed)
         end
     end
 

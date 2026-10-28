@@ -82,11 +82,18 @@ The Features category contains reload-gated toggles:
 | Map rally point | on |
 | Antiquity filters | on |
 | Antiquity lead details | on |
+| Main-menu quick access | on |
+| Main-menu daily dashboard | on |
+| PersonalAssistant junk integration | on |
 
 `KelaPadUI_OnLoaded()` checks these settings before calling the corresponding
 setup function. Changing a toggle therefore requires `/reload`; the setting
-tooltip communicates this. Keep the feature-gating checks in the bootstrap when
-adding a new load-time feature, and add a matching default and string.
+tooltip communicates this, and leaving the options after a change shows a
+"reload required" dialog with Reload UI and Later. Keep the feature-gating
+checks in the bootstrap when adding a new load-time feature, and add a matching
+default and string. The PersonalAssistant junk toggle depends on the optional
+PersonalAssistant add-on; it is installed regardless of load order and checks PA
+availability per item.
 
 The Item sets toggle hides the Sets entry in the KelaPadUI main-menu submenu but
 does not remove the sets list from the add-on. The KELAPADUI main-menu entry
@@ -109,6 +116,32 @@ the core guild-selection dialog. The custom `KPUI_Graph` control does not inheri
 an ATT template, so the trading XML loads without ATT installed.
 
 See `docs/TRADING_HOUSE.md` for module details and test notes.
+
+The trading confirmation dialogs (`TRADING_HOUSE_CONFIRM_BUY_ITEM`,
+`TRADING_HOUSE_CONFIRM_SELL_ITEM`, `TRADING_HOUSE_CONFIRM_REMOVE_LISTING`,
+`TRADING_HOUSE_CHANGE_ACTIVE_GUILD`) are copies of the current core tables
+because their actions are C API calls that cannot be hooked for history
+updates. They must be kept in sync with
+`ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog`. Do not add global
+`ZO_Dialogs_ShowDialog` / `ZO_Dialogs_ShowGamepadDialog` hooks to decorate
+their data: an earlier version did that, and the decoration silently stopped
+working once the display pre-hook was removed. Decorate from a
+dialog-owned `setup` function instead.
+
+## Gamepad dialog callstack pitfall
+
+ESO marks a closure as untrusted based on where it was created (see the
+`ZO_Menu` pre-allocation comment in `zo_contextmenus.lua`). The gamepad
+dialog button-keybind descriptors
+(`g_keybindStripDescriptors` in `ZO_GenericDialog_Gamepad.lua`) are created
+lazily on the first dialog show and then reused by every later dialog. If the
+pool is grown while add-on code is on the callstack, the descriptor's
+`callback` closure is untrusted, and pressing a button on any later core
+dialog that calls a private function (for example `CancelTaskbarWindowFlash`
+when a ready check is accepted) fails with "Attempt to access a private
+function ... from insecure code". Verify a descriptor with
+`IsTrustedFunction(descriptor.callback)`, and prefer add-on scenes over
+`ZO_Dialogs_ShowGamepadDialog` for KelaPadUI-owned panels.
 
 ## Tooltip styles
 
@@ -160,6 +193,23 @@ Manual in-game checks are still required for:
   pieces;
 - verifying purchased listings disappear without duplicate or misaligned rows;
 - switching between gamepad and keyboard UI modes.
+
+## Diagnostics
+
+Chat text cannot be copied out of the gamepad UI, so diagnostics are logged
+through `LibDebugLogger` rather than `d()`:
+
+- `LibDebugLogger` is an optional dependency
+  (`## OptionalDependsOn: LibDebugLogger`). `KelaPadUI.log` is created at load and
+  is nil when the library is missing, so every call site must be nil-safe.
+- Entries are written to the LibDebugLogger saved variables in `SavedVariables`,
+  which can be read from disk. The default minimum level is Info;
+  `/debuglogger level debug` enables `:Debug` entries and `/debuglogger clear`
+  empties the buffer.
+- `/keladiag` is the built-in daily-quest dump: it logs every journal quest with
+  its type, repeat type and complete state, plus every daily quest the game
+  records as completed with its zone. Run it whenever a dashboard daily row looks
+  wrong.
 
 ## Performance profiling
 
@@ -226,8 +276,8 @@ Python, build, editor, and OS artifacts.
 
 `TODO.md` is the source of truth. The current open items are the trading-house
 file split and the replacement of custom controls with supported core
-hooks/templates where feasible. Rated enhancement candidates are in
-`docs/GAMEPAD_ENHANCEMENTS.md`. Ongoing maintenance also includes:
+hooks/templates where feasible. Rated enhancement candidates are in the
+`Candidate enhancements` section of `TODO.md`. Ongoing maintenance also includes:
 
 - verifying tooltip overrides against new core styles after each ESO update;
 - validating LibSets metadata after set/DLC updates;
@@ -238,8 +288,8 @@ hooks/templates where feasible. Rated enhancement candidates are in
 
 - `docs/DEVELOPMENT_NOTES.md` - recurring conventions, validation matrix, and
   pitfalls for future updates, additions, and fixes.
-- `docs/GAMEPAD_ENHANCEMENTS.md` - researched gamepad features and addon
-  integrations with usefulness/difficulty ratings.
+- `TODO.md` - the `Candidate enhancements` table rates researched gamepad
+  features and addon integrations with usefulness/difficulty.
 - `docs/SETTINGS.md` - settings storage, IDs, and adding settings.
 - `docs/TRADING_HOUSE.md` - trading dependencies, modules, and history data.
 - `docs/main_menu_notes.md` - removed pause-menu notes feature and restoration

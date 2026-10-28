@@ -3,9 +3,9 @@
 
 Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text,
 removed references, commented debug lines, TODO markers, direct SI constant
-assignments, optional library dependencies, unused virtual templates, and
-LibSets API compatibility. This is a build/development helper only; ESO does
-not load it.
+assignments, optional library dependencies, unused virtual templates, LibSets
+API compatibility, and add-on hooks on protected dialog show functions.
+This is a build/development helper only; ESO does not load it.
 """
 
 import re
@@ -47,6 +47,20 @@ LIBRARY_GLOBAL_ADDONS = {
 }
 LIBSETS_USE = re.compile(r"\bLibSets\.([A-Za-z_]\w*)")
 LIBSETS_GLOBAL_USE = re.compile(r"\b(LIBSETS_[A-Z0-9_]+)\b")
+# Core functions that build the pooled gamepad dialog keybind descriptors.
+# Hooking them (even with the Secure variants) creates those closures from an
+# add-on callstack, which ESO marks as untrusted for the rest of the session.
+# Pressing a button on any later core dialog that calls a private function then
+# fails ("Attempt to access a private function ... from insecure code"), for
+# example CancelTaskbarWindowFlash when accepting a ready check.
+DIALOG_HOOK_TARGETS = (
+    "ZO_Dialogs_ShowDialog",
+    "ZO_Dialogs_ShowGamepadDialog",
+    "ZO_Dialogs_ShowPlatformDialog",
+    "ZO_Dialogs_ButtonKeybindPressed",
+    "ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog",
+)
+HOOK_CALLS = ("ZO_PreHook", "ZO_PostHook", "SecurePreHook", "SecurePostHook")
 KELA_STRING = re.compile(r"\b(KELA_[A-Z0-9_]+)\b")
 LOCALIZATION_USE = re.compile(
     r"(?:GetString\(\s*[\"']?|(?:text|tooltipText|header|name|stringId)\s*=\s*[\"']?)(KELA_[A-Z0-9_]+)"
@@ -156,6 +170,23 @@ def check_library_dependencies():
                         global_name, path.relative_to(ROOT), addon_name
                     )
                 )
+    return errors
+
+
+def check_dialog_hooks():
+    errors = []
+    for path in iter_files({".lua"}):
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            if not any(re.search(r"\b" + re.escape(hook) + r"\s*\(", line) for hook in HOOK_CALLS):
+                continue
+            for target in DIALOG_HOOK_TARGETS:
+                if re.search(r"(?<![A-Za-z0-9_])" + re.escape(target) + r"(?![A-Za-z0-9_])", line):
+                    errors.append(
+                        "DIALOG HOOK: {}:{}: {} must not be hooked; decorate from a dialog-owned "
+                        "setup function instead (see docs/DEVELOPMENT_NOTES.md)".format(
+                            path.relative_to(ROOT), line_number, target
+                        )
+                    )
     return errors
 
 
@@ -344,6 +375,8 @@ def main():
     errors.extend(check_todo_markers())
     errors.extend(check_si_global_assignments())
     errors.extend(check_library_dependencies())
+    dialog_hook_errors = check_dialog_hooks()
+    errors.extend(dialog_hook_errors)
     unused_virtual, virtual_count = virtual_template_report()
     for name, path in unused_virtual:
         errors.append("UNUSED VIRTUAL: {}: {}".format(path, name))
@@ -354,6 +387,10 @@ def main():
     print("Lua files checked:", lua_count)
     print("XML files checked:", xml_count)
     print("Virtual templates checked:", virtual_count)
+    if dialog_hook_errors:
+        print("Dialog hook guard: {} violation(s)".format(len(dialog_hook_errors)))
+    else:
+        print("Dialog hook guard: clean ({} protected functions)".format(len(DIALOG_HOOK_TARGETS)))
     if libsets_info["available"]:
         print(
             "LibSets version: {} (API {})".format(

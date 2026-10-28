@@ -44,17 +44,36 @@ templates at load time.
 
 ## Main modules
 
-### `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua`
+### Trading-house modules
 
-- Replaces or hooks the gamepad trading-house search-result filtering.
-- Adds the known-item filter and price-effect/deal rating.
-- Adds TTC/ATT-enhanced tooltips in the guild store, bank, vendors, and crafting
+The former `kpui_tradinghouse_gamepad.lua` is split into five load-ordered
+modules. `KelaPadUI.txt` loads them in this order after the trading history:
+
+- `kpui_tradinghouse_shared.lua` - shared colors, state, item-link and tooltip
+  cleanup helpers. The helpers stay file-local and are exposed through the
+  `KPUI_TRADINGHOUSE` table for the other modules.
+- `kpui_tradinghouse_hooks.lua` - `KelaSetupCraftingStation()` and
+  `KelaSetupTradingHouse()`, including the copied confirmation dialogs and
+  history writes.
+- `kpui_tradinghouse_tooltips.lua` - the `ZO_Tooltip:Layout*` replacements for
+  enchanting, alchemy, provisioning, smithing creation, smithing, and general
+  trading tooltips.
+- `kpui_tradinghouse_data.lua` - TTC/ATT price, sales, deal-rating, and guild
+  information helpers.
+- `kpui_tradinghouse_controls.lua` - the custom `KPUI_*` control initialization
+  functions used by `kpui_tradinghouse_gamepad.xml`.
+
+Together these modules:
+
+- Replace or hook the gamepad trading-house search-result filtering.
+- Add the known-item filter and price-effect/deal rating.
+- Add TTC/ATT-enhanced tooltips in the guild store, bank, vendors, and crafting
   stations.
-- Adds ATT statistics, guild statistics, listing rows, quality rows, production
+- Add ATT statistics, guild statistics, listing rows, quality rows, production
   rows, and crafting-component rows to tooltips.
-- Tracks buying, listing, and removal history through the copied confirmation
+- Track buying, listing, and removal history through the copied confirmation
   dialogs; core dialog text and narration remain ZOS-owned.
-- Restores normal paginated search behavior; the old one-page search experiment
+- Restore normal paginated search behavior; the old one-page search experiment
   was removed.
 
 #### Confirmation dialogs
@@ -73,6 +92,14 @@ handling stay intact. Core's `TRADING_HOUSE_CONFIRM_BUY_GUILD_SPECIFIC_ITEM` and
 purchases are not added to Kela buying history. This is intentional: the core
 guild-specific item data has no item unique ID to key a history row.
 
+No dialog hooks are installed for these dialogs. The confirmation data that the
+history callbacks need (`uniqueId`, `itemName`, `pricePerUnit`,
+`displayQuality`, `timeRemaining`) is not provided by core, so buying history is
+currently inactive until that decoration is restored from a dialog-owned
+`setup` function. Do not reintroduce a global `ZO_Dialogs_ShowDialog` /
+`ZO_Dialogs_ShowGamepadDialog` hook for it; see the dialog callstack pitfall in
+`docs/MAINTENANCE.md`.
+
 ### `kpui_features/tradinghouse/kpui_trading_history.lua`
 
 - Owns `kpuiSavedVariables.buyingData` and `kpuiSavedVariables.listingData`.
@@ -86,6 +113,16 @@ guild-specific item data has no item unique ID to key a history row.
 Adds the same price and component data to crafting-station tooltips when the
 trading master setting is enabled and at least one provider is available. ATT
 crafting-component rows require ATT.
+
+The custom tooltip controls are reset when the embedded creation scene hides.
+Provisioner recipe mode is embedded in the alchemy Recipes view through
+`GAMEPAD_PROVISIONER_CREATION_SCENE`, so the root provisioner scene is not a
+reliable cleanup point. `RefreshRecipeDetails(nil)` is the teardown path and
+must not re-anchor the ingredients bar or result tooltip. Smithing creation
+uses `GAMEPAD_SMITHING_CREATION_SCENE` for the same cleanup.
+
+CraftStore is not part of this path: its provisioning code only adjusts the
+keyboard `ZO_ProvisionerTopLevel*` controls, not the gamepad provisioner hooks.
 
 ## Settings
 
@@ -180,6 +217,9 @@ provider installed:
 - Check a sold and a recalled listing when ATT data is available.
 - Open the bank, a vendor, a crafting station, and the guild store and confirm
   the enabled tooltip sections appear.
+- Repeatedly open and close alchemy Recipes and a normal cooking station, then
+  check `interface.log`/`LibDebugLogger` for new `Too many anchors processed`
+  warnings.
 - Hover an armor, weapon, or glyph in the bank and guild store and confirm the
   other-quality rows appear without a Lua error when LibItemLink is installed;
   confirm they are skipped cleanly when it is absent.

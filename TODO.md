@@ -1,116 +1,37 @@
 # KelaPadUI TODO
 
-This file tracks open and completed deferred work. Keep it updated after each refactor phase. Candidate gamepad enhancements and addon integrations are rated in `docs/GAMEPAD_ENHANCEMENTS.md`.
+This file tracks open and deferred work. Keep it updated after each refactor phase. When an item is completed, call it out in `changelog.txt` and remove it from this list. Rated candidate enhancements and addon integrations live in the section at the end of this file.
 
 ## Open work
 
-- [ ] Review `docs/GAMEPAD_ENHANCEMENTS.md` and promote accepted candidates into focused tasks.
-- [ ] Split `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.lua` into focused modules for hooks, tooltip layouts, TTC/ATT data helpers, and dialog/history integration.
 - [ ] Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
-- [ ] Revalidate TTC-only, ATT-only, both-provider, and no-provider modes after the trading-house split or custom-control replacement.
 
-## Completed in the dead-code cleanup
-- [x] Removed the four unused hardcoded set tables and dead Researching/Quick Access constants.
-- [x] Removed dead `kpui_utils.lua` helpers and fixed accidental globals.
-- [x] Pruned unused custom tooltip types, methods, XML controls/templates, and status-label UI; kept the five active tooltip types.
-- [x] Removed 65 unused or core-identical tooltip styles and the commented style archive; kept active overrides.
-- [x] Removed dead settings callbacks, the unused `GetATTPriceAndStatus` helper, and commented-out implementations.
-- [x] Removed the empty `ru.lua`, the stale implementation/debug archives, and the commented-code archive.
-- [x] Re-ran the audit with zero undefined or unused KELA strings.
-- [x] Added audit checks for TODO/FIXME markers and unused virtual templates.
-- [x] Consolidated 121 tooltip style overrides so they now change only differing properties and inherit the rest from core.
+## Candidate enhancements (rated)
 
-## Completed in the current maintenance pass
-- [x] Fixed settings navigation and removed obsolete support/donation/message settings.
-- [x] Added selected-setting information, defaults, apply behavior, and requirement text.
-- [x] Added the Features category and six reload-gated feature toggles.
-- [x] Flattened all settings categories into one list with category headings; removed the category submenu and panel scene.
-- [x] Restored buying/listing history, retention cleanup, guild statistics, category mapping, and history icons.
-- [x] Centralized the ATT analysis-period default and clamped it to 1-30 days.
-- [x] Fixed the recursive trading-house setup retry and the listing-retention deletion bug.
-- [x] Cleaned chat-tool command/context-menu registration and guarded missing research data.
-- [x] Removed the dead `kpui_features/kpui_crafting_panel_tips.lua` file.
-- [x] Removed the nonfunctional one-page trading search setting (`7503`) and its hooks.
-- [x] Fixed the known-item filter for combination-fragment collectibles in trading results.
-- [x] Fixed the gamepad map rally keybind's cosmic-map check, moved it to QUINARY, and exposed it on the main map.
-- [x] Branded the KELAPADUI main-menu entry with a champion icon and purple text/icon tint.
-- [x] Removed the retired pause-menu travel-notes feature; documented restoration notes.
-- [x] Added `docs/MAINTENANCE.md`, `docs/SETTINGS.md`, and `docs/TRADING_HOUSE.md`.
-- [x] Removed 47 dead KELA localization strings and tightened the audit's dynamic/unused detection.
-- [x] Aligned the copied buy/sell/remove confirmation dialogs with current core and removed the obsolete sell API argument.
-- [x] Fixed remaining accidental globals in trading-tooltip and sets code; removed stale commented assignments.
-- [x] Pruned unused `kpuiConst` fields with no remaining callers.
-- [x] Removed the optional `LibCustomMenu` absence warning and localized the trading known-item filter label.
-- [x] Guarded ATT tooltip-extension access with a one-day fallback when the optional extension is absent.
-- [x] Guarded optional MasterMerchant tooltip data access.
-- [x] Replaced the direct `SI_ITEM_FORMAT_STR_SET_NAME` assignment with a `SafeAddString` override; verify set-name tooltips in game.
-- [x] Added an audit check that rejects direct assignments to `SI_*` constants.
-- [x] Guarded the optional `LibItemLink` quality-link path, declared the library in `OptionalDependsOn`, and added an audit check for undeclared library globals.
-- [x] Removed the remaining accidental trading-tooltip global and passed the item link into purchase-history rendering.
-- [x] Deferred other-quality link construction until the quality tooltip option is enabled.
-- [x] Moved the trading-house modules under `kpui_features/tradinghouse/` and removed the compatibility naming.
-- [x] Removed the unused trait-tooltip replacement block, `KELA_RESEARCH_COMPAT`, `kpuiSVCharData`, and the research-only constants/tables/strings.
-- [x] Removed unused `kpuiFunctions`, write-only `KELA_TRADINGHOUSE_CURRENTSCENE`, and unused set enum keys.
+Research snapshot: October 2026. Re-check ESOUI pages and addon status after an ESO update before starting work. Use/Difficulty are the ratings from the original research (5 is best for Usefulness, 1 is lowest risk for Difficulty). Paths are relative to the add-on root. New runtime modules must be added to `KelaPadUI.txt` and, when gated, initialized from `KelaPadUI.lua`; new settings go in `kpui_core/kpui_settings_gamepad.lua` and `docs/SETTINGS.md`; new user-facing text goes in `kpui_lang/en.lua`; optional libraries go in `OptionalDependsOn` and must be guarded.
 
-## Completed in the initial cleanup
-- [x] Removed Quick Access, old Researching, old Undaunted scene, and the broken rally-point experiment.
-- [x] Removed `KelaPadUIBuyingData` and `KelaPadUIListingData`.
-- [x] Split companion, dungeon-finder/pledge, chat, and trial-link code out of `KelaPadUI.lua`.
-- [x] Added a gamepad group-rally-point control in the map info screen.
-- [x] Trimmed dead settings/templates/sets XML controls.
-- [x] Retired Russian localization text; English is the single source of strings.
-- [x] Removed preserved commented code and the debug archive during the dead-code cleanup.
-- [x] Reorganized retained modules into `kpui_core/`, `kpui_features/`, and `kpui_data/`; trading-house modules now live under `kpui_features/tradinghouse/`.
-- [x] Made the KelaPadUI main-menu entry append-only (no re-indexing of core entries).
-- [x] Removed the retired settings panels and unused settings XML/templates.
-- [x] Added the gamepad map-info rally-point keybind.
-- [x] Completed the static audit (manifest, Lua syntax, XML, Cyrillic, removed references).
+Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and retired IDs `7503` and `7100`-`7104`; keep the KELAPADUI main-menu entry append-only; do not add guild-specific purchases to Kela buying history; no lazy loading, profiling or caching work; `LibSets` stays required and `LibItemLink` optional/guarded.
 
-## Trading house (deferred, higher risk)
-- [x] Reviewed the trading-house XML: the `KPUI_*` templates are bespoke tooltip controls, not copied core XML; `KPUI_Graph` now creates an ATT graph child at runtime only when ATT is available.
-- [x] Made TTC and ATT independent: either provider can enable trading, missing-provider tooltip values show `N/A`, ATT-only graph/guild sections are skipped without ATT, and the trading XML no longer inherits an ATT template at load time.
-- [x] Reviewed the graph/list/quality/production/crafting controls: they are custom layouts, so replacing them with core hooks would add risk without removing duplicated core code.
-- [x] Replaced the `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog` override with pre/post hooks; core text and narration now stay intact.
-- [x] Audited the deprecated `quality` fields; retained because core and third-party data still expose `quality`/`displayQuality` variants.
-- [x] Audited the copied confirmation dialogs against current core; retained core-owned narration/display handling and left guild-specific-item/display-error dialogs core-owned.
-- [x] Closed as out of scope: guild-specific-store purchases are not added to Kela buying history, and the core guild-specific dialog remains untouched.
-- [x] Re-tested trader tooltips and other-quality rows on 10/21/2026 with TTC-only, ATT-only, both providers, and neither provider; LibItemLink present and absent also passed.
-- [x] Validated ATT graphs, listing rows, and crafting-component rows on 10/21/2026.
+Already implemented, do not duplicate: enhanced gamepad item/trading tooltips, set browser, antiquities filters and leads, trading history and TTC/ATT price rows, companion rapport, dungeon-finder pledges and `/pledges`, chat commands/achievement links/player context menu, gamepad map rally point, main-menu quick shortcuts, the KELAPAD dashboard, and PersonalAssistant permanent-junk marking.
 
-## Tooltips and styles
-- [x] Replaced the full `ZO_TOOLTIP_STYLES` copies with `KelaOverrideTooltipStyle`, which applies only differing properties and preserves four intentional omissions.
-- [x] Validated the five active custom tooltip types and their remaining styles on 10/21/2026; recheck after future core style changes.
-- [x] Validated the shortened set-name format in item tooltips on 10/21/2026.
-- [x] Reviewed the `ZO_CRAFTING_TOOLTIP_STYLES` copy; core's crafting consumer reads that global directly, so the copy is required and now documented.
+| # | Candidate | Use | Diff | Primary files | Scope |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Gamepad narration and accessibility | 4 | 2 | `kpui_core/kpui_tooltip_gamepad.lua/.xml`; `kpui_features/sets/`; `kpui_features/antiquities/`; `kpui_features/tradinghouse/` | Add narration text and a predictable selection order to the custom controls, reusing core narration helpers. |
+| 2 | Gamepad chat and social quick actions | 4 | 2 | `kpui_features/kpui_chat_tools.lua`; `kpui_lang/en.lua` | Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional. |
+| 3 | Research and trait knowledge | 5 | 3 | `kpui_features/kpui_research.lua` (new); `kpui_features/kpui_info_tooltip.lua` | Normalize an optional LibTraitResearch/Character Knowledge/TraitBuddy provider into tooltips. No Kela research database. |
+| 4 | Gamepad inventory badges | 5 | 3 | `kpui_features/kpui_inventory_badges.lua` (new); `kpui_core/kpui_settings_gamepad.lua` | Post-hook the gamepad inventory row setup for junk, price, set, research, ornate and intricate badges. |
+| 5 | Additional price providers | 5 | 3 | `kpui_features/tradinghouse/kpui_price_providers.lua` (new); `kpui_features/tradinghouse/*` | Add optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels. |
+| 6 | Trading listing assistant | 4 | 3 | `kpui_features/tradinghouse/kpui_listing_assistant.lua` (new) | Extend the listing price/profit path with sales velocity, undercut warnings and stack suggestions. |
+| 7 | Map intel panel | 4 | 3 | `kpui_features/kpui_map_intel.lua` (new); `kpui_features/kpui_main_menu_shortcuts.lua` | Read-only zone summary for surveys, treasure maps, antiquities and points of interest. |
+| 8 | Build and gear quick-swap | 4 | 3 | `kpui_features/kpui_build_switcher.lua` (new) | Main-menu entry for core Armory or a supported Bandits Gear Manager callback; start read-only. |
+| 9 | Crafting and writ helper | 4 | 4 | `kpui_features/kpui_crafting_helper.lua` (new) | Gamepad writ/crafting scene requirements, craftability and a turn-in checklist. No automation. |
+| 10 | Guild trader kiosk intel | 4 | 4 | `kpui_features/kpui_kiosk_intel.lua` (new) | Read-only guild names and item availability at kiosks; no bid automation. |
+| 11 | Group and combat integration | 4 | 4 | `kpui_features/kpui_group_combat.lua` (new) | Optional read-only ultimate-ready, role and combat-alert indicators via HodorReflexes/CrutchAlerts/CombatMetrics. |
+| 12 | Companion gear and loadout | 3 | 3 | `kpui_features/kpui_companion.lua`; `kpui_features/kpui_companion_gear.lua` (new) | Extend the companion overview with gear comparison and quick-swap; keep rapport behavior. |
+| 13 | Controller glyphs | 3 | 2 | `kpui_core/kpui_controller_glyphs.lua` (new); `kpui_data/kpui_controller_glyph_data.lua` (new); `kpui_core/kpui_constants.lua`; `kpui_core/kpui_settings_gamepad.lua` | Replace the two hardcoded Xbox icon paths with a resolver plus a reload-gated Xbox/PS5/Steam/Switch selection. |
+| 14 | Fishing and maintenance QoL | 3 | 2 | `kpui_features/kpui_fishing_qol.lua` (new) | Optional fishing bite/reel feedback and auto-repair/auto-charge toggles. Avoid duplicating GamePadHelper. |
+| 15 | Guild roster and social tools | 3 | 3 | `kpui_features/kpui_guild_roster.lua` (new); `kpui_features/kpui_chat_tools.lua` | Post-hook the gamepad guild roster for sorting and filters, then reuse the social callbacks. |
+| 16 | Housing tools | 2 | 4 | `kpui_features/kpui_housing.lua` (new) | Optional housing shortcut or furnishing search, only if requested; guard any Essential Housing Tools API. |
+| 17 | Localization (DE/FR/RU) | 3 | 3 | `kpui_lang/*.lua`; `KelaPadUI.txt` | Separate from glyphs: new locale files, manifest entries and translated strings. |
 
-## Sets
-- [x] Validated LibSets metadata and set-browser entries on 10/21/2026; recheck after future set/DLC updates.
-- [x] Added an audit check for the sets browser's LibSets API calls and API-version compatibility against the sibling LibSets add-on.
-
-## Main menu
-- [x] Keep the append-only `ZO_MENU_ENTRIES` entry; no supported ZOS gamepad menu-extension API is expected.
-- [x] Keep the KelaPadUI Settings submenu; placement is accepted.
-
-## XML
-- [x] Audit the remaining virtual templates; all 27 are referenced.
-- [x] Reviewed XML consolidation: kept the module-scoped settings, template, tooltip, sets, and trading XML files because merging them would not reduce maintenance and could change load order.
-- [x] Retained `kpui_sets_list_gamepad.xml`, the custom tooltip XML, and `kpui_features/tradinghouse/kpui_tradinghouse_gamepad.xml` because their replacements are not yet tested.
-
-## Constants and helper functions
-- [x] Re-audited `kpuiConst` and pruned fields with no remaining callers; re-check after future feature changes.
-- [x] Converted the internal `KelaGetLocalTimeShift` helper to a local; remaining helpers have cross-file callers.
-- [x] Confirmed that no writer populated the research data, then removed the unused `KELA_RESEARCH_COMPAT` shim and its dependent code.
-
-## Settings UI
-- [x] Disabled sliders already follow core's `ZO_GamepadMenuEntryTemplate_GetLabelColor` path; no separate palette is needed.
-- [x] Reviewed `RefreshVisible`: no configured sliders or horizontal lists currently have dependent controls; apply it when such a dependency is added.
-
-## API / dependencies
-- [x] Verify and update `## APIVersion` for the current live client (`101051`).
-- [x] Re-check `LibSets` API compatibility and required version (`0.9.4`, API `101051`/`101052`).
-- [x] Reviewed compatibility shims for API `101051`: no obsolete shims remain; the remaining trading-house custom controls are tracked as future work. Recheck after future game updates.
-- [x] Kept `LibCustomMenu` optional and removed the absence warning from the player-activation path.
-
-## Localization / comments
-- [x] Keep English as the single source of strings in `kpui_lang/en.lua`; the audit enforces zero undefined or unused KELA strings.
-- [x] Removed the remaining stale commented-out assignments; keep explanatory comments only.
+Controller glyphs (#13) notes: the local `PS5Buttons` add-on (`..\PS5Buttons`, author Fyro, API `101044`) is not a runtime dependency and should not become one. It contains only 249 `RedirectTexture` calls mapping core Xbox paths to core PS5 paths (240 unique), with no DDS files to copy. Add a `KELA_GLYPH_*` resolver in `kpui_core/kpui_controller_glyphs.lua` plus the Xbox-to-PS5 redirect table in `kpui_data/kpui_controller_glyph_data.lua`, use the resolver for the two `kpuiConst.stringDDS` trading-header lookups, and apply the selected family's redirect once at load with a reload-gated setting. The PS5 paths are ESOUI assets that must exist in the live client; Steam and Switch paths are not in `PS5Buttons` and need new or permission-cleared textures (do not copy unlicensed DDS). Validate the Xbox default, each family after a reload, missing-texture fallbacks, and the PS5Buttons-disabled case.
