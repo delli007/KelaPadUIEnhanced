@@ -1,5 +1,11 @@
 KelaPadUI changelog (newest first)
 
+10/28/2026
+- The dashboard's Events section now lists additional active promotional campaigns alongside Golden Pursuit and Tamriel Tomes.
+- Campaigns are sorted by time remaining, and extra campaigns are shown as a +N count on the last row.
+- The Events section stays visible when only a promotional campaign is running.
+- Removed the empty Announcements block, because the client no longer publishes that data to add-ons.
+
 10/27/2026
 - Fixed dashboard value colors, including a refresh bug that dropped the color from rows returning text and color.
 - Pledge statuses, maxed character values, and capacity now use the intended blue, teal, green, orange, and red colors.
