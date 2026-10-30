@@ -1,5 +1,9 @@
 KelaPadUI changelog (newest first)
 
+10/30/2026
+- Fixed the guild trader resetting to a previously selected guild after listing an item when ATT is installed.
+- Guild selection now persists through the saved guild store id, and the custom guild dialog matches core narration and alliance icon helpers.
+
 10/28/2026
 - Added an optional PS5 button map setting, off by default, so controller hints can use PlayStation 5 icons without a reload.
 - The dashboard's Events section now lists additional active promotional campaigns alongside Golden Pursuit and Tamriel Tomes.

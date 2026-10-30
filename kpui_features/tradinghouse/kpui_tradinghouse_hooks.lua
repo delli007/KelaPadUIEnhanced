@@ -1215,6 +1215,9 @@ function KelaSetupTradingHouse()
 			control.statusIndicator:Show()
 		end
 	end
+	local function GetGuildSelectionNarrationText(entryData, entryControl)
+		return ZO_FormatRadioButtonNarrationText(entryData.text, entryData.isCurrentGuild)
+	end
 	local function SetupGuildSelectionDialog(dialog)
 		local currentGuildId = GetSelectedTradingHouseGuildId()
 		dialog.info.parametricList = {}
@@ -1223,7 +1226,7 @@ function KelaSetupTradingHouse()
 			local guildId = GetGuildId(i)
 			local guildName = GetGuildName(guildId)
 			local allianceId = GetGuildAlliance(guildId)
-			local icon = GetLargeAllianceSymbolIcon(allianceId)
+			local icon = ZO_GetLargeAllianceSymbolIcon(allianceId)
 			local listItem = 
 			{
 				template = "ZO_GamepadSubMenuEntryWithStatusTemplate",
@@ -1234,7 +1237,8 @@ function KelaSetupTradingHouse()
 					 allianceId = allianceId,
 					 fontScaleOnSelection = false,
 					 setup = SetupTradingHouseGuildItem,
-					 isCurrentGuild = guildId == currentGuildId
+					 isCurrentGuild = guildId == currentGuildId,
+					 narrationText = GetGuildSelectionNarrationText,
 				},
 				icon = icon,
 				text = guildName,
@@ -1332,10 +1336,11 @@ function KelaSetupTradingHouse()
 					if IsKPUITradingHouseSettingEnabled() then
 						if data.guildId then
 							dialog.info.blockDialogReleaseOnPress = false
-							local currentGuildId = GetSelectedTradingHouseGuildId()
-							if data.guildId ~= currentGuildId then
-								SelectTradingHouseGuildId(data.guildId)
-							end
+							-- Route through the selector manager so the choice is persisted.
+							-- Calling SelectTradingHouseGuildId directly changes the active guild
+							-- only until the trading-house scene is shown again, which resets it
+							-- from the saved guild id.
+							ZO_GUILD_SELECTOR_MANAGER:SetSelectedGuildStoreId(data.guildId)
 							KelaPadUI.selector.control:SetHidden(true)
 							zo_callLater(KelaUpdateTradingHouseTooltip, 150)
 						else
@@ -1349,9 +1354,9 @@ function KelaSetupTradingHouse()
 							end					
 						end
 					else
-					   if data.guildId then
-						   SelectTradingHouseGuildId(data.guildId)
-					   end					
+						if data.guildId then
+							ZO_GUILD_SELECTOR_MANAGER:SetSelectedGuildStoreId(data.guildId)
+						end
 					end
 				end
 			},

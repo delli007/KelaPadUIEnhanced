@@ -534,7 +534,7 @@ function ZO_Tooltip:LayoutTradingTooltip(currentScene, itemLink, selectedData, t
 			guildName = GetGuildName(currentGuildId)
 			if currentGuildId and guildName ~= "" then
 				local allianceId = GetGuildAlliance(currentGuildId)
-				local icon = GetLargeAllianceSymbolIcon(allianceId)				
+				local icon = ZO_GetLargeAllianceSymbolIcon(allianceId)
 				local guildColor = colors.COLOR_WHITE
 				if ArkadiusTradeTools ~= nil then
 					guildColor = ArkadiusTradeTools:GetGuildColor(guildName)
