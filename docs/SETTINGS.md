@@ -79,6 +79,14 @@ off the scene-transition callstack. The PersonalAssistant junk toggle is on by
 default and does nothing when PersonalAssistant is not installed or PA's custom
 junk rules are disabled.
 
+The Companion information toggle (`7401`) also gates the extra details in the
+gamepad Collections > Allies > Companions tooltip
+(`kpui_features/kpui_companion_collections.lua`). That module stores build
+snapshots account-wide in `kpuiSavedVariables.companionSnapshots.builds` and
+rapport snapshots per character in
+`kpuiSavedVariables.companionSnapshots.rapport[characterId]`; it adds no
+separate setting.
+
 ### Trading Interface
 
 | ID | Constant | Default |

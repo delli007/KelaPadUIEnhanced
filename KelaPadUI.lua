@@ -118,6 +118,7 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	KelaSetupPS5ButtonMap()
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_COMPANION) then
 		KelaSetupCompanionInfo()
+		KelaSetupCompanionCollections()
 	end
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_DUNGEON_FINDER) then
 		KelaSetupDungeonFinder()

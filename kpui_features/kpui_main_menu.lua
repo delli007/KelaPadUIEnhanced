@@ -4,14 +4,14 @@ local KELAPADUI_ENTRIES = {
 }
 
 local KELAPADUI_TEXT_COLOR = "|cC64CFF"
-local KELAPADUI_ICON_COLOR = ZO_ColorDef:New("C64CFF")
+--local KELAPADUI_ICON_COLOR = ZO_ColorDef:New("C64CFF")
 
 local KELAPADUI_MENU_ENTRY_DATA =
 {
     customTemplate = "ZO_GamepadMenuEntryTemplateWithArrow",
     name = KELAPADUI_TEXT_COLOR .. GetString(KELA_MAINMENU_TITLE) .. "|r",
     icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_champion.dds",
-    iconColor = KELAPADUI_ICON_COLOR,
+    --iconColor = KELAPADUI_ICON_COLOR,
     subMenu =
     {
         [KELAPADUI_ENTRIES.SETS] =
@@ -33,7 +33,8 @@ local KELAPADUI_MENU_ENTRY_DATA =
     }
 }
 
-local function CreateEntry(data)
+-- Shared with kpui_main_menu_shortcuts.lua for the Quick Access submenu entries.
+function KelaCreateMainMenuEntry(data)
     local name = data.name
     if type(name) == "function" then
         name = "" --will be updated whenever the list is generated
@@ -58,13 +59,13 @@ local function CreateEntry(data)
 end
 
 -- Create the Kela Menu
-local kelaEntry = CreateEntry(KELAPADUI_MENU_ENTRY_DATA)
+local kelaEntry = KelaCreateMainMenuEntry(KELAPADUI_MENU_ENTRY_DATA)
 
 -- Add the Sub Menu
 if KELAPADUI_MENU_ENTRY_DATA.subMenu then
     kelaEntry.subMenu = {}
     for submenuEntryId, subMenuData in ipairs(KELAPADUI_MENU_ENTRY_DATA.subMenu) do
-        local newSubMenuEntry = CreateEntry(subMenuData)
+        local newSubMenuEntry = KelaCreateMainMenuEntry(subMenuData)
         newSubMenuEntry.id = submenuEntryId
         table.insert(kelaEntry.subMenu, newSubMenuEntry)
     end

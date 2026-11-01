@@ -1,8 +1,24 @@
 KelaPadUI changelog (newest first)
 
+10/31/2026
+- Fixed the companion details not appearing in the gamepad Collections > Allies > Companions tooltip.
+- Added a Companions entry to the Quick Access submenu that opens the Companions collection page.
+- Companion details now use the same body text size and color as the base Collections info, with a blank line before each titled block.
+- Rapport now shows the level, current and maximum values, percentage, and tier in one line.
+- The passive perk now includes its description and appears before the level.
+- Gear rows now include armor weight and trait alongside the quality-colored name.
+- Slotted skills and the ultimate are still recorded but hidden from the tooltip.
+- Fixed the duel/ready-check "CancelTaskbarWindowFlash from insecure code" error by keeping Quick Access out of the shared core gamepad-dialog keybind pool.
+- Moved Quick Access into the built-in gamepad main menu submenu, so it uses the standard Select and Back keybinds and closes with the menu when prompts appear.
+- Removed the redundant Quick Access row from the main-menu list; the Options keybind opens the submenu directly.
+- Fixed Quick Access section headers overlapping the previous row.
+
 10/30/2026
 - Fixed the guild trader resetting to a previously selected guild after listing an item when ATT is installed.
 - Guild selection now persists through the saved guild store id, and the custom guild dialog matches core narration and alliance icon helpers.
+- Added companion level and XP, rapport tier, passive perk, slotted skills plus ultimate, and equipped gear to the gamepad Collections > Allies > Companions tooltip.
+- Companion builds are recorded while the companion is summoned and shared account-wide; rapport is recorded per character.
+- Cached rows are labeled as recorded while summoned, and missing data is left blank instead of being invented.
 
 10/28/2026
 - Added an optional PS5 button map setting, off by default, so controller hints can use PlayStation 5 icons without a reload.

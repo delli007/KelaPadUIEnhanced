@@ -6,23 +6,19 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 - [ ] Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
 
-## Candidate enhancements (rated)
+## Candidate enhancements
 
-Research snapshot: October 2026. Re-check ESOUI pages and addon status after an ESO update before starting work. Use/Difficulty are the ratings from the original research (5 is best for Usefulness, 1 is lowest risk for Difficulty). Paths are relative to the add-on root. New runtime modules must be added to `KelaPadUI.txt` and, when gated, initialized from `KelaPadUI.lua`; new settings go in `kpui_core/kpui_settings_gamepad.lua` and `docs/SETTINGS.md`; new user-facing text goes in `kpui_lang/en.lua`; optional libraries go in `OptionalDependsOn` and must be guarded.
+New runtime modules must be added to `KelaPadUI.txt` and, when gated, initialized from `KelaPadUI.lua`; new settings go in `kpui_core/kpui_settings_gamepad.lua` and `docs/SETTINGS.md`; new user-facing text goes in `kpui_lang/en.lua`; optional libraries go in `OptionalDependsOn` and must be guarded.
 
-Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and retired IDs `7503` and `7100`-`7104`; keep the KELAPADUI main-menu entry append-only; do not add guild-specific purchases to Kela buying history; no lazy loading, profiling or caching work; `LibSets` stays required and `LibItemLink` optional/guarded.
+Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and retired IDs `7503` and `7100`-`7104`; keep the KELAPADUI main-menu entry append-only; avoid xml styling in favor of dynamically initialized visual elements; avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
 
-Already implemented, do not duplicate: enhanced gamepad item/trading tooltips, set browser, antiquities filters and leads, trading history and TTC/ATT price rows, companion rapport, dungeon-finder pledges and `/pledges`, chat commands/achievement links/player context menu, gamepad map rally point, main-menu quick shortcuts, the KELAPAD dashboard, and PersonalAssistant permanent-junk marking.
+- Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional.
+- Reintroduce a Research and trait knowledge submenu under the kelapadui main menu entry that reads from `craftstore` and/or `libcharacterknowledge`
+- Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
+- Additional Filters and sorting for gamepad menus: Achievements, Guild Roster
+- Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
 
-| # | Candidate | Use | Diff | Primary files | Scope |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Controller glyphs | 3 | 2 | `kpui_core/kpui_controller_glyphs.lua` (new); `kpui_data/kpui_controller_glyph_data.lua` (new); `kpui_core/kpui_constants.lua`; `kpui_core/kpui_settings_gamepad.lua` | Replace the two hardcoded Xbox icon paths with a resolver plus a reload-gated Xbox/PS5/Steam/Switch selection. |
-| 2 | Gamepad chat and social quick actions | 4 | 2 | `kpui_features/kpui_chat_tools.lua`; `kpui_lang/en.lua` | Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional. |
-| 3 | Research and trait knowledge | 5 | 3 | `kpui_features/kpui_research.lua` (new); `kpui_features/kpui_info_tooltip.lua` | Normalize an optional LibTraitResearch/Character Knowledge/TraitBuddy provider into tooltips. No Kela research database. |
-| 4 | Gamepad inventory badges | 5 | 3 | `kpui_features/kpui_inventory_badges.lua` (new); `kpui_core/kpui_settings_gamepad.lua` | Post-hook the gamepad inventory row setup for junk, price, set, research, ornate and intricate badges. |
-| 5 | Additional price providers | 5 | 3 | `kpui_features/tradinghouse/kpui_price_providers.lua` (new); `kpui_features/tradinghouse/*` | Add optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels. |
-| 6 | Trading listing assistant | 4 | 3 | `kpui_features/tradinghouse/kpui_listing_assistant.lua` (new) | Extend the listing price/profit path with sales velocity, undercut warnings and stack suggestions. |
-| 7 | Guild roster and social tools | 3 | 3 | `kpui_features/kpui_guild_roster.lua` (new); `kpui_features/kpui_chat_tools.lua` | Post-hook the gamepad guild roster for sorting and filters, then reuse the social callbacks. |
-| 8 | Localization (DE/FR/RU) | 3 | 3 | `kpui_lang/*.lua`; `KelaPadUI.txt` | new locale files, manifest entries and translated strings. |
 
-Controller glyphs (#13) notes: the local `PS5Buttons` add-on (`..\PS5Buttons`, author Fyro, API `101044`) is not a runtime dependency and should not become one. It contains only 249 `RedirectTexture` calls mapping core Xbox paths to core PS5 paths (240 unique), with no DDS files to copy. Add a `KELA_GLYPH_*` resolver in `kpui_core/kpui_controller_glyphs.lua` plus the Xbox-to-PS5 redirect table in `kpui_data/kpui_controller_glyph_data.lua`, use the resolver for the two `kpuiConst.stringDDS` trading-header lookups, and apply the selected family's redirect once at load with a reload-gated setting. The PS5 paths are ESOUI assets that must exist in the live client; Steam and Switch paths are not in `PS5Buttons` and need new or permission-cleared textures (do not copy unlicensed DDS). Validate the Xbox default, each family after a reload, missing-texture fallbacks, and the PS5Buttons-disabled case.
+## Already implemented: Do not duplicate
+
+enhanced gamepad item/trading tooltips, set browser, antiquities filters and leads, trading history and TTC/ATT price rows, companion rapport, companion Collections tooltip details (perk and description, level and XP, rapport progress and tier, equipped gear with weight and trait; skills tracked but hidden), dungeon-finder pledges and `/pledges`, chat commands/achievement links/player context menu, gamepad map rally point, main-menu quick shortcuts, the KELAPAD dashboard, and PersonalAssistant permanent-junk marking.

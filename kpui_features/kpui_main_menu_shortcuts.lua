@@ -1,18 +1,18 @@
 -- KelaPadUI main-menu quick access
--- Opened with the tertiary (triangle) keybind on the gamepad main menu.
+-- The tertiary (Options/triangle) keybind on the menu root opens a Quick Access
+-- submenu built from the gamepad main menu's own sublist. No main-menu row is added.
 
-local KELA_QUICK_ACCESS_DIALOG = "KELA_QUICK_ACCESS_DIALOG"
-local KELA_QUICK_ACCESS_SETTING = KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS
+local QUICK_ACCESS_SETTING = KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS
+local QUICK_ACCESS_HEADER_PADDING = GAMEPAD_HEADER_DEFAULT_PADDING or 80
 
-local registered = false
 local keybindAdded = false
+local submenuCallbackRegistered = false
+local quickAccessEntry = nil
+local quickAccessSubMenu = nil
+local showQuickAccessOnSubmenuShow = false
 
 local function IsQuickAccessEnabled()
-    return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_QUICK_ACCESS_SETTING)
-end
-
-local function IsGamepadDialogAvailable()
-    return ZO_Dialogs_RegisterCustomDialog ~= nil and ZO_Dialogs_ShowGamepadDialog ~= nil
+    return KelaGetSetting_Bool(SETTING_TYPE_KELA, QUICK_ACCESS_SETTING)
 end
 
 local function ShowGroupFinder()
@@ -79,6 +79,39 @@ local function ShowStickerBook()
     end
 end
 
+local function FindCompanionCollectibleId()
+    local companionId = GetActiveCompanionDefId()
+    if companionId and companionId ~= 0 then
+        local collectibleId = GetCompanionCollectibleId(companionId)
+        if collectibleId and collectibleId ~= 0 then
+            return collectibleId
+        end
+    end
+
+    -- No companion is summoned, so use any companion collectible to land on the
+    -- Allies > Companions page.
+    for _, collectibleData in ipairs(ZO_COLLECTIBLE_DATA_MANAGER:GetAllCollectibleDataObjects()) do
+        if collectibleData:GetCategoryType() == COLLECTIBLE_CATEGORY_TYPE_COMPANION then
+            return collectibleData:GetId()
+        end
+    end
+
+    return nil
+end
+
+local function ShowCompanions()
+    if not GAMEPAD_COLLECTIONS_BOOK then
+        return
+    end
+
+    -- BrowseToCollectible opens the Collections book directly on the companion's
+    -- category and selects its entry.
+    local collectibleId = FindCompanionCollectibleId()
+    if collectibleId then
+        GAMEPAD_COLLECTIONS_BOOK:BrowseToCollectible(collectibleId)
+    end
+end
+
 local function TravelToPrimaryHouse()
     if not GetHousingPrimaryHouse or not RequestJumpToHouse then
         return
@@ -135,6 +168,10 @@ local function IsStickerBookAvailable()
     return SCENE_MANAGER ~= nil
 end
 
+local function IsCompanionsAvailable()
+    return GAMEPAD_COLLECTIONS_BOOK ~= nil and ZO_COLLECTIBLE_DATA_MANAGER ~= nil
+end
+
 local function IsPrimaryHouseAvailable()
     if not GetHousingPrimaryHouse then
         return false
@@ -143,83 +180,72 @@ local function IsPrimaryHouseAvailable()
     return houseId ~= nil and houseId ~= 0
 end
 
--- The first entry of each group carries the section header text, using the
--- parametric list dialog's built-in header support.
+-- The first entry of each group carries the section header text.
+-- Search Icon: EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_activityFinder.dds
 local QUICK_ACCESS_ENTRIES =
 {
-    { label = KELA_SHORTCUT_GROUP_FINDER, action = ShowGroupFinder, enabled = IsGroupFinderAvailable, header = KELA_SHORTCUT_HEADER_ACTIVITIES },
-    { label = KELA_SHORTCUT_DUNGEON_FINDER, action = ShowDungeonFinder, enabled = IsDungeonFinderAvailable },
-    { label = KELA_SHORTCUT_BATTLEGROUNDS, action = ShowBattlegroundFinder, enabled = IsBattlegroundFinderAvailable },
-    { label = KELA_SHORTCUT_TOME_CHALLENGES, action = ShowTomeChallenges, enabled = IsTomeChallengesAvailable },
-    { label = KELA_SHORTCUT_GROUP, action = ShowGroupList, enabled = IsGroupAvailable, header = KELA_SHORTCUT_HEADER_SHORTCUTS },
-    { label = KELA_SHORTCUT_MAIL, action = ShowMail, enabled = IsMailAvailable },
-    { label = KELA_SHORTCUT_SCRYABLE_ANTIQUITIES, action = ShowScryableAntiquities, enabled = IsScryableAntiquitiesAvailable },
-    { label = KELA_SHORTCUT_STICKER_BOOK, action = ShowStickerBook, enabled = IsStickerBookAvailable },
-    { label = KELA_SHORTCUT_PRIMARY_HOUSE, action = TravelToPrimaryHouse, enabled = IsPrimaryHouseAvailable, header = KELA_SHORTCUT_HEADER_ACTIONS },
+    { label = KELA_SHORTCUT_GROUP_FINDER, icon = "EsoUI/Art/LFG/Gamepad/LFG_menuIcon_groupFinder.dds", action = ShowGroupFinder, enabled = IsGroupFinderAvailable, header = KELA_SHORTCUT_HEADER_ACTIVITIES },
+    { label = KELA_SHORTCUT_DUNGEON_FINDER, icon = "EsoUI/Art/LFG/Gamepad/gp_LFG_menuIcon_Dungeon.dds", action = ShowDungeonFinder, enabled = IsDungeonFinderAvailable },
+    { label = KELA_SHORTCUT_BATTLEGROUNDS, icon = "EsoUI/Art/LFG/Gamepad/LFG_menuIcon_battlegrounds.dds", action = ShowBattlegroundFinder, enabled = IsBattlegroundFinderAvailable },
+    { label = KELA_SHORTCUT_TOME_CHALLENGES, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_tamrielTomes.dds", action = ShowTomeChallenges, enabled = IsTomeChallengesAvailable },
+    { label = KELA_SHORTCUT_GROUP, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_groups.dds", action = ShowGroupList, enabled = IsGroupAvailable, header = KELA_SHORTCUT_HEADER_SHORTCUTS },
+    { label = KELA_SHORTCUT_MAIL, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_mail.dds", action = ShowMail, enabled = IsMailAvailable },
+    { label = KELA_SHORTCUT_SCRYABLE_ANTIQUITIES, icon = "EsoUI/Art/Journal/Gamepad/GP_journal_tabIcon_antiquities.dds", action = ShowScryableAntiquities, enabled = IsScryableAntiquitiesAvailable },
+    { label = KELA_SHORTCUT_STICKER_BOOK, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_itemSetCollections.dds", action = ShowStickerBook, enabled = IsStickerBookAvailable },
+    { label = KELA_SHORTCUT_COMPANIONS, icon = "EsoUI/Art/Companion/Gamepad/gp_companion_icon_overview.dds", action = ShowCompanions, enabled = IsCompanionsAvailable },
+    { label = KELA_SHORTCUT_PRIMARY_HOUSE, icon = "EsoUI/Art/Collections/PrimaryHouse.dds", action = TravelToPrimaryHouse, enabled = IsPrimaryHouseAvailable, header = KELA_SHORTCUT_HEADER_ACTIONS },
 }
 
-local function BuildParametricList()
-    local list = {}
-    for _, entry in ipairs(QUICK_ACCESS_ENTRIES) do
-        table.insert(list,
-        {
-            template = "ZO_GamepadMenuEntryTemplate",
-            header = entry.header and GetString(entry.header) or nil,
-            templateData =
-            {
-                text = GetString(entry.label),
-                setup = ZO_SharedGamepadEntry_OnSetup,
-                enabled = entry.enabled,
-                callback = entry.action,
-            },
-        })
-    end
-    return list
-end
-
-local function RegisterQuickAccessDialog()
-    if registered then
+local function BuildQuickAccessSubmenu()
+    if quickAccessEntry then
         return
     end
-    registered = true
 
-    ZO_Dialogs_RegisterCustomDialog(KELA_QUICK_ACCESS_DIALOG,
+    local subMenu = {}
+    for index, quickEntry in ipairs(QUICK_ACCESS_ENTRIES) do
+        local nextEntry = QUICK_ACCESS_ENTRIES[index + 1]
+        local data =
+        {
+            name = GetString(quickEntry.label),
+            icon = quickEntry.icon,
+            header = quickEntry.header and GetString(quickEntry.header) or nil,
+            quickAccess = true,
+            shouldDisableFunction = function()
+                return not quickEntry.enabled()
+            end,
+            activatedCallback = quickEntry.action,
+        }
+
+        if nextEntry and nextEntry.header then
+            -- The main menu passes postPadding = 0 for every entry, which also
+            -- suppresses the automatic header padding. Reserve the header space
+            -- ourselves so the next section title does not overlap this line.
+            data.postPadding = QUICK_ACCESS_HEADER_PADDING
+        end
+
+        local entry = KelaCreateMainMenuEntry(data)
+        entry:SetEnabled(quickEntry.enabled())
+        entry.id = index
+        subMenu[index] = entry
+    end
+
+    quickAccessSubMenu = subMenu
+    quickAccessEntry =
     {
-        gamepadInfo =
-        {
-            dialogType = GAMEPAD_DIALOGS.PARAMETRIC,
-        },
-        setup = function(dialog)
-            dialog.info.parametricList = BuildParametricList()
-            dialog:setupFunc()
-        end,
-        title =
-        {
-            text = KELA_SHORTCUT_TITLE,
-        },
-        blockDialogReleaseOnPress = true,
-        buttons =
-        {
-            {
-                keybind = "DIALOG_PRIMARY",
-                text = SI_GAMEPAD_SELECT_OPTION,
-                callback = function(dialog)
-                    local data = dialog.entryList:GetTargetData()
-                    if data and data.callback and data:IsEnabled() then
-                        data.callback()
-                    end
-                    ZO_Dialogs_ReleaseDialogOnButtonPress(KELA_QUICK_ACCESS_DIALOG)
-                end,
-            },
-            {
-                keybind = "DIALOG_NEGATIVE",
-                text = SI_DIALOG_CANCEL,
-                callback = function()
-                    ZO_Dialogs_ReleaseDialogOnButtonPress(KELA_QUICK_ACCESS_DIALOG)
-                end,
-            },
-        },
-    })
+        data = { subMenu = subMenu },
+        subMenu = subMenu,
+    }
+end
+
+-- The menu entry does not live in ZO_MENU_ENTRIES; the Options keybind builds
+-- and shows its sublist directly.
+local function RefreshQuickAccessEntryStates()
+    for index, quickEntry in ipairs(QUICK_ACCESS_ENTRIES) do
+        local entry = quickAccessSubMenu and quickAccessSubMenu[index]
+        if entry then
+            entry:SetEnabled(quickEntry.enabled())
+        end
+    end
 end
 
 local function IsMainMenuRootShowing()
@@ -228,6 +254,72 @@ local function IsMainMenuRootShowing()
         return manager:GetCurrentList() == manager.mainList
     end
     return true
+end
+
+local function ApplyQuickAccessSubmenu()
+    local manager = MAIN_MENU_GAMEPAD
+    if not quickAccessEntry or not manager then
+        return
+    end
+    if not manager.RefreshSubList or not manager.SetCurrentList or not manager.subList then
+        return
+    end
+
+    manager:RefreshSubList(quickAccessEntry)
+    if manager:GetCurrentList() ~= manager.subList then
+        manager:SetCurrentList(manager.subList)
+    end
+end
+
+local function IsQuickAccessSubmenuShowing()
+    local manager = MAIN_MENU_GAMEPAD
+    local targetData = manager and manager.subList and manager.subList.GetTargetData and manager.subList:GetTargetData()
+    return targetData ~= nil and targetData.data ~= nil and targetData.data.quickAccess == true
+end
+
+local function OnPlayerSubmenuStateChange(_, newState)
+    if newState == SCENE_SHOWING then
+        if showQuickAccessOnSubmenuShow then
+            -- Run after the main menu's own callback has built the sublist for
+            -- whichever main-list entry was selected.
+            ApplyQuickAccessSubmenu()
+        end
+    elseif newState == SCENE_SHOWN then
+        if showQuickAccessOnSubmenuShow then
+            showQuickAccessOnSubmenuShow = false
+            -- Safety net if the main menu rebuilds its submenu after our callback.
+            if not IsQuickAccessSubmenuShowing() then
+                ApplyQuickAccessSubmenu()
+            end
+        end
+    elseif newState == SCENE_HIDING then
+        showQuickAccessOnSubmenuShow = false
+    end
+end
+
+local function ShowQuickAccessSubmenu()
+    local manager = MAIN_MENU_GAMEPAD
+    if not quickAccessEntry or not manager then
+        return
+    end
+    if not IsMainMenuRootShowing() then
+        return
+    end
+
+    RefreshQuickAccessEntryStates()
+
+    -- The main menu builds its sublist when the playerSubmenu scene is shown,
+    -- so flag the override and let the scene callback replace that sublist.
+    showQuickAccessOnSubmenuShow = true
+    SCENE_MANAGER:Push("playerSubmenu")
+end
+
+local function RegisterSubmenuCallback()
+    if submenuCallbackRegistered or not PLAYER_SUBMENU_SCENE then
+        return
+    end
+    submenuCallbackRegistered = true
+    PLAYER_SUBMENU_SCENE:RegisterCallback("StateChange", OnPlayerSubmenuStateChange)
 end
 
 local function AddQuickAccessKeybind()
@@ -241,9 +333,7 @@ local function AddQuickAccessKeybind()
     {
         name = GetString(KELA_SHORTCUT_TITLE),
         keybind = "UI_SHORTCUT_TERTIARY",
-        callback = function()
-            ZO_Dialogs_ShowGamepadDialog(KELA_QUICK_ACCESS_DIALOG)
-        end,
+        callback = ShowQuickAccessSubmenu,
         visible = function()
             -- Add-ons run on PC, where the console voice-chat shortcut is not shown.
             if not IsQuickAccessEnabled() then
@@ -262,10 +352,11 @@ function KelaSetupMainMenuShortcuts()
         return
     end
 
-    if not IsGamepadDialogAvailable() then
+    if not KelaCreateMainMenuEntry or not PLAYER_SUBMENU_SCENE then
         return
     end
 
-    RegisterQuickAccessDialog()
+    BuildQuickAccessSubmenu()
+    RegisterSubmenuCallback()
     AddQuickAccessKeybind()
 end

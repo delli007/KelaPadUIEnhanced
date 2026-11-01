@@ -72,6 +72,15 @@ Minion and ESOUI installations use the same folder layout.
 - Shows companion level, rapport, and active-companion details when talking to a
   companion.
 - Adds rapport stages and sources to the companion tooltip.
+- Adds the passive perk and its description, level and XP, rapport progress and
+  tier, and equipped gear with weight and trait to the gamepad
+  Collections > Allies > Companions tooltip, so off-duty companions can be
+  inspected.
+- Slotted skills and the ultimate are recorded with the build but are not
+  displayed for now.
+- Companion builds are recorded while the companion is summoned and shared by
+  all characters; rapport is recorded per character. Missing data is never
+  invented, and cached rows are labeled as recorded while summoned.
 
 ### Dungeon finder and pledges
 
@@ -96,10 +105,11 @@ Minion and ESOUI installations use the same folder layout.
 
 ### Main-menu quick access
 
-- Adds a KelaPadUI quick-access panel to the gamepad main menu.
-- Opens with the Options (tertiary) button.
-- Shortcuts to the group finder, Mail, antiquities, the Sticker Book, and your
-  primary house.
+- Adds a Quick Access submenu to the gamepad main menu, opened with the Options
+  (tertiary) button. It uses the menu's built-in Select and Back keybinds and
+  adds no main-menu row.
+- Shortcuts to the group finder, Mail, antiquities, the Sticker Book, the
+  Companions collection page, and your primary house.
 
 ### KELAPAD dashboard
 

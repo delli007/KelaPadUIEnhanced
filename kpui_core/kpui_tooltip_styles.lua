@@ -383,6 +383,18 @@ function kelaTotalRedefineStyles ()
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
     })
 
+    -- Extra companion details in the Collections tooltip. Match the body text
+    -- used by the base Collections info section (27px light font, off-white).
+    ZO_TOOLTIP_STYLES.companionCollectionsSection = {
+        width = KELA_TOOLTIPS_CONTENT_WIDTH,
+        childSpacing = 10,
+        customSpacing = 25,
+        fontSize = KELA_TOOLTIPS_FONT_MEDIUM,
+        fontFace = "$(GAMEPAD_LIGHT_FONT)",
+        fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
+        fontColorField = GAMEPAD_TOOLTIP_COLOR_GENERAL_COLOR_3,
+    }
+
     KelaOverrideTooltipStyle("collectionsEmoteGranted", {
         fontColorType = INTERFACE_COLOR_TYPE_GAMEPAD_TOOLTIP,
     })

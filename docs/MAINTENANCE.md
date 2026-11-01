@@ -103,6 +103,16 @@ The Item sets toggle hides the Sets entry in the KelaPadUI main-menu submenu but
 does not remove the sets list from the add-on. The KELAPADUI main-menu entry
 itself is always visible so the user cannot lock themselves out of settings.
 
+Companion information covers both `kpui_features/kpui_companion.lua` (companion
+menu details and rapport notifications) and
+`kpui_features/kpui_companion_collections.lua` (extra rows in the gamepad
+Collections companion tooltip). The Collections module post-hooks
+`GAMEPAD_COLLECTIONS_BOOK.RefreshStandardTooltip` and records build and rapport
+snapshots, because the game only exposes live level, skills, and gear for the
+summoned companion. Companion builds are account-wide; rapport is stored per
+character. Skills and the ultimate are captured but not rendered. Neither part
+registers a setting of its own.
+
 ## Trading features
 
 The trading stack is initialized when at least one of TTC or ATT is present and
@@ -147,6 +157,12 @@ function ... from insecure code". Verify a descriptor with
 `IsTrustedFunction(descriptor.callback)`, and prefer add-on scenes over
 `ZO_Dialogs_ShowGamepadDialog` for KelaPadUI-owned panels.
 
+KelaPadUI's Quick Access uses the gamepad main menu's own submenu, opened from
+the Options keybind, so it does not touch the dialog pool. Any add-on-shown
+gamepad dialog that can appear before a core dialog must either avoid core
+`buttons` and manage its own keybind group, or use an add-on scene. Reload clears
+an already-poisoned pool.
+
 ## Tooltip styles
 
 `kpui_core/kpui_tooltip_styles.lua` applies only properties that differ from the
@@ -189,6 +205,8 @@ npx.cmd --yes luaparse path\to\file.lua > $null
 Manual in-game checks are still required for:
 
 - opening KelaPadUI from the gamepad main menu;
+- opening Quick Access with the Options keybind, checking section spacing, and
+  using Select/Back on each shortcut;
 - scrolling the flattened settings list and confirming category headings;
 - changing and resetting settings, including reload-gated toggles;
 - entering the guild store with TTC only, ATT only, both, and neither;

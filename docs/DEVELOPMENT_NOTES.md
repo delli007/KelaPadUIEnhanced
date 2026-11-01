@@ -45,6 +45,32 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
   block, `getTraitHeaderLine`, or `kelaGetSameTraitCount`. They were removed
   after confirming the trait block was never assigned or called.
 
+## Companion snapshot notes
+
+- `kpui_features/kpui_companion.lua` handles the companion menu and rapport
+  notifications. `kpui_features/kpui_companion_collections.lua` post-hooks
+  `GAMEPAD_COLLECTIONS_BOOK.RefreshStandardTooltip` to add the extra Collections
+  tooltip rows. `ZO_GamepadCollectionsBook` is file-local, so the global
+  singleton must be hooked.
+- Level, XP, slotted skills, ultimate, equipped gear, and the passive perk are
+  account-wide, but the game only exposes them for the summoned companion.
+  Rapport is per character and is also active-only.
+- Store builds in
+  `kpuiSavedVariables.companionSnapshots.builds[companionId]` and rapport in
+  `kpuiSavedVariables.companionSnapshots.rapport[characterId][companionId]`.
+- Merge only sections that are ready. Never write an empty skills or gear table
+  over a good snapshot, and never fabricate missing values. Rows read from a
+  cache are labeled as recorded while summoned.
+- Read normal skill slots up to `ACTION_BAR_ULTIMATE_SLOT_INDEX`; the ultimate is
+  `ACTION_BAR_ULTIMATE_SLOT_INDEX + 1`, and each captured skill also stores a
+  1-based `index`. Companion gear uses `BAG_COMPANION_WORN`; skip
+  `EQUIP_SLOT_COSTUME`, and skip the off-hand when the main hand is two-handed.
+- Skills and the ultimate are captured but not rendered. The tooltip shows the
+  perk and description, level/XP, rapport progress and tier, and gear with
+  weight and trait.
+- Use the `companionCollectionsSection` tooltip style; it matches the Collections
+  body text (27px light font, off-white) and uses `bodyHeader` for titles.
+
 ## Trading-house notes
 
 - TTC-only uses the core active-guild dialog. ATT-only graph and guild-stat
@@ -110,9 +136,10 @@ The callstack became untrusted 3 stack frame(s) from the top.
 
 This is exactly what the ready-check error was (10/23/2026): the fix was
 deleting the dead confirmation-dialog hooks in
-`kpui_features/tradinghouse/kpui_tradinghouse_hooks.lua`. Both the
-"reload, then accept a ready check" and "reload, open Quick Access, then accept
-a ready check" tests passed afterwards.
+`kpui_features/tradinghouse/kpui_tradinghouse_hooks.lua`. The
+"reload, then accept a ready check" test passed afterwards. Quick Access later
+reintroduced the error by showing its own gamepad dialog; it now lives in the
+main menu, so that path no longer touches the pool.
 
 Instead of hooking:
 
@@ -122,6 +149,20 @@ Instead of hooking:
   KelaPadUI's own panels;
 - for anything else on a core path, use the `Secure*` hook variants and keep the
   hook out of the callstack that creates controls or closures.
+
+KelaPadUI's Quick Access avoids the pool by reusing the gamepad main menu's own
+submenu, opened from the Options keybind. Any add-on-shown gamepad dialog that
+can appear before a core dialog must either avoid core `buttons` and manage its
+own keybind group (passing `KEYBIND_STRIP:GetTopKeybindStateIndex()`), or use an
+add-on scene. A reload clears an already-poisoned pool.
+
+The Quick Access entry is deliberately not in `ZO_MENU_ENTRIES`. The keybind
+flags an override, pushes `playerSubmenu`, and replaces the sublist from the
+scene's `SCENE_SHOWING` callback (with a `SCENE_SHOWN` check as a safety net),
+so the main menu's own `RefreshSubList` does not win. The main menu passes
+`postPadding = 0` for every entry, which also disables the list's automatic
+header padding; set `postPadding = GAMEPAD_HEADER_DEFAULT_PADDING` on the entry
+before each section header or the header overlaps the previous row.
 
 To check a descriptor at runtime, run this with a dialog on screen and look for
 `trusted = false`:
