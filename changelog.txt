@@ -1,5 +1,9 @@
 KelaPadUI changelog (newest first)
 
+11/02/2026
+- Fixed the sets browser registering itself under a table key in the game's systems list instead of the `kelaSets` system name.
+- Fixed the set-detail rows writing a global `label` on every row setup.
+
 11/01/2026
 - Fixed Quick Access entries disappearing while the submenu stayed open when a background inventory, mail, level, or daily-reward update rebuilt the main-menu sublist.
 - Quick Access now restores the selected row after such a rebuild.
