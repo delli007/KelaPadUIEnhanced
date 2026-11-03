@@ -2154,8 +2154,6 @@ function Kela_Sets:OnShowing()
 		if not KELA_SETS.CurrentSetsZone then KELA_SETS.CurrentSetsZone = 1 end
 		if not KELA_SETS.CurrentSetsDLC then KELA_SETS.CurrentSetsDLC = 1 end
 		KELA_SETS_LIST:MainFilterScrollList()	
-		KPUI_GAMEPAD_TOOLTIPS:ClearTooltip(KPUI_GAMEPAD_LEFT_DIALOG_TOOLTIP)	
-		KPUI_GAMEPAD_TOOLTIPS:LayoutDescriptionTooltip(KPUI_GAMEPAD_LEFT_DIALOG_TOOLTIP, colors.COLOR_NOTSOON:Colorize(GetString(KELA_SETS_WARNING_TITLE)), GetString(KELA_SETS_WARNING_TEXT))
 		KELA_SETS_FIRST_SHOW = false
 	end
 

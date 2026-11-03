@@ -84,8 +84,6 @@ do
 	Add("KELA_SETS_DIALOG_SEND", 					"Send to the chat")	
 	Add("KELA_SETS_DIALOG_RESET_FILTERS", 			"Reset selection")
 	Add("KELA_SETS_DIALOG_COMPARE_WRONGEQUIPSLOT", 	"No equipped item in the current inventory slot")	
-	Add("KELA_SETS_WARNING_TITLE", 					"Attention")
-	Add("KELA_SETS_WARNING_TEXT", 					"There Is a bug with the items dialog in the inventory after opening dialogs from third-party add-ons. To avoid this bug, you must first open and close any built-in game dialog before working with a third-party add-ons.\n\nThis message is displayed once at the beginning of the game session.")
 	Add("KELA_SETS_METADATAATTRIBUTE1",				"Weapon and shield")
 	Add("KELA_SETS_METADATAATTRIBUTE2",				"Cloth robes")
 	Add("KELA_SETS_METADATAATTRIBUTE3",				"Leather armor")
