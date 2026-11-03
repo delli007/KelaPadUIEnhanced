@@ -111,8 +111,8 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
 
 ### Do not hook protected dialog show functions
 
-Never install `ZO_PreHook`, `ZO_PostHook`, `SecurePreHook`, or `SecurePostHook`
-on `ZO_Dialogs_ShowDialog`, `ZO_Dialogs_ShowGamepadDialog`,
+Never install `ZO_PreHook`, `ZO_PostHook`, or `SecurePostHook` on
+`ZO_Dialogs_ShowDialog`, `ZO_Dialogs_ShowGamepadDialog`,
 `ZO_Dialogs_ShowPlatformDialog`, `ZO_Dialogs_ButtonKeybindPressed`, or
 `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog`. The audit fails on
 any of these.
@@ -158,11 +158,18 @@ add-on scene. A reload clears an already-poisoned pool.
 
 The Quick Access entry is deliberately not in `ZO_MENU_ENTRIES`. The keybind
 flags an override, pushes `playerSubmenu`, and replaces the sublist from the
-scene's `SCENE_SHOWING` callback (with a `SCENE_SHOWN` check as a safety net),
-so the main menu's own `RefreshSubList` does not win. The main menu passes
-`postPadding = 0` for every entry, which also disables the list's automatic
-header padding; set `postPadding = GAMEPAD_HEADER_DEFAULT_PADDING` on the entry
-before each section header or the header overlaps the previous row.
+scene's `SCENE_SHOWING` callback (with a `SCENE_SHOWN` check as a safety net).
+The main menu also rebuilds the sublist from the selected main-list entry when
+inventory, mail, level, or daily-reward updates mark it dirty. A
+`SecurePostHook` on `RefreshLists` puts the Quick Access list back afterwards.
+ESO has no `SecurePreHook`, so the selected row is tracked by a
+`SecurePostHook` on the manager's `OnSelectionChanged` instead of a
+before/after snapshot; that hook ignores the selection reports produced by the
+core rebuild because the rebuilt rows are not Quick Access rows.
+The main menu passes `postPadding = 0` for every entry, which also disables the
+list's automatic header padding; set
+`postPadding = GAMEPAD_HEADER_DEFAULT_PADDING` on the entry before each section
+header or the header overlaps the previous row.
 
 To check a descriptor at runtime, run this with a dialog on screen and look for
 `trusted = false`:
@@ -175,8 +182,10 @@ To check a descriptor at runtime, run this with a dialog on screen and look for
 
 `ZO_PreHook`/`ZO_PostHook` build the replacement closure in add-on code, so the
 wrapped core function runs inside untrusted code; any private call it makes will
-fail. Use `SecurePreHook`/`SecurePostHook` for core functions. `ZO_PreHook` and
-`ZO_PostHook` stay acceptable for add-on-owned or pure data/UI functions.
+fail. Use `SecurePostHook` for core functions. `ZO_PreHook` and `ZO_PostHook`
+stay acceptable for add-on-owned or pure data/UI functions. ESO exposes no
+`SecurePreHook`; where a before/after value is needed, hook a separate core
+function that reports the value (for example `OnSelectionChanged`) instead.
 
 ## Validation matrix
 

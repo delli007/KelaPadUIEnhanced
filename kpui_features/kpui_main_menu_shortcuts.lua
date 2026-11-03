@@ -7,9 +7,13 @@ local QUICK_ACCESS_HEADER_PADDING = GAMEPAD_HEADER_DEFAULT_PADDING or 80
 
 local keybindAdded = false
 local submenuCallbackRegistered = false
+local refreshHooksInstalled = false
 local quickAccessEntry = nil
 local quickAccessSubMenu = nil
-local showQuickAccessOnSubmenuShow = false
+local quickAccessOpen = false
+local quickAccessSelectedIndex = nil
+local applyingQuickAccess = false
+local IsQuickAccessSubmenuShowing
 
 local function IsQuickAccessEnabled()
     return KelaGetSetting_Bool(SETTING_TYPE_KELA, QUICK_ACCESS_SETTING)
@@ -213,7 +217,20 @@ local function BuildQuickAccessSubmenu()
             shouldDisableFunction = function()
                 return not quickEntry.enabled()
             end,
-            activatedCallback = quickEntry.action,
+            activatedCallback = function(...)
+                -- The action may deliberately replace this sublist (for example,
+                -- the Group shortcut opens the Social submenu). Do not restore
+                -- Quick Access over that navigation.
+                quickAccessOpen = false
+                quickEntry.action(...)
+
+                -- If the action did nothing (for example, the primary house
+                -- cannot be reached right now), keep guarding the list that is
+                -- still open against background refreshes.
+                if IsQuickAccessSubmenuShowing() and PLAYER_SUBMENU_SCENE:IsShowing() then
+                    quickAccessOpen = true
+                end
+            end,
         }
 
         if nextEntry and nextEntry.header then
@@ -256,7 +273,7 @@ local function IsMainMenuRootShowing()
     return true
 end
 
-local function ApplyQuickAccessSubmenu()
+local function ApplyQuickAccessSubmenu(selectedIndex)
     local manager = MAIN_MENU_GAMEPAD
     if not quickAccessEntry or not manager then
         return
@@ -265,35 +282,89 @@ local function ApplyQuickAccessSubmenu()
         return
     end
 
+    applyingQuickAccess = true
     manager:RefreshSubList(quickAccessEntry)
+    if selectedIndex and manager.subList.SetSelectedIndexWithoutAnimation then
+        manager.subList:SetSelectedIndexWithoutAnimation(selectedIndex, true)
+    end
+    applyingQuickAccess = false
+
     if manager:GetCurrentList() ~= manager.subList then
         manager:SetCurrentList(manager.subList)
     end
 end
 
-local function IsQuickAccessSubmenuShowing()
+IsQuickAccessSubmenuShowing = function()
     local manager = MAIN_MENU_GAMEPAD
     local targetData = manager and manager.subList and manager.subList.GetTargetData and manager.subList:GetTargetData()
     return targetData ~= nil and targetData.data ~= nil and targetData.data.quickAccess == true
 end
 
+-- The main menu rebuilds its sublist from the selected main-list entry whenever
+-- an inventory, mail, level, or daily-reward update marks it dirty. That refresh
+-- replaces the Quick Access entries while the submenu is open. ESO does not
+-- expose a pre-hook for core functions, so the selected row is tracked
+-- continuously instead and restored once the core rebuild has finished.
+local function OnMainMenuSelectionChanged(_, list, selectedData)
+    if applyingQuickAccess or not quickAccessOpen then
+        return
+    end
+
+    local manager = MAIN_MENU_GAMEPAD
+    if not manager or list ~= manager.subList then
+        return
+    end
+
+    -- A core refresh reports the selection of the entry it just rebuilt, which
+    -- is not a Quick Access row. Ignore those so the tracked index survives.
+    if not IsQuickAccessSubmenuShowing() then
+        return
+    end
+
+    if selectedData and selectedData.data and selectedData.data.quickAccess then
+        local subList = manager.subList
+        if subList.GetSelectedIndex then
+            quickAccessSelectedIndex = subList:GetSelectedIndex()
+        end
+    end
+end
+
+local function OnMainMenuRefreshPost()
+    if applyingQuickAccess or not quickAccessOpen then
+        return
+    end
+
+    if not IsQuickAccessSubmenuShowing() then
+        ApplyQuickAccessSubmenu(quickAccessSelectedIndex)
+    end
+end
+
+local function InstallRefreshHooks()
+    local manager = MAIN_MENU_GAMEPAD
+    if refreshHooksInstalled or not manager or not manager.RefreshLists then
+        return
+    end
+
+    refreshHooksInstalled = true
+    SecurePostHook(manager, "OnSelectionChanged", OnMainMenuSelectionChanged)
+    SecurePostHook(manager, "RefreshLists", OnMainMenuRefreshPost)
+end
+
 local function OnPlayerSubmenuStateChange(_, newState)
     if newState == SCENE_SHOWING then
-        if showQuickAccessOnSubmenuShow then
+        if quickAccessOpen and not IsQuickAccessSubmenuShowing() then
             -- Run after the main menu's own callback has built the sublist for
             -- whichever main-list entry was selected.
             ApplyQuickAccessSubmenu()
         end
     elseif newState == SCENE_SHOWN then
-        if showQuickAccessOnSubmenuShow then
-            showQuickAccessOnSubmenuShow = false
-            -- Safety net if the main menu rebuilds its submenu after our callback.
-            if not IsQuickAccessSubmenuShowing() then
-                ApplyQuickAccessSubmenu()
-            end
+        -- Safety net if the main menu rebuilds its submenu after our callback.
+        if quickAccessOpen and not IsQuickAccessSubmenuShowing() then
+            ApplyQuickAccessSubmenu()
         end
     elseif newState == SCENE_HIDING then
-        showQuickAccessOnSubmenuShow = false
+        quickAccessOpen = false
+        quickAccessSelectedIndex = nil
     end
 end
 
@@ -310,7 +381,7 @@ local function ShowQuickAccessSubmenu()
 
     -- The main menu builds its sublist when the playerSubmenu scene is shown,
     -- so flag the override and let the scene callback replace that sublist.
-    showQuickAccessOnSubmenuShow = true
+    quickAccessOpen = true
     SCENE_MANAGER:Push("playerSubmenu")
 end
 
@@ -357,6 +428,7 @@ function KelaSetupMainMenuShortcuts()
     end
 
     BuildQuickAccessSubmenu()
+    InstallRefreshHooks()
     RegisterSubmenuCallback()
     AddQuickAccessKeybind()
 end

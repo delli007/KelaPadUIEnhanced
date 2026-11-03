@@ -1,5 +1,9 @@
 KelaPadUI changelog (newest first)
 
+11/01/2026
+- Fixed Quick Access entries disappearing while the submenu stayed open when a background inventory, mail, level, or daily-reward update rebuilt the main-menu sublist.
+- Quick Access now restores the selected row after such a rebuild.
+
 10/31/2026
 - Fixed the companion details not appearing in the gamepad Collections > Allies > Companions tooltip.
 - Added a Companions entry to the Quick Access submenu that opens the Companions collection page.

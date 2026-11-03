@@ -207,6 +207,8 @@ Manual in-game checks are still required for:
 - opening KelaPadUI from the gamepad main menu;
 - opening Quick Access with the Options keybind, checking section spacing, and
   using Select/Back on each shortcut;
+- leaving Quick Access open through an inventory, mail, level, or daily-reward
+  update and confirming its rows and selected position stay in place;
 - scrolling the flattened settings list and confirming category headings;
 - changing and resetting settings, including reload-gated toggles;
 - entering the guild store with TTC only, ATT only, both, and neither;
