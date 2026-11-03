@@ -353,8 +353,8 @@ function Kela_Sets_List:CreateMapPinRows(dialog)
 
 	local function setupRow (control, data, selected, reselectingDuringRebuild, enabled, active)
 		ZO_SharedGamepadEntry_OnSetup(control, data, selected, reselectingDuringRebuild, enabled, active)
-		label = control.label
-		label:SetFont(selected and "ZoFontGamepad34" or "ZoFontGamepad34")
+		local label = control.label
+		label:SetFont("ZoFontGamepad34")
 	end
 
 	local function callbackRow(dialog)
@@ -754,8 +754,8 @@ function Kela_Sets_List:BuildSetsObtainableItemsData(dialog)
 
 	local function setupRow (control, data, selected, reselectingDuringRebuild, enabled, active)
 		ZO_SharedGamepadEntry_OnSetup(control, data, selected, reselectingDuringRebuild, enabled, active)
-		label = control.label
-		label:SetFont(selected and "ZoFontGamepad34" or "ZoFontGamepad34")
+		local label = control.label
+		label:SetFont("ZoFontGamepad34")
 	end
 
 	local listItem = 
@@ -2212,7 +2212,7 @@ end
 -- XML Functions
 function Kela_Sets_OnInitialize(control)
     KELA_SETS = Kela_Sets:New(control)
-	SYSTEMS:RegisterGamepadObject(KELA_SETS, self)
+	SYSTEMS:RegisterGamepadObject("kelaSets", KELA_SETS)
 end
 
 function Kela_Sets_List_OnInitialize(control)

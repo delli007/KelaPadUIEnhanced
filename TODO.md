@@ -5,6 +5,7 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 ## Open work
 
 - [ ] Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
+- [ ] One-off `Attempt to call a userdata value` with an empty traceback, logged at 2026-11-02 17:27:57 on first login of a character in Cyrodiil. Not reproduced by `/reloadui`, by relogging the same character, or by logging in another character; LibDebugLogger captured no entry. Revisit only if it recurs.
 
 ## Candidate enhancements
 
