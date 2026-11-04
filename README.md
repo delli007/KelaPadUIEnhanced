@@ -155,6 +155,9 @@ for any character on the server you are playing.
   cross when there is none.
 - Item availability covers the backpack and bank for the current character, and
   the bank for the other characters on the server.
+- Active research appears below the matrix in four station columns, with each
+  research line, trait, and countdown. Use the right stick to scroll the right
+  pane when its contents do not fit on screen.
 
 ### PersonalAssistant junk integration
 

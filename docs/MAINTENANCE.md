@@ -212,6 +212,12 @@ Manual in-game checks are still required for:
 - leaving Quick Access open through an inventory, mail, level, or daily-reward
   update and confirming its rows and selected position stay in place;
 - scrolling the flattened settings list and confirming category headings;
+- opening Trait Research with and without LibCharacterKnowledge, switching
+  characters with active research, and checking each station's line, trait and
+  countdown; verify the right stick scrolls the entire matrix and active list
+  without affecting character navigation, including at 1080p;
+- starting, cancelling and completing research while the page is open, checking
+  countdown refreshes and that empty or unavailable data is not shown as active;
 - changing and resetting settings, including reload-gated toggles;
 - entering the guild store with TTC only, ATT only, both, and neither;
 - confirming tooltips, search filters, and trading history;

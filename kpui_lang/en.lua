@@ -351,12 +351,14 @@ do
 	Add("KELA_TRAIT_RESEARCH_TITLE_MEDIUM_ARMOR",		"Medium Armor")
 	Add("KELA_TRAIT_RESEARCH_TITLE_WOODWORKING",		"Woodworking")
 	Add("KELA_TRAIT_RESEARCH_TITLE_SHIELD",				"Shield")
+	Add("KELA_TRAIT_RESEARCH_TITLE_CLOTHIER",			"Clothier")
+	Add("KELA_TRAIT_RESEARCH_TITLE_JEWELRY",			"Jewelry")
+	Add("KELA_TRAIT_RESEARCH_ACTIVE_HEADER",			"IN PROGRESS")
 	Add("KELA_TRAIT_RESEARCH_RESEARCHED",				"Researched: <<1>>")
 	Add("KELA_TRAIT_RESEARCH_IN_PROGRESS",				"In Progress: <<1>>")
 	Add("KELA_TRAIT_RESEARCH_COMPLETED",				"Completed")
 	Add("KELA_TRAIT_RESEARCH_NO_DATA",					"No LibCharacterKnowledge data for this character")
 	Add("KELA_TRAIT_RESEARCH_NO_LCK",					"LibCharacterKnowledge is not installed. Only the current character is listed, and item availability covers the backpack and the bank.")
-	Add("KELA_TRAIT_RESEARCH_LEGEND",					"Researched | Researching | Item available | No item")
 
 end
 

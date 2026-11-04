@@ -1,6 +1,8 @@
 KelaPadUI changelog (newest first)
 
 11/04/2026
+- Removed the text legend from the upper-right corner of the Trait Research page.
+- Added an active research section below the Trait Research matrix, grouped into four crafting-station columns with each trait, item type, and countdown on one line. The right pane scrolls with the right stick when needed.
 - Reworked the Trait Research browser so the whole matrix is on one page: the weapon and jewelry sections share the first row and armor takes the second, instead of showing one craft section at a time with L1/R1.
 - Every Trait Research group now has a single-line heading with its researched / total count, and the count turns light green once the group is complete. The group titles are Blacksmithing, Woodworking, Heavy Armor, Light Armor, Medium Armor and Shield, each section is named in its left column, and there is a little space under the character name before the tables start. The jewelry section drops its duplicate group name and shows only the count.
 - Added a shared text style set (`kpuiConst.TextStyles` in `kpui_core/kpui_constants.lua`) so all KelaPadUI text uses one palette: bold gold section titles, white body text, and one colour per value state. Applied it to the Trait Research page, which also made its plain text white instead of grey and gave its section titles the bold gold style.

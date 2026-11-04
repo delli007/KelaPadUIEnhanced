@@ -1,8 +1,8 @@
 -- KelaPadUI trait research matrix
 --
 -- Left pane: every character on the current server, logged-in character first,
--- each with a two-line research summary.  Right pane: one page showing every
--- crafting research line against its traits, so nothing has to be paged through.
+-- each with a two-line research summary.  Right pane: one scrollable page showing
+-- every crafting research line against its traits and active research below it.
 --
 -- Research knowledge of the current character comes from the base-game API.
 -- Every other character is read from LibCharacterKnowledge when that library is
@@ -221,6 +221,22 @@ local ROW_HEIGHT_MAX = 40
 -- the row above or below.
 local ROW_CELL_PADDING = 4
 
+-- Active research is grouped by crafting station below the matrix.  Each entry
+-- has its trait, research line and countdown on one line, with no fixed limit.
+local ACTIVE_RESEARCH_GAP = 20
+local ACTIVE_RESEARCH_HEADING_HEIGHT = 26
+local ACTIVE_RESEARCH_HEADING_GAP = 8
+local ACTIVE_RESEARCH_COLUMN_HEADER_HEIGHT = 24
+local ACTIVE_RESEARCH_ENTRY_HEIGHT = 22
+local ACTIVE_RESEARCH_COLUMN_GAP = 12
+local ACTIVE_RESEARCH_CRAFTS =
+{
+	{ craft = CRAFTING_TYPE_BLACKSMITHING, title = KELA_TRAIT_RESEARCH_TITLE_BLACKSMITHING },
+	{ craft = CRAFTING_TYPE_CLOTHIER, title = KELA_TRAIT_RESEARCH_TITLE_CLOTHIER },
+	{ craft = CRAFTING_TYPE_WOODWORKING, title = KELA_TRAIT_RESEARCH_TITLE_WOODWORKING },
+	{ craft = CRAFTING_TYPE_JEWELRYCRAFTING, title = KELA_TRAIT_RESEARCH_TITLE_JEWELRY },
+}
+
 local BANK_BAGS = { BAG_BANK, BAG_SUBSCRIBER_BANK }
 
 -- Mirrors LibCharacterKnowledge's server naming so the saved completion records
@@ -421,6 +437,7 @@ local function BuildCharacterData(server, charId, name, isCurrent, now, availabi
 		researched = 0,
 		total = 0,
 		inProgress = 0,
+		activeResearch = {},
 		cells = {},
 	}
 
@@ -479,6 +496,19 @@ local function BuildCharacterData(server, charId, name, isCurrent, now, availabi
 						cell = CELL_RESEARCHING
 						data.inProgress = data.inProgress + 1
 						local completionAt = now + remaining
+						local active = data.activeResearch[group.craft]
+						if not active then
+							active = {}
+							data.activeResearch[group.craft] = active
+						end
+						local line = group.lines[researchLineIndex - group.firstLine + 1]
+						active[#active + 1] =
+						{
+							name = line.name,
+							groupTitle = group.craft == CRAFTING_TYPE_CLOTHIER and group.title or nil,
+							traitType = group.traits[traitIndex].type,
+							completionAt = completionAt,
+						}
 						if not earlierCompletion or completionAt < earlierCompletion then
 							earlierCompletion = completionAt
 						end
@@ -495,6 +525,15 @@ local function BuildCharacterData(server, charId, name, isCurrent, now, availabi
 				end
 			end
 		end
+	end
+
+	for _, active in pairs(data.activeResearch) do
+		table.sort(active, function(a, b)
+			if a.completionAt == b.completionAt then
+				return a.name < b.name
+			end
+			return a.completionAt < b.completionAt
+		end)
 	end
 
 	data.nextCompletionAt = earlierCompletion
@@ -674,6 +713,7 @@ local function InitializeLayout()
 		- (ZO_GAMEPAD_QUADRANT_2_LEFT_OFFSET + ZO_GAMEPAD_CONTENT_INSET_X)
 	local paneHeight = UI_REFERENCE_HEIGHT - ZO_GAMEPAD_QUADRANT_TOP_OFFSET - 62
 		+ ZO_GAMEPAD_QUADRANT_BOTTOM_OFFSET
+	research.paneWidth = paneWidth
 
 	local rowCount = #research.bandRows
 	local perRowHeight = ROW_HEIGHT_DEFAULT
@@ -788,25 +828,18 @@ local function CreateTexture(parent, name, size)
 end
 
 local function BuildPage(parent)
-	local page = { name = nil, detail = nil, legend = nil, bandRows = {} }
+	local page = { name = nil, detail = nil, bandRows = {} }
 
 	page.name = CreateLabel(parent, "KelaTraitResearchCharacter", STYLES.CharacterName)
 	page.name:SetHorizontalAlignment(TEXT_ALIGN_LEFT)
 	page.name:SetAnchor(TOPLEFT, parent, TOPLEFT, 0, 0)
 	page.name:SetHeight(NAME_LINE_HEIGHT)
 
-	-- The detail line sits under the name; the legend stays on the name line,
-	-- flush with the pane's right edge.
+	-- The detail line sits under the name.
 	page.detail = CreateLabel(parent, "KelaTraitResearchDetail", STYLES.Body)
 	page.detail:SetHorizontalAlignment(TEXT_ALIGN_LEFT)
 	page.detail:SetAnchor(TOPLEFT, page.name, BOTTOMLEFT, 0, NAME_DETAIL_GAP)
 	page.detail:SetHeight(DETAIL_LINE_HEIGHT)
-
-	page.legend = CreateLabel(parent, "KelaTraitResearchLegend", STYLES.Body)
-	page.legend:SetHorizontalAlignment(TEXT_ALIGN_RIGHT)
-	page.legend:SetAnchor(TOPRIGHT, parent, TOPRIGHT, 0, 0)
-	page.legend:SetHeight(NAME_LINE_HEIGHT)
-	page.legend:SetText(GetString(KELA_TRAIT_RESEARCH_LEGEND))
 
 	local rowY = TOP_STRIP_HEIGHT + TOP_STRIP_GAP
 
@@ -882,7 +915,90 @@ local function BuildPage(parent)
 		rowY = rowY + bandRow.height + BAND_ROW_GAP
 	end
 
+	page.matrixHeight = rowY - (#research.bandRows > 0 and BAND_ROW_GAP or 0)
+	page.activeY = page.matrixHeight + ACTIVE_RESEARCH_GAP
+	page.activeTitle = CreateLabel(parent, "KelaTraitResearchActiveTitle", STYLES.SectionTitle)
+	page.activeTitle:SetHorizontalAlignment(TEXT_ALIGN_LEFT)
+	page.activeTitle:SetAnchor(TOPLEFT, parent, TOPLEFT, 0, page.activeY)
+	page.activeTitle:SetWidth(research.paneWidth)
+	page.activeTitle:SetHeight(ACTIVE_RESEARCH_HEADING_HEIGHT)
+	page.activeTitle:SetText(GetString(KELA_TRAIT_RESEARCH_ACTIVE_HEADER))
+
+	page.activeColumns = {}
+	local columnWidth = (research.paneWidth - (#ACTIVE_RESEARCH_CRAFTS - 1) * ACTIVE_RESEARCH_COLUMN_GAP) / #ACTIVE_RESEARCH_CRAFTS
+	for index, definition in ipairs(ACTIVE_RESEARCH_CRAFTS) do
+		local x = (index - 1) * (columnWidth + ACTIVE_RESEARCH_COLUMN_GAP)
+		local header = CreateLabel(parent, "KelaTraitResearchActiveHeader" .. index, STYLES.Body)
+		header:SetHorizontalAlignment(TEXT_ALIGN_LEFT)
+		header:SetAnchor(TOPLEFT, parent, TOPLEFT, x, page.activeY + ACTIVE_RESEARCH_HEADING_HEIGHT + ACTIVE_RESEARCH_HEADING_GAP)
+		header:SetDimensions(columnWidth, ACTIVE_RESEARCH_COLUMN_HEADER_HEIGHT)
+		header:SetText(GetString(definition.title))
+		page.activeColumns[index] = { header = header, entries = {}, x = x, width = columnWidth }
+	end
+
 	return page
+end
+
+local function RenderActiveResearch(page, data, now)
+	local hasActive = data.inProgress > 0
+	page.activeTitle:SetHidden(not hasActive)
+	local maxEntries = 0
+	for index, definition in ipairs(ACTIVE_RESEARCH_CRAFTS) do
+		local column = page.activeColumns[index]
+		local active = data.activeResearch[definition.craft] or {}
+		column.header:SetHidden(not hasActive)
+		local count = hasActive and math.max(#active, 1) or 0
+		maxEntries = math.max(maxEntries, count)
+		for entryIndex = 1, count do
+			local entry = column.entries[entryIndex]
+			if not entry then
+				local prefix = "KelaTraitResearchActive" .. index .. "Entry" .. entryIndex
+				local y = page.activeY + ACTIVE_RESEARCH_HEADING_HEIGHT + ACTIVE_RESEARCH_HEADING_GAP + ACTIVE_RESEARCH_COLUMN_HEADER_HEIGHT
+					+ (entryIndex - 1) * ACTIVE_RESEARCH_ENTRY_HEIGHT
+				local name = CreateLabel(page.parent, prefix .. "Name", STYLES.Body)
+				name:SetHorizontalAlignment(TEXT_ALIGN_LEFT)
+				name:SetAnchor(TOPLEFT, page.parent, TOPLEFT, column.x, y)
+				name:SetDimensions(column.width, ACTIVE_RESEARCH_ENTRY_HEIGHT)
+				local timer = CreateLabel(page.parent, prefix .. "Timer", STYLES.Body)
+				timer:SetHorizontalAlignment(TEXT_ALIGN_LEFT)
+				timer:SetAnchor(TOPLEFT, name, TOPRIGHT, 0, 0)
+				timer:SetDimensions(column.width, ACTIVE_RESEARCH_ENTRY_HEIGHT)
+				entry = { name = name, timer = timer }
+				column.entries[entryIndex] = entry
+			end
+			local item = active[entryIndex]
+			local name = item and item.name or "-"
+			if item then
+				if item.groupTitle then
+					name = item.groupTitle .. ": " .. name
+				end
+				name = GetString("SI_ITEMTRAITTYPE", item.traitType) .. " " .. name
+			end
+			-- Reserve room for the countdown before truncating a long item name.
+			entry.timer:SetWidth(column.width)
+			entry.timer:SetText(item and (" - " .. GOLD:Colorize(FormatTimeLeft(item.completionAt - now))) or "")
+			local timerWidth = item and math.min(column.width, entry.timer:GetTextWidth() + 2) or 0
+			entry.timer:SetWidth(timerWidth)
+			entry.timer:SetHidden(not item)
+			entry.name:SetWidth(column.width)
+			entry.name:SetText(name)
+			entry.name:SetWidth(math.max(0, math.min(entry.name:GetTextWidth() + 2, column.width - timerWidth)))
+			entry.name:SetHidden(false)
+		end
+		for entryIndex = count + 1, #column.entries do
+			column.entries[entryIndex].name:SetHidden(true)
+			column.entries[entryIndex].timer:SetHidden(true)
+		end
+	end
+	local height = page.matrixHeight
+	if hasActive then
+		height = page.activeY + ACTIVE_RESEARCH_HEADING_HEIGHT + ACTIVE_RESEARCH_HEADING_GAP + ACTIVE_RESEARCH_COLUMN_HEADER_HEIGHT
+			+ maxEntries * ACTIVE_RESEARCH_ENTRY_HEIGHT
+	end
+	if page.contentHeight ~= height then
+		page.contentHeight = height
+		page.parent:SetHeight(height)
+	end
 end
 
 local function GetSelectedCharacter()
@@ -922,6 +1038,7 @@ local function RenderPage(now)
 		end
 		page.detail:SetText(text)
 	end
+	RenderActiveResearch(page, data, now)
 
 	for rowIndex, bandRow in ipairs(research.bandRows) do
 		local bandRowControls = page.bandRows[rowIndex]
@@ -1090,8 +1207,12 @@ local function OnListSelectionChanged()
 		return
 	end
 
+	local changedCharacter = research.selectedServer ~= character.server or research.selectedCharId ~= character.charId
 	research.selectedServer = character.server
 	research.selectedCharId = character.charId
+	if changedCharacter and research.scroll then
+		research.scroll:ResetToTop()
+	end
 
 	for index, candidate in ipairs(research.characters or {}) do
 		if candidate == character then
@@ -1368,7 +1489,14 @@ local function CreateScene()
 	list:SetOnSelectedDataChangedCallback(OnListSelectionChanged)
 	research.list = list
 
-	research.page = BuildPage(rightPane)
+	local scroll = CreateControlFromVirtual("KelaTraitResearchScroll", rightPane, "ZO_ScrollContainer_Gamepad")
+	scroll:SetAnchorFill(rightPane)
+	local scrollChild = scroll:GetNamedChild("ScrollChild")
+	scrollChild:SetResizeToFitDescendents(false)
+	scrollChild:SetWidth(research.paneWidth)
+	research.scroll = scroll
+	research.page = BuildPage(scrollChild)
+	research.page.parent = scrollChild
 
 	scene:RegisterCallback("StateChange", OnSceneStateChanged)
 	scene:AddFragmentGroup(FRAGMENT_GROUP.GAMEPAD_DRIVEN_UI_WINDOW)
