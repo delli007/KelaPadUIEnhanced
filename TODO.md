@@ -4,21 +4,23 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 ## Open work
 
-- [ ] Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
-- [x] Closed: one-off `Attempt to call a userdata value` with an empty traceback, logged at 2026-11-02 17:27:57 on first login of a character in Cyrodiil. Not reproduced by `/reloadui`, by relogging the same character, or by logging in another character; LibDebugLogger captured no entry. No cause identified; reopen only if it recurs.
+- Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
+- Reintroduce a Research and trait knowledge submenu under the kelapadui main menu entry that reads from `craftstore` and/or `libcharacterknowledge`: implemented as the Trait Research matrix (`kpui_features/traitresearch/kpui_trait_research_gamepad.lua`) using the base-game API plus LibCharacterKnowledge, without CraftStore.
 
 ## Candidate enhancements
+
+- Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional.
+- Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
+- Additional Filters and sorting for gamepad menus: Provisioning station, Achievements, Guild Roster
+- Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
+- Add support for the Extended Journal: place in the KelaPadUI menu and in the journal menu at the end of the list.
+- ?? Add support for CMX Fight Stats: place in the KelaPadUI menu
+
+## Enhancement Notes
 
 New runtime modules must be added to `KelaPadUI.txt` and, when gated, initialized from `KelaPadUI.lua`; new settings go in `kpui_core/kpui_settings_gamepad.lua` and `docs/SETTINGS.md`; new user-facing text goes in `kpui_lang/en.lua`; optional libraries go in `OptionalDependsOn` and must be guarded.
 
 Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and retired IDs `7503` and `7100`-`7104`; keep the KELAPADUI main-menu entry append-only; avoid xml styling in favor of dynamically initialized visual elements; avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
-
-- Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional.
-- Reintroduce a Research and trait knowledge submenu under the kelapadui main menu entry that reads from `craftstore` and/or `libcharacterknowledge`: implemented as the Trait Research matrix (`kpui_features/traitresearch/kpui_trait_research_gamepad.lua`) using the base-game API plus LibCharacterKnowledge, without CraftStore.
-- Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
-- Additional Filters and sorting for gamepad menus: Achievements, Guild Roster
-- Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
-
 
 ## Already implemented: Do not duplicate
 
