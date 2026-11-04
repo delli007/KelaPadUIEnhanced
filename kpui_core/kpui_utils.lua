@@ -29,6 +29,32 @@ local ARMOR_EQUIP_TYPE_TO_CATEGORY_MAP = {
 
 local colors = kpuiConst.Colors	
 
+-- Text styling helpers.  kpuiConst.TextStyles is the single source of truth for
+-- how KelaPadUI text looks, so modules pick a style rather than hardcoding a
+-- font or a colour.
+function KelaApplyTextStyle(label, style)
+	if not label or not style then
+		return
+	end
+	if style.font then
+		label:SetFont(style.font)
+	end
+	if style.color then
+		label:SetColor(style.color:UnpackRGBA())
+	end
+end
+
+-- Gamepad list rows take their label colour from the row's entry data, and the
+-- core setup re-applies it on every refresh, so a colour set straight on the
+-- label would be overwritten.
+function KelaApplyEntryTextStyle(entryData, style)
+	if not entryData or not style or not style.color then
+		return
+	end
+	entryData:SetNameColors(style.color, style.color)
+	entryData:SetSubLabelColors(style.color, style.color)
+end
+
 --local functions
 function getStyleHeaderLine(styleIndex)
 	local style = zo_strformat("<<1>>", GetItemStyleName(styleIndex))

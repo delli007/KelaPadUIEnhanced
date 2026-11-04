@@ -1,5 +1,27 @@
 KelaPadUI changelog (newest first)
 
+11/04/2026
+- Reworked the Trait Research browser so the whole matrix is on one page: the weapon and jewelry sections share the first row and armor takes the second, instead of showing one craft section at a time with L1/R1.
+- Every Trait Research group now has a single-line heading with its researched / total count, and the count turns light green once the group is complete. The group titles are Blacksmithing, Woodworking, Heavy Armor, Light Armor, Medium Armor and Shield, each section is named in its left column, and there is a little space under the character name before the tables start. The jewelry section drops its duplicate group name and shows only the count.
+- Added a shared text style set (`kpuiConst.TextStyles` in `kpui_core/kpui_constants.lua`) so all KelaPadUI text uses one palette: bold gold section titles, white body text, and one colour per value state. Applied it to the Trait Research page, which also made its plain text white instead of grey and gave its section titles the bold gold style.
+- Enlarged the character name at the top of the Trait Research page (the shared `CharacterName` style, condensed 42px) and sized its line to fit, so it reads as the page's subject.
+- The Trait Research CHARACTERS heading now matches the game's own list headings: bold, uppercase, the interface text colour, and left-aligned to the same indent as the character names.
+- The Trait Research progress line now sits under the character name instead of beside it, with a little more space before the tables start.
+- Fixed the red X marker in the Trait Research matrix: it drew the close-button texture whole, so the X sat off-centre and small. It is now cropped the same way the game's own close button crops it, and centred in its cell.
+- Every Trait Research section now uses the same column width, so the weapon and armor columns line up vertically, with a gap between neighbouring groups and the jewelry section aligned to the right edge.
+- The Trait Research character list now only lists the characters on the server being played, and uses the standard menu row style with the research summary on two lines under each name; picking a different character updates the matrix immediately.
+- Added a Research progress row to the dashboard's Character section showing the current character's researched / total traits with a countdown to the next completion; it turns light green when every trait is researched.
+- Added a PVP Veterancy row to the dashboard's Events section with the season countdown.
+- Added end-of-event countdowns to the Golden Pursuit and Tamriel Tomes rows. The Tomes row now reads "tier / total - time left" and no longer appends the points needed for the next tier.
+- Every dashboard countdown now keeps ticking about once a minute while the panel stays open, instead of only when the main menu is reopened.
+
+11/03/2026
+- Added a Trait Research browser to the KelaPadUI main menu (Sets, Trait Research, Settings). The left pane lists every character on the account with the logged-in character first and a research summary under each name; the right pane shows each crafting research line against its traits with check, timer, plus and cross cell states.
+- Item availability uses the backpack and bank for the current character, the bank only for characters on the same server, and nothing for characters on another server.
+- The other characters are read through LibCharacterKnowledge when it is installed; without it the browser shows the current character only and says so.
+- Added the Trait research settings category before Item sets, with a default-on toggle whose help text reports whether LibCharacterKnowledge was found.
+- Smithing, inventory and library refresh triggers are coalesced into a single deferred rebuild so the browser cannot rebuild twice for one change.
+
 11/02/2026
 - Fixed the sets browser registering itself under a table key in the game's systems list instead of the `kelaSets` system name.
 - Fixed the set-detail rows writing a global `label` on every row setup.

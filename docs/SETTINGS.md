@@ -52,6 +52,18 @@ The base setting type is `SETTING_TYPE_KELA = 7000`.
 | `7300` | `KELA_SETTING_PANEL_SETS` (panel) | - |
 | `7301` | `KELA_SETTING_PANEL_SETS_ENABLED` | `true` |
 
+### Trait research
+
+| ID | Constant | Default |
+| --- | --- | --- |
+| `7302` | `KELA_SETTING_PANEL_TRAIT_RESEARCH` (panel) | - |
+| `7303` | `KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED` | `true` |
+
+The trait research matrix is reload-gated. Its help text is built in
+`RefreshOptionsList()` (not from the static metadata) so the
+`LibCharacterKnowledge` line reports "available" in light green or "not found"
+in light red on every open.
+
 ### Features
 
 | ID | Constant | Default |
@@ -123,6 +135,7 @@ category list and no `kela_options_panel` scene.
 local KELA_SETTINGS_CATEGORY_ORDER =
 {
     KELA_SETTING_PANEL_FEATURES,
+    KELA_SETTING_PANEL_TRAIT_RESEARCH,
     KELA_SETTING_PANEL_SETS,
     KELA_SETTING_PANEL_TRADE,
 }
@@ -228,10 +241,11 @@ state is true.
 
 ## Testing checklist
 
-- Open KelaPadUI, then Settings, and confirm all three category headings are
+- Open KelaPadUI, then Settings, and confirm all four category headings are
   visible in one scrollable list.
-- Confirm `Sets` is visible or hidden according to the Item sets setting, and
-  that Settings still opens when Sets is disabled.
+- Confirm `Sets` is visible or hidden according to the Item sets setting,
+  `Trait Research` according to the Trait research setting, and that Settings
+  still opens when either is disabled.
 - Toggle each feature and confirm the tooltip says a reload is required.
 - Change the ATT period with the slider and confirm the value is retained.
 - Toggle trading tooltip sub-options and confirm dependent options hide/show.

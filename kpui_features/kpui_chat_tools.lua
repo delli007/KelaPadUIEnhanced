@@ -59,6 +59,9 @@ local function AddChatCommands()
 			ZO_LinkHandler_InsertLink(ZO_LinkHandler_CreateChatLink(GetAchievementLink, aid))
 		else
 			CHAT_SYSTEM:AddMessage('Use the trial abbreviation, such as vse or vDSR. Highest achievement will be linked.')
+			for t, d in ipairs(KELA_TRIALS_DATA) do
+				CHAT_SYSTEM:AddMessage('   ' .. t .. ' - ' .. d.NAME)
+			end
 		end
 	end
 	SLASH_COMMANDS['/linkachiev'] = SLASH_COMMANDS['/linkachievement']

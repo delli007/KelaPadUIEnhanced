@@ -33,6 +33,14 @@ local dashboardWasVisible = false
 local fragment = nil
 local unavailableText = ""
 local titleControl = nil
+-- Rows whose value carries a countdown.  Re-rendered by the per-minute tick so
+-- the times keep ticking while the panel stays open.
+local countdownRows = {}
+-- Values the rows compute but do not display yet, kept so a later change can
+-- render them without re-deriving anything.  Live data only, never persisted.
+--   tomes:     { tier, totalTiers, pointsToNextTier }
+--   veterancy: { rank, numRanks, rankPoints, rankPointsTotal, percent }
+local eventDetail = {}
 
 -- The controls in kpui_main_menu_dashboard.xml all bind a color through the
 -- `color="INTERFACE_COLOR_TYPE_TEXT_COLORS:..."` XML attribute.  A bound color is
@@ -61,6 +69,30 @@ local function GetTimeText(seconds)
         return string.format("%d:%02d", hours, minutes)
     end
     return string.format("%d min", minutes)
+end
+
+-- Events and research rows read "level / total - time left".  The count keeps
+-- the dashboard's usual completion color and the countdown is always gold.  A
+-- nil color leaves the inline markup alone; the caller passes that through.
+local function FormatProgressWithCountdown(countText, countColor, seconds)
+    local text = Colorize(countColor, countText)
+    local timeText = GetTimeText(seconds)
+    if timeText then
+        text = text .. " - " .. Colorize(colors.COLOR_GOLD, timeText)
+    end
+    return text
+end
+
+-- Single place that turns a row's value provider into the value label's text,
+-- shared by the full refresh and the per-minute tick.
+local function SetRowValueControl(row)
+    -- `row.getValue and row.getValue()` would truncate the color away: an `and`
+    -- expression only keeps the first result of the call.
+    local value, color
+    if row.getValue then
+        value, color = row.getValue()
+    end
+    row.valueControl:SetText(Colorize(color, value) or unavailableText)
 end
 
 -- The activity finder manager only tracks queue and desertion cooldowns, so the
@@ -544,8 +576,15 @@ local function GetGoldenPursuitText()
         return nil
     end
 
-    local color = completed >= threshold and colors.COLOR_LIGHT_GREEN or nil
-    return string.format("%d / %d", completed, threshold), color
+    local countText = string.format("%d / %d", completed, threshold)
+    local countColor = completed >= threshold and colors.COLOR_LIGHT_GREEN or nil
+
+    local secondsRemaining
+    if type(GetSecondsRemainingInPromotionalEventCampaign) == "function" and campaign.GetSecondsRemaining then
+        secondsRemaining = campaign:GetSecondsRemaining()
+    end
+
+    return FormatProgressWithCountdown(countText, countColor, secondsRemaining)
 end
 
 local function HasTamrielTomesAPI()
@@ -573,38 +612,46 @@ end
 
 local function GetTamrielTomesText()
     if not HasTamrielTomesAPI() then
+        eventDetail.tomes = nil
         return nil
     end
 
     local tome = GetTomeData()
     if not tome then
+        eventDetail.tomes = nil
         return GetString(KELA_DASHBOARD_VALUE_NONE)
     end
 
     local tier = tome.GetCurrentTier and tome:GetCurrentTier() or 0
     local total = tome.GetNumTotalTiers and tome:GetNumTotalTiers() or 0
     if total <= 0 then
+        eventDetail.tomes = nil
         return GetString(KELA_DASHBOARD_VALUE_NONE)
     end
 
-    local progress = string.format("%d / %d", tier, total)
-    if tier >= total then
-        return progress, colors.COLOR_LIGHT_GREEN
+    -- Collected, not displayed: the points needed for the next tier.
+    local pointsToNextTier
+    if tier < total and tome.GetCostToProgressToTier then
+        local ok, remaining = pcall(tome.GetCostToProgressToTier, tome, tier + 1)
+        if ok and type(remaining) == "number" then
+            pointsToNextTier = remaining
+        end
+    end
+    eventDetail.tomes = { tier = tier, totalTiers = total, pointsToNextTier = pointsToNextTier }
+
+    local countText = string.format("%d / %d", tier, total)
+    local countColor = tier >= total and colors.COLOR_LIGHT_GREEN or nil
+
+    local secondsRemaining
+    if type(GetActiveTamrielTomeSeasonEndTimeS) == "function" then
+        local endTimeS = GetActiveTamrielTomeSeasonEndTimeS()
+        if type(endTimeS) == "number" and endTimeS > 0 then
+            local now = GetTimeStamp and GetTimeStamp() or 0
+            secondsRemaining = math.max(0, endTimeS - now)
+        end
     end
 
-    if not tome.GetCostToProgressToTier then
-        return progress
-    end
-
-    local ok, remaining = pcall(tome.GetCostToProgressToTier, tome, tier + 1)
-    if not ok or type(remaining) ~= "number" then
-        return progress
-    end
-    if remaining <= 0 then
-        return string.format("%s (%s)", progress, GetString(KELA_DASHBOARD_VALUE_READY)), colors.COLOR_LIGHT_GREEN
-    end
-
-    return string.format("%s (%d %s)", progress, remaining, GetString(KELA_DASHBOARD_VALUE_LEFT))
+    return FormatProgressWithCountdown(countText, countColor, secondsRemaining)
 end
 
 -- The public promotional-campaign API is the only event source add-ons can
@@ -870,6 +917,128 @@ local function GetTransmuteText()
     return string.format("%d / %d", amount, maxAmount), color
 end
 
+-- Research progress for the logged-in character.  Counted over the same crafts,
+-- lines and traits the Trait Research panel walks, so both show the same total.
+local RESEARCH_CRAFTS =
+{
+    CRAFTING_TYPE_BLACKSMITHING,
+    CRAFTING_TYPE_CLOTHIER,
+    CRAFTING_TYPE_WOODWORKING,
+    CRAFTING_TYPE_JEWELRYCRAFTING,
+}
+
+-- { researched, total, nextCompletionAt }.  Rebuilt on every full dashboard
+-- refresh, then reused by the per-minute tick, which only needs the clock.
+local researchSummary = nil
+
+local function RefreshResearchSummary()
+    local now = GetTimeStamp and GetTimeStamp() or 0
+    local researched, total = 0, 0
+    local nextCompletionAt
+
+    for _, craftingSkillType in ipairs(RESEARCH_CRAFTS) do
+        if GetNumSmithingResearchLines(craftingSkillType) > 0 then
+            for researchLineIndex = 1, GetNumSmithingResearchLines(craftingSkillType) do
+                local numTraits = select(3, GetSmithingResearchLineInfo(craftingSkillType, researchLineIndex))
+                for traitIndex = 1, numTraits do
+                    total = total + 1
+                    if select(3, GetSmithingResearchLineTraitInfo(craftingSkillType, researchLineIndex, traitIndex)) then
+                        researched = researched + 1
+                    else
+                        local remaining = select(2, GetSmithingResearchLineTraitTimes(craftingSkillType, researchLineIndex, traitIndex))
+                        if remaining and remaining > 0 then
+                            local completionAt = now + remaining
+                            if not nextCompletionAt or completionAt < nextCompletionAt then
+                                nextCompletionAt = completionAt
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    researchSummary = { researched = researched, total = total, nextCompletionAt = nextCompletionAt }
+end
+
+local function GetResearchText()
+    if not researchSummary then
+        RefreshResearchSummary()
+    end
+    if not researchSummary or researchSummary.total <= 0 then
+        return nil
+    end
+
+    local countText = string.format("%d / %d", researchSummary.researched, researchSummary.total)
+    local countColor = researchSummary.researched >= researchSummary.total and colors.COLOR_LIGHT_GREEN or nil
+
+    local secondsRemaining
+    if researchSummary.nextCompletionAt then
+        local now = GetTimeStamp and GetTimeStamp() or 0
+        secondsRemaining = math.max(0, researchSummary.nextCompletionAt - now)
+    end
+
+    return FormatProgressWithCountdown(countText, countColor, secondsRemaining)
+end
+
+-- PvP Veterancy: a seasonal AvA reward track.  The season has to be running and
+-- the manager has to have built its rank data before the row can be read.
+local function HasVeterancyAPI()
+    local manager = ZO_VETERANCY_MANAGER
+    return manager ~= nil
+        and type(IsVeterancySeasonActive) == "function"
+        and type(GetCurrentVeterancySeasonTimeRemainingS) == "function"
+        and manager.GetNumRanks ~= nil
+        and manager.GetCurrentRank ~= nil
+end
+
+local function GetVeterancyText()
+    if not HasVeterancyAPI() then
+        eventDetail.veterancy = nil
+        return nil
+    end
+
+    if not IsVeterancySeasonActive() then
+        eventDetail.veterancy = nil
+        return GetString(KELA_DASHBOARD_VALUE_NONE_ACTIVE)
+    end
+
+    local manager = ZO_VETERANCY_MANAGER
+    local numRanks = manager:GetNumRanks() or 0
+    if numRanks <= 0 then
+        -- The manager has not refreshed its reward-track data yet.
+        return nil
+    end
+
+    local rank = manager:GetCurrentRank() or 0
+
+    -- Collected, not displayed: the rank points and the tier completion.
+    local rankPoints, rankPointsTotal, percent
+    if manager.GetCurrentTierProgress then
+        rankPoints = manager:GetCurrentTierProgress()
+    end
+    if manager.GetCurrentTierTotal then
+        rankPointsTotal = manager:GetCurrentTierTotal()
+    end
+    local rankData = manager.GetCurrentRankData and manager:GetCurrentRankData()
+    if rankData and rankData.GetProgressPercent then
+        percent = rankData:GetProgressPercent()
+    end
+    eventDetail.veterancy =
+    {
+        rank = rank,
+        numRanks = numRanks,
+        rankPoints = rankPoints,
+        rankPointsTotal = rankPointsTotal,
+        percent = percent,
+    }
+
+    local countText = string.format("%d / %d", rank, numRanks)
+    local countColor = manager.IsOnMaxRank and manager:IsOnMaxRank() and colors.COLOR_LIGHT_GREEN or nil
+
+    return FormatProgressWithCountdown(countText, countColor, GetCurrentVeterancySeasonTimeRemainingS())
+end
+
 local DASHBOARD_LAYOUT =
 {
     {
@@ -890,15 +1059,16 @@ local DASHBOARD_LAYOUT =
     {
         title = KELA_DASHBOARD_SECTION_EVENTS,
         available = function()
-            if HasPromotionalEventAPI() or HasTamrielTomesAPI() then
+            if HasPromotionalEventAPI() or HasTamrielTomesAPI() or HasVeterancyAPI() then
                 return true
             end
             return HasPromotionalEventCampaignAPI() and (GetNumActivePromotionalEventCampaigns() or 0) > 0
         end,
         rows =
         {
-            { label = KELA_DASHBOARD_GOLDEN_PURSUIT, value = GetGoldenPursuitText, available = HasPromotionalEventAPI },
-            { label = KELA_DASHBOARD_TAMRIEL_TOMES, value = GetTamrielTomesText, available = HasTamrielTomesAPI },
+            { label = KELA_DASHBOARD_GOLDEN_PURSUIT, value = GetGoldenPursuitText, available = HasPromotionalEventAPI, countdown = true },
+            { label = KELA_DASHBOARD_TAMRIEL_TOMES, value = GetTamrielTomesText, available = HasTamrielTomesAPI, countdown = true },
+            { label = KELA_DASHBOARD_VETERANCY, value = GetVeterancyText, available = HasVeterancyAPI, countdown = true },
             { eventIndex = 1 },
             { eventIndex = 2 },
         },
@@ -911,6 +1081,7 @@ local DASHBOARD_LAYOUT =
             { label = KELA_DASHBOARD_LEVEL, value = GetLevelText },
             { label = KELA_DASHBOARD_CHAMPION_POINTS, value = GetChampionPointText },
             { label = KELA_DASHBOARD_PVP_RANK, value = GetPvPRankText },
+            { label = KELA_DASHBOARD_RESEARCH, value = GetResearchText, countdown = true },
             { label = KELA_DASHBOARD_SKYSHARDS, value = GetSkyshardText },
             { label = KELA_DASHBOARD_SKILL_POINTS, value = GetSkillPointText },
         },
@@ -971,6 +1142,9 @@ local function RefreshDashboard(ignoreHidden)
     end
 
     RefreshDailyQuestData()
+    -- The research counts and the next completion are re-read on every full
+    -- refresh; the per-minute tick only re-reads the clock from the cache.
+    researchSummary = nil
 
     -- Colors are carried by inline markup, because the XML color attributes bind
     -- the labels and labels/values must not fight a bound color with SetColor.
@@ -987,13 +1161,7 @@ local function RefreshDashboard(ignoreHidden)
             label = GetString(row.label)
         end
         row.labelControl:SetText(Colorize(row.labelColor, label))
-        -- `row.getValue and row.getValue()` would truncate the color away: an
-        -- `and` expression only keeps the first result of the call.
-        local value, color
-        if row.getValue then
-            value, color = row.getValue()
-        end
-        row.valueControl:SetText(Colorize(color, value) or unavailableText)
+        SetRowValueControl(row)
     end
 
     RefreshEvents(GetActiveEventCampaigns())
@@ -1061,6 +1229,25 @@ local function UpdateDailyResetRow()
     end
 end
 
+local function UpdateCountdownRows()
+    for _, row in ipairs(countdownRows) do
+        SetRowValueControl(row)
+    end
+end
+
+-- Per-minute update for the visible rows.  A research completion changes the
+-- researched count, not just the clock, so that case rebuilds every row.
+local function UpdateCountdowns()
+    local now = GetTimeStamp and GetTimeStamp() or 0
+    if researchSummary and researchSummary.nextCompletionAt and researchSummary.nextCompletionAt <= now then
+        RefreshDashboard()
+        return
+    end
+
+    UpdateDailyResetRow()
+    UpdateCountdownRows()
+end
+
 -- Refresh whenever the panel becomes visible (every time the gamepad main menu
 -- is pulled up) and never while it is hidden.
 local function OnDashboardUpdate()
@@ -1079,7 +1266,7 @@ local function OnDashboardUpdate()
         dashboardPollCount = dashboardPollCount + 1
         if dashboardPollCount >= DASHBOARD_RESET_UPDATE_POLLS then
             dashboardPollCount = 0
-            UpdateDailyResetRow()
+            UpdateCountdowns()
         end
     end
     dashboardWasVisible = visible
@@ -1191,7 +1378,7 @@ local function BuildDashboard()
                         }
                         table.insert(sectionData.dynamicRows, rowControl)
                     else
-                        table.insert(dashboardRows,
+                        local rowData =
                         {
                             labelControl = labelControl,
                             valueControl = valueControl,
@@ -1199,7 +1386,11 @@ local function BuildDashboard()
                             labelColor = DASHBOARD_COLOR_LABEL,
                             getLabel = row.getLabel,
                             getValue = row.value,
-                        })
+                        }
+                        table.insert(dashboardRows, rowData)
+                        if row.countdown then
+                            table.insert(countdownRows, rowData)
+                        end
                         if row.dailyReset then
                             dailyResetValueControl = valueControl
                         end

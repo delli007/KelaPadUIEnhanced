@@ -24,6 +24,31 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
 - Keep the manifest order. Trading-house modules load before
   `kpui_features/kpui_info_tooltip.lua`.
 
+## Text styling
+
+`kpuiConst.TextStyles` in `kpui_core/kpui_constants.lua` is the single source of
+truth for how KelaPadUI text looks. Pick a style instead of hardcoding a font or
+a colour:
+
+| Style | Look | Use for |
+| --- | --- | --- |
+| `Title` | large, white | screen and page titles |
+| `SectionTitle` | bold, gold | section titles such as WEAPONS / ARMOR / JEWELRY |
+| `ListHeader` | bold, uppercase, interface-normal colour, left-aligned | headers inside a list, such as CHARACTERS — matches the game's own list headers |
+| `CharacterName` | condensed 42px, white | the selected character's name on the trait research page |
+| `Body` | 20px, white | normal text and group headings |
+| `BodyLarge` | 27px, white | trait names and group headings |
+| `Dim` | 20px, off-white | secondary text |
+| `ValuePositive` / `ValueWarning` / `ValueNegative` / `ValueTimer` | light green / light orange / light red / gold | complete, nearly full, full, and running timers |
+
+Apply a style with `KelaApplyTextStyle(label, style)` for a plain label, or
+`KelaApplyEntryTextStyle(entryData, style)` for a gamepad list row. Row colours
+live on the entry data, because the core row setup re-applies them on every
+refresh; calling `SetColor` straight on a row label is overwritten.
+
+Coloured runs inside a longer string (a green count, a gold timer) use the same
+styles through `ZO_ColorDef:Colorize`.
+
 ## Do not regress these
 
 - Keep the five tooltip types:
@@ -108,6 +133,63 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
 7. Perform the relevant in-game checks before considering the change complete.
 
 ## Never do this
+
+### Do not pass a bare quoted `KELA_*` name to `GetString`
+
+`GetString`'s first argument is a string *variable prefix*, not a string id, and
+its optional second argument is a context id appended to that prefix:
+
+```lua
+GetString(KELA_SETTINGS_SETS_ENABLED)                 -- works: numeric constant
+GetString("KELA_SETSSOURCE", sourceIndex)             -- works: resolves KELA_SETSSOURCE<index>
+GetString("KELA_TRAIT_RESEARCH_TITLE")                -- BROKEN: returns nothing
+```
+
+The game uses the same convention: it defines `SI_ITEMTRAITTYPE0`,
+`SI_ITEMTRAITTYPE1`, `SI_ITEMTRAITTYPE10`, ... and calls
+`GetString("SI_ITEMTRAITTYPE", traitType)`.
+
+A broken lookup renders as *nothing at all*, which looks exactly like a missing
+font or a wrong colour, so this cost several rounds of styling changes on the
+trait research page before the real cause was found. When a label is blank:
+
+1. grep for `GetString\("KELA_` and fix the call before touching any styling;
+2. only then consider the font, the colour, or the control's size.
+
+The static audit cannot catch this: it verifies that the ids exist, not how they
+are read. Note also that this pattern is invisible in review, because
+`GetString(KELA_FOO)` and `GetString("KELA_FOO")` look almost identical.
+
+### Do not draw a button texture without the game's texture coords
+
+Some base-game button textures are not full-bleed: the artwork sits in one
+corner of a larger canvas. `EsoUI/Art/Buttons/closeButton_up.dds` is a 32x32
+texture whose X is drawn in the top-left 20x20, and the game's own close button
+crops it:
+
+```xml
+<Button name="ZO_CloseButton" ...>
+    <Dimensions x="20" y="20"/>
+    <TextureCoords left="0" top="0" right="0.625" bottom="0.625"/>
+    <Textures normal="EsoUI/Art/Buttons/closeButton_up.dds" .../>
+</Button>
+```
+
+`20 / 0.625 = 32`, so the crop is the top-left 20x20. Drawn whole into a square
+control, the X renders at 62.5% and offset up-left — it looks like a broken
+anchor, but it is a texture-coords bug, and no amount of re-anchoring will move
+it. When a texture looks consistently off-centre, find the game template that
+uses it and copy its `TextureCoords` before touching any anchors.
+
+If one control is reused for several states, reset the other states to the full
+texture with `(0, 1, 0, 1)`; a stale crop leaks when the control changes texture.
+
+Watch the argument order: `SetTextureCoords` takes
+`(left, right, top, bottom)`, which is *not* the order the XML
+`<TextureCoords left top right bottom>` attributes are written in. Passing the
+XML order to the call silently produces zero-width or zero-height coordinates,
+which renders nothing at all — it blanked every marker in the trait research
+table until the order was fixed.
 
 ### Do not hook protected dialog show functions
 

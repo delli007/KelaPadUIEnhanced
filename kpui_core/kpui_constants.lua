@@ -50,6 +50,35 @@ kpuiConst.Colors = {
 
 }
 
+-- Shared text styles.  Every user-facing label in KelaPadUI should take one of
+-- these so the add-on reads consistently: bold gold section titles, white body
+-- text, and one semantic colour per value state.  Apply a style with
+-- KelaApplyTextStyle (plain labels) or KelaApplyEntryTextStyle (gamepad rows).
+kpuiConst.TextStyles = {
+	-- Screen and page titles.
+	Title 					= { font = "ZoFontGamepadCondensed54", color = kpuiConst.Colors.COLOR_WHITE },
+	-- Section titles, e.g. the WEAPONS / ARMOR / JEWELRY labels.
+	SectionTitle 			= { font = "ZoFontGamepadBold22", color = kpuiConst.Colors.COLOR_GOLD },
+	-- Headers inside a list, e.g. the CHARACTERS row.  This mirrors the game's own
+	-- list headers (ZO_GamepadMenuEntryHeaderTemplate): bold, uppercase, the
+	-- interface normal text colour, left-aligned at the list indent.
+	ListHeader 				= { font = "ZoFontGamepadBold22", color = kpuiConst.Colors.GENERAL_COLOR_NORMAL },
+	-- The selected character's name on the trait research page, larger than body
+	-- text so it reads as the page's subject.
+	CharacterName 			= { font = "ZoFontGamepadCondensed42", color = kpuiConst.Colors.COLOR_WHITE },
+	-- Normal body text.
+	Body 					= { font = "ZoFontGamepad20", color = kpuiConst.Colors.COLOR_WHITE },
+	-- Larger body text, e.g. trait names and group headings.
+	BodyLarge 				= { font = "ZoFontGamepad27", color = kpuiConst.Colors.COLOR_WHITE },
+	-- Secondary text.
+	Dim 					= { font = "ZoFontGamepad20", color = kpuiConst.Colors.COLOR_OFF_WHITE },
+	-- Value colours: complete, close to full, full, and a running timer.
+	ValuePositive 			= { color = kpuiConst.Colors.COLOR_LIGHT_GREEN },
+	ValueWarning 			= { color = kpuiConst.Colors.COLOR_LIGHT_ORANGE },
+	ValueNegative 			= { color = kpuiConst.Colors.COLOR_LIGHT_RED },
+	ValueTimer 				= { color = kpuiConst.Colors.COLOR_GOLD },
+}
+
 	 -- tooltips size
 KELA_TOOLTIPS_WIDTH = 470 --650
 KELA_TOOLTIPS_CONTENT_WIDTH = KELA_TOOLTIPS_WIDTH - 2 * 40

@@ -101,6 +101,9 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS) then
 		KelaSetupAntiquityLeadInfo()
 	end
+	if IsFeatureEnabled(KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED) then
+		KelaSetupTraitResearch()
+	end
 
 	KELA_SETS_LIST:SetMasterSetsList()
 

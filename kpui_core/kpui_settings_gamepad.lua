@@ -14,6 +14,9 @@ SETTING_TYPE_KELA = 7000
 -- SETS
 KELA_SETTING_PANEL_SETS 						= 7300 
 KELA_SETTING_PANEL_SETS_ENABLED 				= 7301
+-- TRAIT RESEARCH
+KELA_SETTING_PANEL_TRAIT_RESEARCH 				= 7302
+KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED 		= 7303
 -- FEATURES
 KELA_SETTING_PANEL_FEATURES 					= 7400
 KELA_SETTING_PANEL_FEATURES_COMPANION 			= 7401
@@ -96,6 +99,15 @@ KELA_SETTINGS_DATA =
             panel = KELA_SETTING_PANEL_FEATURES,
             system = SETTING_TYPE_KELA,
             settingId = KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS,
+        },
+    },
+	-- TRAIT RESEARCH
+    [KELA_SETTING_PANEL_TRAIT_RESEARCH] =
+    {
+        {
+            panel = KELA_SETTING_PANEL_TRAIT_RESEARCH,
+            system = SETTING_TYPE_KELA,
+            settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED,
         },
     },
 	-- SETS
@@ -181,6 +193,22 @@ KELA_SETTINGS_DATA =
 -- control data table for the auto-list
 kela_SettingsData = 
 {
+    [KELA_SETTING_PANEL_TRAIT_RESEARCH] =
+    {
+		[SETTING_TYPE_KELA] =
+		{
+			[KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_TRAIT_RESEARCH,
+				settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED,
+				text = KELA_SETTINGS_TRAIT_RESEARCH_ENABLED,
+				tooltipText = KELA_SETTINGS_TRAIT_RESEARCH_ENABLED_TOOLTIP,
+				requiresReload = true,
+			},
+		},
+	},
     [KELA_SETTING_PANEL_SETS] =
     {
 		[SETTING_TYPE_KELA] =
@@ -476,6 +504,8 @@ KELA_SETTINGS_DEFAULTS =
 	{
 		-- SETS
 		[KELA_SETTING_PANEL_SETS_ENABLED] 				= "true",
+		-- TRAIT RESEARCH
+		[KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED] 	= "true",
 		-- FEATURES
 		[KELA_SETTING_PANEL_FEATURES_COMPANION] 		= "true",
 		[KELA_SETTING_PANEL_FEATURES_DUNGEON_FINDER] 	= "true",
@@ -1033,16 +1063,16 @@ do
 
         local defaultText
         if defaultValue == true or defaultValue == "true" then
-            defaultText = GetString("KELA_SETTING_INFO_ON")
+            defaultText = GetString(KELA_SETTING_INFO_ON)
         elseif defaultValue == false or defaultValue == "false" then
-            defaultText = GetString("KELA_SETTING_INFO_OFF")
+            defaultText = GetString(KELA_SETTING_INFO_OFF)
         elseif data.valueFormat then
             defaultText = string.format(data.valueFormat, tonumber(defaultValue) or 0)
         else
             defaultText = tostring(defaultValue)
         end
 
-        return zo_strformat(GetString("KELA_SETTING_INFO_DEFAULT"), defaultText)
+        return zo_strformat(GetString(KELA_SETTING_INFO_DEFAULT), defaultText)
     end
 
     local function GetSettingInfoText(data)
@@ -1054,7 +1084,7 @@ do
         end
 
         if data.settingId then
-            lines[#lines + 1] = data.requiresReload and GetString("KELA_SETTING_INFO_RELOAD") or GetString("KELA_SETTING_INFO_IMMEDIATE")
+            lines[#lines + 1] = data.requiresReload and GetString(KELA_SETTING_INFO_RELOAD) or GetString(KELA_SETTING_INFO_IMMEDIATE)
         end
 
         if data.requiresText then
@@ -1356,12 +1386,36 @@ local TEMPLATE_NAMES =
 local KELA_SETTINGS_CATEGORY_ORDER =
 {
     KELA_SETTING_PANEL_FEATURES,
+    KELA_SETTING_PANEL_TRAIT_RESEARCH,
     KELA_SETTING_PANEL_SETS,
     KELA_SETTING_PANEL_TRADE,
 }
 
+-- The trait research help text names LibCharacterKnowledge and reports whether
+-- the library was found.  It is rebuilt on every list refresh so the status is
+-- accurate without restarting the add-on.
+local function KelaTraitResearchTooltip()
+    local statusText
+    if LibCharacterKnowledge ~= nil then
+        statusText = kpuiConst.Colors.COLOR_LIGHT_GREEN:Colorize(GetString(KELA_SETTINGS_TRAIT_RESEARCH_LCK_AVAILABLE))
+    else
+        statusText = kpuiConst.Colors.COLOR_LIGHT_RED:Colorize(GetString(KELA_SETTINGS_TRAIT_RESEARCH_LCK_NOTFOUND))
+    end
+
+    return GetString(KELA_SETTINGS_TRAIT_RESEARCH_ENABLED_TOOLTIP)
+        .. "\n\n"
+        .. GetString(KELA_SETTINGS_TRAIT_RESEARCH_LCK_STATUS) .. ": " .. statusText
+end
+
 function Kela_GamepadOptions:RefreshOptionsList()
     self.optionsList:Clear()
+    local traitResearchData = kela_SettingsData[KELA_SETTING_PANEL_TRAIT_RESEARCH]
+    if traitResearchData then
+        local data = traitResearchData[SETTING_TYPE_KELA][KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED]
+        if data then
+            data.tooltipText = KelaTraitResearchTooltip()
+        end
+    end
     for _, panelId in ipairs(KELA_SETTINGS_CATEGORY_ORDER) do
         self:AddSettingGroup(panelId, GetString("KELA_SETTINGSYSTEMPANEL", panelId))
     end

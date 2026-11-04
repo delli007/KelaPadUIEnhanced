@@ -14,7 +14,7 @@ New runtime modules must be added to `KelaPadUI.txt` and, when gated, initialize
 Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and retired IDs `7503` and `7100`-`7104`; keep the KELAPADUI main-menu entry append-only; avoid xml styling in favor of dynamically initialized visual elements; avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
 
 - Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional.
-- Reintroduce a Research and trait knowledge submenu under the kelapadui main menu entry that reads from `craftstore` and/or `libcharacterknowledge`
+- Reintroduce a Research and trait knowledge submenu under the kelapadui main menu entry that reads from `craftstore` and/or `libcharacterknowledge`: implemented as the Trait Research matrix (`kpui_features/traitresearch/kpui_trait_research_gamepad.lua`) using the base-game API plus LibCharacterKnowledge, without CraftStore.
 - Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
 - Additional Filters and sorting for gamepad menus: Achievements, Guild Roster
 - Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
@@ -22,4 +22,4 @@ Any candidate must preserve the current invariants: TTC and ATT stay independent
 
 ## Already implemented: Do not duplicate
 
-enhanced gamepad item/trading tooltips, set browser, antiquities filters and leads, trading history and TTC/ATT price rows, companion rapport, companion Collections tooltip details (perk and description, level and XP, rapport progress and tier, equipped gear with weight and trait; skills tracked but hidden), dungeon-finder pledges and `/pledges`, chat commands/achievement links/player context menu, gamepad map rally point, main-menu quick shortcuts, the KELAPAD dashboard, and PersonalAssistant permanent-junk marking.
+enhanced gamepad item/trading tooltips, set browser, antiquities filters and leads, trading history and TTC/ATT price rows, companion rapport, companion Collections tooltip details (perk and description, level and XP, rapport progress and tier, equipped gear with weight and trait; skills tracked but hidden), dungeon-finder pledges and `/pledges`, chat commands/achievement links/player context menu, gamepad map rally point, main-menu quick shortcuts, the KELAPAD dashboard, PersonalAssistant permanent-junk marking, and the trait research matrix.

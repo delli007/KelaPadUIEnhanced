@@ -115,19 +115,46 @@ Minion and ESOUI installations use the same folder layout.
 
 A passive dashboard shown beside the gamepad main menu. It is filled when the
 menu opens, so nothing is polled while it is hidden, and it scrolls with the
-right stick when the rows are taller than the panel.
+right stick when the rows are taller than the panel. Countdowns keep ticking
+about once a minute while the panel stays open.
 
 - **Daily** - daily reset countdown, crafting writs, Random Dungeon and
   Battleground rewards, Infinite Archive progress, and Undaunted pledges with
   per-pledge status.
-- **Events** - Golden Pursuit and Tamriel Tomes progress, plus any additional
-  active promotional campaigns published by the client.
-- **Character** - ESO Plus status, level, Champion Points, PvP rank, skill
-  points, and skyshards.
+- **Events** - Golden Pursuit, Tamriel Tomes, and PVP Veterancy progress, each
+  with the time left in its event or season, plus any additional active
+  promotional campaigns published by the client.
+- **Character** - ESO Plus status, level, Champion Points, PvP rank, research
+  progress with the time to the next research completion, skill points, and
+  skyshards.
 - **Capacity** - backpack, bank, and transmute-crystal usage with warning colors.
 
 Daily progress is tracked per character and survives `/reloadui`. The writ,
 archive, and pledge rows share one journal scan and clear after the daily reset.
+The research row counts the same traits as the Trait Research browser, so both
+show the same researched / total figure.
+
+### Trait Research browser
+
+Shows every crafting research trait against every research line, on one page,
+for any character on the server you are playing.
+
+- Left pane: the characters on the server you are playing, logged-in character
+  first, with the research summary on two lines under each name. Any other
+  character's knowledge comes from LibCharacterKnowledge when it is installed;
+  without it only the current character is listed.
+- Right pane: the whole matrix at once, split into a weapon, armor, and jewelry
+  section because the game uses a separate trait set for each. The weapon and
+  jewelry sections share the first row (jewelry against the right edge) and armor
+  takes the second. Each section is named, and every group has a single-line
+  heading with its researched / total count, such as "Heavy Armor  24/63".
+- All sections share one column width, so the weapon and armor columns line up
+  vertically, and neighbouring groups are separated by a small gap.
+- Cell states: a green check for researched, a yellow timer for research in
+  progress, an orange plus when an unlocked item for that trait exists, and a red
+  cross when there is none.
+- Item availability covers the backpack and bank for the current character, and
+  the bank for the other characters on the server.
 
 ### PersonalAssistant junk integration
 

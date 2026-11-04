@@ -1,6 +1,7 @@
 local KELAPADUI_ENTRIES = {
-    SETS     = 1,
-    SETTINGS = 2,
+    SETS           = 1,
+    TRAIT_RESEARCH = 2,
+    SETTINGS       = 3,
 }
 
 local KELAPADUI_TEXT_COLOR = "|cC64CFF"
@@ -21,6 +22,15 @@ local KELAPADUI_MENU_ENTRY_DATA =
             icon = "esoui/art/treeicons/gamepad/gp_collectionicon_weapona+armor.dds",
             isVisibleCallback = function()
                 return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_SETS_ENABLED)
+            end,
+        },
+        [KELAPADUI_ENTRIES.TRAIT_RESEARCH] =
+        {
+            scene = "kelaTraitResearch",
+            name = GetString(KELA_MAINMENU_TRAIT_RESEARCH),
+            icon = "EsoUI/Art/Crafting/Gamepad/gp_crafting_menuIcon_create.dds",
+            isVisibleCallback = function()
+                return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED)
             end,
         },
         [KELAPADUI_ENTRIES.SETTINGS] =

@@ -4,6 +4,7 @@ do
     -- Main Menu
 	Add("KELA_MAINMENU_TITLE",												"KelaPadUI")
 	Add("KELA_MAINMENU_SETS",												"Sets")
+	Add("KELA_MAINMENU_TRAIT_RESEARCH",										"Trait Research")
 
 	-- Main menu quick access
 	Add("KELA_SHORTCUT_TITLE",						"Quick Access")
@@ -40,10 +41,12 @@ do
 	Add("KELA_DASHBOARD_BATTLEGROUND_REWARD",		"Battleground")
 	Add("KELA_DASHBOARD_GOLDEN_PURSUIT",			"Golden Pursuit")
 	Add("KELA_DASHBOARD_TAMRIEL_TOMES",				"Tamriel Tomes")
+	Add("KELA_DASHBOARD_VETERANCY",					"PVP Veterancy")
 	Add("KELA_DASHBOARD_ESO_PLUS",					"ESO+ Active")
 	Add("KELA_DASHBOARD_LEVEL",						"Level")
 	Add("KELA_DASHBOARD_CHAMPION_POINTS",			"Champion points")
 	Add("KELA_DASHBOARD_PVP_RANK",					"PvP rank")
+	Add("KELA_DASHBOARD_RESEARCH",					"Research progress")
 	Add("KELA_DASHBOARD_SKILL_POINTS",				"Skill Points (USPF)")
 	Add("KELA_DASHBOARD_SKYSHARDS",					"Total Skyshards")
 	Add("KELA_DASHBOARD_BACKPACK",					"Backpack")
@@ -203,6 +206,12 @@ do
 	Add("KELA_SETTINGSYSTEMPANEL7300",				"Item sets")
 	Add("KELA_SETTINGS_SETS_ENABLED",				"Sets interface")
 	Add("KELA_SETTINGS_SETS_ENABLED_TOOLTIP",		"Adds the KelaPadUI sets browser to the main menu. Turn this off to hide the Sets menu entry.")
+	Add("KELA_SETTINGSYSTEMPANEL7302",				"Trait research")
+	Add("KELA_SETTINGS_TRAIT_RESEARCH_ENABLED",			"Trait research matrix")
+	Add("KELA_SETTINGS_TRAIT_RESEARCH_ENABLED_TOOLTIP",	"Adds the trait research matrix to the KelaPadUI main menu. It lists every character on the account and shows each crafting research line against all of its traits. Item availability for the current character covers the backpack and the bank; a character on the same server uses bank items only; a character on another server shows research knowledge without item availability. LibCharacterKnowledge supplies the research knowledge of the other characters and the bank item details.")
+	Add("KELA_SETTINGS_TRAIT_RESEARCH_LCK_STATUS",		"LibCharacterKnowledge")
+	Add("KELA_SETTINGS_TRAIT_RESEARCH_LCK_AVAILABLE",	"available")
+	Add("KELA_SETTINGS_TRAIT_RESEARCH_LCK_NOTFOUND",	"not found")
 	Add("KELA_SETTINGSYSTEMPANEL7500",						"Trading Interface")
 	Add("KELA_SETTINGS_TRADE_ENABLED",						"Enable trading interface")
 	Add("KELA_SETTINGS_TRADE_ENABLED_TOOLTIP",				"Enables KelaPadUI trading tooltips and guild-store enhancements. \n\nRequires Tamriel Trade Centre or Arkadius Trade Tools; both are used when available.")
@@ -329,6 +338,25 @@ do
 	Add("KELA_ANTIQUITY_FILTER_STATUS_RECOVERED",		"Recovered")
 	Add("KELA_ANTIQUITY_FILTER_STATUS_NOT_RECOVERED",	"Not Recovered")
 	Add("KELA_ANTIQUITY_FILTER_CODEX_NOT_COMPLETED",	"Not Completed")
+
+	-- Trait research matrix
+	Add("KELA_TRAIT_RESEARCH_TITLE",					"Trait Research")
+	Add("KELA_TRAIT_RESEARCH_HEADER_CHARACTERS",		"Characters")
+	Add("KELA_TRAIT_RESEARCH_SECTION_WEAPONS",			"WEAPONS")
+	Add("KELA_TRAIT_RESEARCH_SECTION_ARMOR",			"ARMOR")
+	Add("KELA_TRAIT_RESEARCH_SECTION_JEWELRY",			"JEWELRY")
+	Add("KELA_TRAIT_RESEARCH_TITLE_BLACKSMITHING",		"Blacksmithing")
+	Add("KELA_TRAIT_RESEARCH_TITLE_HEAVY_ARMOR",		"Heavy Armor")
+	Add("KELA_TRAIT_RESEARCH_TITLE_LIGHT_ARMOR",		"Light Armor")
+	Add("KELA_TRAIT_RESEARCH_TITLE_MEDIUM_ARMOR",		"Medium Armor")
+	Add("KELA_TRAIT_RESEARCH_TITLE_WOODWORKING",		"Woodworking")
+	Add("KELA_TRAIT_RESEARCH_TITLE_SHIELD",				"Shield")
+	Add("KELA_TRAIT_RESEARCH_RESEARCHED",				"Researched: <<1>>")
+	Add("KELA_TRAIT_RESEARCH_IN_PROGRESS",				"In Progress: <<1>>")
+	Add("KELA_TRAIT_RESEARCH_COMPLETED",				"Completed")
+	Add("KELA_TRAIT_RESEARCH_NO_DATA",					"No LibCharacterKnowledge data for this character")
+	Add("KELA_TRAIT_RESEARCH_NO_LCK",					"LibCharacterKnowledge is not installed. Only the current character is listed, and item availability covers the backpack and the bank.")
+	Add("KELA_TRAIT_RESEARCH_LEGEND",					"Researched | Researching | Item available | No item")
 
 end
 

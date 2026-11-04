@@ -59,8 +59,9 @@ defined by `KELA_SETTINGS_CATEGORY_ORDER` in
 `kpui_core/kpui_settings_gamepad.lua`:
 
 1. Features (`7400`)
-2. Item sets (`7300`)
-3. Trading Interface (`7500`)
+2. Trait research (`7302`)
+3. Item sets (`7300`)
+4. Trading Interface (`7500`)
 
 `Kela_GamepadOptions:RefreshOptionsList()` clears the list and calls
 `AddSettingGroup(panelId, categoryHeader)` for each category. The first visible
@@ -84,6 +85,7 @@ The Features category contains reload-gated toggles:
 | Antiquity lead details | on |
 | Main-menu quick access | on |
 | Main-menu daily dashboard | on |
+| Trait research matrix | on |
 | PersonalAssistant junk integration | on |
 | PS5 button map | off |
 
