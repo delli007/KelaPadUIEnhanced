@@ -1,66 +1,25 @@
 KelaPadUI changelog (newest first)
 
-11/04/2026
-- Removed the text legend from the upper-right corner of the Trait Research page.
-- Added an active research section below the Trait Research matrix, grouped into four crafting-station columns with each trait, item type, and countdown on one line. The right pane scrolls with the right stick when needed.
-- Reworked the Trait Research browser so the whole matrix is on one page: the weapon and jewelry sections share the first row and armor takes the second, instead of showing one craft section at a time with L1/R1.
-- Every Trait Research group now has a single-line heading with its researched / total count, and the count turns light green once the group is complete. The group titles are Blacksmithing, Woodworking, Heavy Armor, Light Armor, Medium Armor and Shield, each section is named in its left column, and there is a little space under the character name before the tables start. The jewelry section drops its duplicate group name and shows only the count.
-- Added a shared text style set (`kpuiConst.TextStyles` in `kpui_core/kpui_constants.lua`) so all KelaPadUI text uses one palette: bold gold section titles, white body text, and one colour per value state. Applied it to the Trait Research page, which also made its plain text white instead of grey and gave its section titles the bold gold style.
-- Enlarged the character name at the top of the Trait Research page (the shared `CharacterName` style, condensed 42px) and sized its line to fit, so it reads as the page's subject.
-- The Trait Research CHARACTERS heading now matches the game's own list headings: bold, uppercase, the interface text colour, and left-aligned to the same indent as the character names.
-- The Trait Research progress line now sits under the character name instead of beside it, with a little more space before the tables start.
-- Fixed the red X marker in the Trait Research matrix: it drew the close-button texture whole, so the X sat off-centre and small. It is now cropped the same way the game's own close button crops it, and centred in its cell.
-- Every Trait Research section now uses the same column width, so the weapon and armor columns line up vertically, with a gap between neighbouring groups and the jewelry section aligned to the right edge.
-- The Trait Research character list now only lists the characters on the server being played, and uses the standard menu row style with the research summary on two lines under each name; picking a different character updates the matrix immediately.
-- Added a Research progress row to the dashboard's Character section showing the current character's researched / total traits with a countdown to the next completion; it turns light green when every trait is researched.
-- Added a PVP Veterancy row to the dashboard's Events section with the season countdown.
-- Added end-of-event countdowns to the Golden Pursuit and Tamriel Tomes rows. The Tomes row now reads "tier / total - time left" and no longer appends the points needed for the next tier.
-- Every dashboard countdown now keeps ticking about once a minute while the panel stays open, instead of only when the main menu is reopened.
+Version numbers before 2.5.0 were assigned retrospectively to the dated
+changelog entries; they do not imply those versions were released. Future
+entries use major.minor.patch and match the add-on manifest version.
 
-11/03/2026
-- Added a Trait Research browser to the KelaPadUI main menu (Sets, Trait Research, Settings). The left pane lists every character on the account with the logged-in character first and a research summary under each name; the right pane shows each crafting research line against its traits with check, timer, plus and cross cell states.
-- Item availability uses the backpack and bank for the current character, the bank only for characters on the same server, and nothing for characters on another server.
-- The other characters are read through LibCharacterKnowledge when it is installed; without it the browser shows the current character only and says so.
-- Added the Trait research settings category before Item sets, with a default-on toggle whose help text reports whether LibCharacterKnowledge was found.
-- Smithing, inventory and library refresh triggers are coalesced into a single deferred rebuild so the browser cannot rebuild twice for one change.
+2.5.0 - 11/04/2026
+- Added Rumours and an Events section with Tome Challenges, PVP Veterancy, and Golden Pursuit to Quick Access.
+- Added a gamepad Trait Research browser with a full matrix, per-character progress, item availability, and active research countdowns. LibCharacterKnowledge enables other characters on the current server; without it, the current character is still available.
+- Added dashboard research progress and PVP Veterancy, plus live Golden Pursuit, Tamriel Tomes, and event countdowns.
+- Improved companion details in Collections, including level, rapport, passive perk, and equipped gear, and added Companions to Quick Access.
+- Fixed Quick Access disappearing during background updates and interfering with gamepad dialogs.
+- Fixed guild selection reverting after listing an item with ATT and corrected Sets browser registration.
 
-11/02/2026
-- Fixed the sets browser registering itself under a table key in the game's systems list instead of the `kelaSets` system name.
-- Fixed the set-detail rows writing a global `label` on every row setup.
-- Removed the one-time Attention notice from the Sets browser; it described an ESO dialog bug that KelaPadUI no longer triggers.
-
-11/01/2026
-- Fixed Quick Access entries disappearing while the submenu stayed open when a background inventory, mail, level, or daily-reward update rebuilt the main-menu sublist.
-- Quick Access now restores the selected row after such a rebuild.
-
-10/31/2026
-- Fixed the companion details not appearing in the gamepad Collections > Allies > Companions tooltip.
-- Added a Companions entry to the Quick Access submenu that opens the Companions collection page.
-- Companion details now use the same body text size and color as the base Collections info, with a blank line before each titled block.
-- Rapport now shows the level, current and maximum values, percentage, and tier in one line.
-- The passive perk now includes its description and appears before the level.
-- Gear rows now include armor weight and trait alongside the quality-colored name.
-- Slotted skills and the ultimate are still recorded but hidden from the tooltip.
-- Fixed the duel/ready-check "CancelTaskbarWindowFlash from insecure code" error by keeping Quick Access out of the shared core gamepad-dialog keybind pool.
-- Moved Quick Access into the built-in gamepad main menu submenu, so it uses the standard Select and Back keybinds and closes with the menu when prompts appear.
-- Removed the redundant Quick Access row from the main-menu list; the Options keybind opens the submenu directly.
-- Fixed Quick Access section headers overlapping the previous row.
-
-10/30/2026
-- Fixed the guild trader resetting to a previously selected guild after listing an item when ATT is installed.
-- Guild selection now persists through the saved guild store id, and the custom guild dialog matches core narration and alliance icon helpers.
-- Added companion level and XP, rapport tier, passive perk, slotted skills plus ultimate, and equipped gear to the gamepad Collections > Allies > Companions tooltip.
-- Companion builds are recorded while the companion is summoned and shared account-wide; rapport is recorded per character.
-- Cached rows are labeled as recorded while summoned, and missing data is left blank instead of being invented.
-
-10/28/2026
+2.4.0 - 10/28/2026
 - Added an optional PS5 button map setting, off by default, so controller hints can use PlayStation 5 icons without a reload.
 - The dashboard's Events section now lists additional active promotional campaigns alongside Golden Pursuit and Tamriel Tomes.
 - Campaigns are sorted by time remaining, and extra campaigns are shown as a +N count on the last row.
 - The Events section stays visible when only a promotional campaign is running.
 - Removed the empty Announcements block, because the client no longer publishes that data to add-ons.
 
-10/27/2026
+2.3.1 - 10/27/2026
 - Fixed dashboard value colors, including a refresh bug that dropped the color from rows returning text and color.
 - Pledge statuses, maxed character values, and capacity now use the intended blue, teal, green, orange, and red colors.
 - Random Dungeon and Battleground are green for both Ready and Complete.
@@ -70,7 +29,7 @@ KelaPadUI changelog (newest first)
 - Reset boundaries are snapped to five minutes, and the reset time is learned from the first valid timer.
 - The writ, archive, and pledge rows share one clock reading and boundary per refresh.
 
-10/26/2026
+2.3.0 - 10/26/2026
 - Extended per-character daily tracking to Infinite Archive and Undaunted pledges.
 - All three daily rows now use one journal scan, with turn-ins recorded from quest removal.
 - The pledge total counts only completed pledges, and its sub-rows show Ready, Active, Turn In, or Complete.
@@ -80,7 +39,7 @@ KelaPadUI changelog (newest first)
 - Fixed the crafting-writ counter so it no longer counts the permanent completed-quest archive.
 - Writs now combine finished journal quests with per-character turn-ins for the current reset day.
 
-10/23/2026
+2.2.0 - 10/23/2026
 - Fixed the dashboard's daily rows and added the Undaunted pledges.
 - Daily writ and Infinite Archive counts now include handed-in quests instead of dropping to zero.
 - Random Dungeon and Battleground now use the reward cooldown APIs.
@@ -93,21 +52,21 @@ KelaPadUI changelog (newest first)
 - Added a reload-required prompt for reload-gated settings.
 - PersonalAssistant junk marking now defaults on when installed and works in gamepad mode.
 
-10/22/2026
+2.1.2 - 10/22/2026
 - Fixed a Too many anchors processed warning after closing alchemy recipe and provisioning tooltips.
 - Added implementation notes and a controller-glyph migration plan to the gamepad enhancements document.
 - Renamed OPTIMIZATION_TODO.md to TODO.md and refreshed the maintenance and development documentation.
 - Removed a dead trait-tooltip replacement block and unused research compatibility code.
 - Moved the trading-house modules under kpui_features/tradinghouse.
 
-10/21/2026
+2.1.1 - 10/21/2026
 - Cleaned up trading tooltips, fixed an accidental global, and corrected purchase-history quality handling.
 - Fixed a Lua error when hovering armor, weapons, or glyphs in bank and trading-house tooltips.
 - Set-name tooltips now use SafeAddString instead of replacing the core string constant.
 - Updated the copied trading-house confirmation dialogs to match current core.
 - Removed unused constants and commented-out code, localized the known-item filter, and guarded optional libraries.
 
-10/20/2026
+2.1.0 - 10/20/2026
 - TTC and ATT now work independently, and missing-provider tooltip rows show N/A.
 - Trading-house confirmation dialogs now use core ZOS text and narration.
 - Tooltip overrides now change only properties that differ from core.
@@ -122,36 +81,36 @@ KelaPadUI changelog (newest first)
 - Branded the KELAPADUI main-menu entry with a purple champion icon and text tint.
 - Added maintenance, settings, and trading-house documentation.
 
-10/19/2026
+2.0.1 - 10/19/2026
 - Refactor phase 2 reorganized the code into kpui_core, kpui_features, kpui_data, and kpui_compat.
 - Made the main-menu entry append-only and completed the static manifest, syntax, and XML audit.
 - Removed retired panels and unused templates, and added the gamepad map-info rally-point keybind.
 
-10/18/2026
+2.0.0 - 10/18/2026
 - Refactor phase 1 removed retired features and split companion, dungeon-finder, chat, and trial-link code into feature modules.
 - Added a gamepad group-rally-point button and trimmed dead XML and settings.
 - Retired Russian text in favor of English and added developer notes and the deferred-work TODO list.
 
-04/15/2023
+1.5.0 - 04/15/2023
 - Added a guild store search filter for known and unknown items.
 
-04/01/2023
+1.4.0 - 04/01/2023
 - Added companion rapport numbers, stages, and sources.
 
-03/20/2023
+1.3.0 - 03/20/2023
 - Added /achievementsearch and /keyboardmap chat commands.
 
-07/15/2022
+1.2.1 - 07/15/2022
 - Fixed trading-house display and duplicate another-quality listings.
 
-06/20/2022
+1.2.0 - 06/20/2022
 - Added a Link in Chat option for achievements and other fixes.
 
-03/23/2022
+1.1.0 - 03/23/2022
 - Slimmed down the main-menu code and moved the KelaPadUI entry next to Options.
 
-03/20/2022
+1.0.1 - 03/20/2022
 - Fixed a crash when selling grouped items whose individual cost exceeded 999.
 
-03/01/2022
+1.0.0 - 03/01/2022
 - Fixed crashes on load.

@@ -108,8 +108,10 @@ Minion and ESOUI installations use the same folder layout.
 - Adds a Quick Access submenu to the gamepad main menu, opened with the Options
   (tertiary) button. It uses the menu's built-in Select and Back keybinds and
   adds no main-menu row.
-- Shortcuts to the group finder, Mail, antiquities, the Sticker Book, the
-  Companions collection page, and your primary house.
+- Shortcuts to the group finder, Rumours, Mail, antiquities, the Sticker Book,
+  the Companions collection page, and your primary house.
+- The Events section provides Tome Challenges, PVP Veterancy, and Golden Pursuit;
+  unavailable seasonal activities are disabled.
 
 ### KELAPAD dashboard
 

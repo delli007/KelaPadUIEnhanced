@@ -121,7 +121,9 @@ styles through `ZO_ColorDef:Colorize`.
    tooltip style.
 3. Keep the change focused. Do not mix cleanup, behavior changes, and
    main-menu color changes in one commit.
-4. Update `changelog.txt` and any affected docs.
+4. Update `changelog.txt` and any affected docs. For a release, keep the newest
+   `major.minor.patch` changelog version and the `## Version` in `KelaPadUI.txt`
+   in sync; pre-2.5.0 changelog versions were assigned retrospectively.
 5. Add deferred or risky work to `TODO.md`; do not leave untracked
    `TODO`/`FIXME` markers in Lua/XML.
 6. Run the static audit:

@@ -59,6 +59,19 @@ local function ShowBattlegroundFinder()
     end
 end
 
+local function IsRumoursAvailable()
+    return QUEST_JOURNAL_GAMEPAD ~= nil and QUEST_JOURNAL_GAMEPAD.SetMode ~= nil
+        and ZO_QUEST_JOURNAL_MODE ~= nil and ZO_QUEST_JOURNAL_MODE.RUMORS ~= nil
+        and SCENE_MANAGER ~= nil and SCENE_MANAGER.CreateStackFromScratch ~= nil
+end
+
+local function ShowRumours()
+    if IsRumoursAvailable() then
+        QUEST_JOURNAL_GAMEPAD:SetMode(ZO_QUEST_JOURNAL_MODE.RUMORS)
+        SCENE_MANAGER:CreateStackFromScratch("mainMenuGamepad", "gamepad_quest_journal")
+    end
+end
+
 local function ShowGroupList()
     if MAIN_MENU_GAMEPAD and MAIN_MENU_GAMEPAD.ShowGroupMenu then
         MAIN_MENU_GAMEPAD:ShowGroupMenu()
@@ -156,6 +169,63 @@ local function IsTomeChallengesAvailable()
     return TIMED_ACTIVITIES_MANAGER ~= nil and TIMED_ACTIVITIES_MANAGER.ShowTimedActivitiesScene ~= nil
 end
 
+local function IsVeterancyAvailable()
+    return type(IsVeterancySeasonActive) == "function" and IsVeterancySeasonActive()
+        and type(QueryCampaignSelectionData) == "function"
+        and GAMEPAD_AVA_BROWSER ~= nil and GAMEPAD_AVA_BROWSER.SetSelectVeterancy ~= nil
+        and MAIN_MENU_GAMEPAD ~= nil and MAIN_MENU_GAMEPAD.SelectMenuEntry ~= nil
+        and ZO_MENU_MAIN_ENTRIES ~= nil and ZO_MENU_MAIN_ENTRIES.CAMPAIGN ~= nil
+        and VETERANCY_SCENE_GAMEPAD ~= nil
+        and SCENE_MANAGER ~= nil and SCENE_MANAGER.CreateStackFromScratch ~= nil
+end
+
+local function ShowVeterancy()
+    if IsVeterancyAvailable() then
+        -- Match the game's notification route, including its campaign selection
+        -- and intermediate scene so Back returns to the campaign browser.
+        QueryCampaignSelectionData()
+        GAMEPAD_AVA_BROWSER:SetSelectVeterancy()
+        MAIN_MENU_GAMEPAD:SelectMenuEntry(ZO_MENU_MAIN_ENTRIES.CAMPAIGN)
+        SCENE_MANAGER:CreateStackFromScratch("mainMenuGamepad", "gamepad_campaign_root", "VeterancySceneGamepad")
+    end
+end
+
+-- The dashboard's Golden Pursuit row uses the first promotional campaign; use
+-- the same campaign here instead of the unrelated returning-player announcement.
+local function GetGoldenPursuitCampaign()
+    local manager = PROMOTIONAL_EVENT_MANAGER
+    if not manager or not manager.GetNumActiveCampaigns or not manager.GetCampaignDataByIndex
+        or not manager.ShowPromotionalEventScene
+        or not PROMOTIONAL_EVENTS_GAMEPAD or not PROMOTIONAL_EVENTS_GAMEPAD.GetCategoryData
+        or not ZO_ACTIVITY_FINDER_ROOT_GAMEPAD or not ZO_ACTIVITY_FINDER_ROOT_GAMEPAD.ShowCategory
+        or type(IsPromotionalEventSystemLocked) ~= "function" or IsPromotionalEventSystemLocked() then
+        return nil
+    end
+    local count = manager:GetNumActiveCampaigns() or 0
+    if count == 0 or not PROMOTIONAL_EVENTS_GAMEPAD:GetCategoryData() then
+        return nil
+    end
+    if count > 1 and (not PROMOTIONAL_EVENTS_LIST_GAMEPAD or not PROMOTIONAL_EVENTS_LIST_GAMEPAD.SelectCampaign) then
+        return nil
+    end
+    local campaign = manager:GetCampaignDataByIndex(1)
+    if campaign and campaign.ShouldCampaignBeVisible and campaign:ShouldCampaignBeVisible() then
+        return campaign
+    end
+    return nil
+end
+
+local function IsGoldenPursuitAvailable()
+    return GetGoldenPursuitCampaign() ~= nil
+end
+
+local function ShowGoldenPursuit()
+    local campaign = GetGoldenPursuitCampaign()
+    if campaign then
+        PROMOTIONAL_EVENT_MANAGER:ShowPromotionalEventScene(false, campaign)
+    end
+end
+
 local function IsGroupAvailable()
     return MAIN_MENU_GAMEPAD ~= nil and MAIN_MENU_GAMEPAD.ShowGroupMenu ~= nil
 end
@@ -191,12 +261,15 @@ local QUICK_ACCESS_ENTRIES =
     { label = KELA_SHORTCUT_GROUP_FINDER, icon = "EsoUI/Art/LFG/Gamepad/LFG_menuIcon_groupFinder.dds", action = ShowGroupFinder, enabled = IsGroupFinderAvailable, header = KELA_SHORTCUT_HEADER_ACTIVITIES },
     { label = KELA_SHORTCUT_DUNGEON_FINDER, icon = "EsoUI/Art/LFG/Gamepad/gp_LFG_menuIcon_Dungeon.dds", action = ShowDungeonFinder, enabled = IsDungeonFinderAvailable },
     { label = KELA_SHORTCUT_BATTLEGROUNDS, icon = "EsoUI/Art/LFG/Gamepad/LFG_menuIcon_battlegrounds.dds", action = ShowBattlegroundFinder, enabled = IsBattlegroundFinderAvailable },
-    { label = KELA_SHORTCUT_TOME_CHALLENGES, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_tamrielTomes.dds", action = ShowTomeChallenges, enabled = IsTomeChallengesAvailable },
+    { label = KELA_SHORTCUT_RUMOURS, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_quests.dds", action = ShowRumours, enabled = IsRumoursAvailable },
     { label = KELA_SHORTCUT_GROUP, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_groups.dds", action = ShowGroupList, enabled = IsGroupAvailable, header = KELA_SHORTCUT_HEADER_SHORTCUTS },
     { label = KELA_SHORTCUT_MAIL, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_mail.dds", action = ShowMail, enabled = IsMailAvailable },
     { label = KELA_SHORTCUT_SCRYABLE_ANTIQUITIES, icon = "EsoUI/Art/Journal/Gamepad/GP_journal_tabIcon_antiquities.dds", action = ShowScryableAntiquities, enabled = IsScryableAntiquitiesAvailable },
     { label = KELA_SHORTCUT_STICKER_BOOK, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_itemSetCollections.dds", action = ShowStickerBook, enabled = IsStickerBookAvailable },
     { label = KELA_SHORTCUT_COMPANIONS, icon = "EsoUI/Art/Companion/Gamepad/gp_companion_icon_overview.dds", action = ShowCompanions, enabled = IsCompanionsAvailable },
+    { label = KELA_SHORTCUT_TOME_CHALLENGES, icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_tamrielTomes.dds", action = ShowTomeChallenges, enabled = IsTomeChallengesAvailable, header = KELA_SHORTCUT_HEADER_EVENTS },
+    { label = KELA_SHORTCUT_VETERANCY, icon = "EsoUI/Art/Campaign/Gamepad/gp_campaign_menuIcon_veterancy.dds", action = ShowVeterancy, enabled = IsVeterancyAvailable },
+    { label = KELA_SHORTCUT_GOLDEN_PURSUIT, icon = "EsoUI/Art/LFG/Gamepad/LFG_menuIcon_PromotionalEvents.dds", action = ShowGoldenPursuit, enabled = IsGoldenPursuitAvailable },
     { label = KELA_SHORTCUT_PRIMARY_HOUSE, icon = "EsoUI/Art/Collections/PrimaryHouse.dds", action = TravelToPrimaryHouse, enabled = IsPrimaryHouseAvailable, header = KELA_SHORTCUT_HEADER_ACTIONS },
 }
 

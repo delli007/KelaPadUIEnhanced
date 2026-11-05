@@ -11,7 +11,10 @@ do
 	Add("KELA_SHORTCUT_GROUP_FINDER",				"Group Finder")
 	Add("KELA_SHORTCUT_DUNGEON_FINDER",				"Dungeon Finder")
 	Add("KELA_SHORTCUT_BATTLEGROUNDS",				"Battlegrounds")
+	Add("KELA_SHORTCUT_RUMOURS",					"Rumours")
 	Add("KELA_SHORTCUT_TOME_CHALLENGES",			"Tome Challenges")
+	Add("KELA_SHORTCUT_VETERANCY",					"PVP Veterancy")
+	Add("KELA_SHORTCUT_GOLDEN_PURSUIT",				"Golden Pursuit")
 	Add("KELA_SHORTCUT_GROUP",						"Group")
 	Add("KELA_SHORTCUT_MAIL",						"Mail")
 	Add("KELA_SHORTCUT_SCRYABLE_ANTIQUITIES",		"Scryable Antiquities")
@@ -20,6 +23,7 @@ do
 	Add("KELA_SHORTCUT_PRIMARY_HOUSE",				"Primary House")
 	Add("KELA_SHORTCUT_HEADER_ACTIVITIES",			"Activities")
 	Add("KELA_SHORTCUT_HEADER_SHORTCUTS",			"Shortcuts")
+	Add("KELA_SHORTCUT_HEADER_EVENTS",				"Events")
 	Add("KELA_SHORTCUT_HEADER_ACTIONS",				"Actions")
 
 	-- PersonalAssistant junk integration

@@ -8,6 +8,7 @@
 
 ## APIVersion: 101051
 ## Title: KelaPadUI2
+## Version: 2.5.0
 ## Author: @slice_o'life
 ## Description: This addon improves the gamepad's UI by adding additional information and features. Original author: @rkirgizov
 ## SavedVariables: kpuiSavedVariables
