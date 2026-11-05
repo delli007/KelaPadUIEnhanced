@@ -214,6 +214,9 @@ Manual in-game checks are still required for:
   seasonal shortcuts are disabled when unavailable;
 - leaving Quick Access open through an inventory, mail, level, or daily-reward
   update and confirming its rows and selected position stay in place;
+- checking the dashboard's skill-point count after a fresh character login and
+  `/reloadui`, with and without USPF; confirm it updates while the menu is open
+  and remains N/A if USPF or the required game data is unavailable;
 - scrolling the flattened settings list and confirming category headings;
 - opening Trait Research with and without LibCharacterKnowledge, switching
   characters with active research, and checking each station's line, trait and

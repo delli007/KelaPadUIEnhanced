@@ -36,6 +36,7 @@ local titleControl = nil
 -- Rows whose value carries a countdown.  Re-rendered by the per-minute tick so
 -- the times keep ticking while the panel stays open.
 local countdownRows = {}
+local skillPointsRow = nil
 -- Values the rows compute but do not display yet, kept so a later change can
 -- render them without re-deriving anything.  Live data only, never persisted.
 --   tomes:     { tier, totalTiers, pointsToNextTier }
@@ -808,15 +809,82 @@ local function GetPvPRankText()
     return tostring(rank), color
 end
 
--- Skill points are USPF's own character total: the same pair USPF shows in its
--- footer (earned / maximum).  Without USPF there is no comparable number, so the
--- row reads N/A instead of mixing in a differently calculated total.
-local function GetSkillPointText()
-    local data = USPF and USPF.ptsData
+-- USPF calculates its skyshard counts once during add-on loading.  Zone data may
+-- not be ready then, and USPF does not recalculate those counts on activation.
+-- Keep its definition of the maximum but count its tracked zones using live game
+-- data.  Do not mutate USPF's tables or invoke its UI refresh.
+local function GetLiveUSPFMaximum()
     local totals = USPF and USPF.ptsTots
-    local earned = data and data.Tot
-    local maxPoints = totals and totals.Tot
-    if type(earned) ~= "number" or type(maxPoints) ~= "number" or maxPoints <= 0 then
+    local data = USPF and USPF.data
+    local zoneIds = data and data.ZId and data.ZId.ZN
+    if not totals or type(totals.Tot) ~= "number" or type(totals.SSTot) ~= "number"
+        or not data or type(data.zones) ~= "table" or type(zoneIds) ~= "table"
+        or type(GetNumSkyshardsInZone) ~= "function" or type(GetNumSkyshards) ~= "function"
+        or (GetNumSkyshards() or 0) <= 0 then
+        return nil
+    end
+
+    local skyshards = 0
+    for _, zone in ipairs(data.zones) do
+        local zoneId = zoneIds[zone.key]
+        if not zoneId then
+            return nil
+        end
+        local count = GetNumSkyshardsInZone(zoneId)
+        if type(count) ~= "number" or count < 0 then
+            return nil
+        end
+        skyshards = skyshards + count
+    end
+    if skyshards <= 0 then
+        return nil
+    end
+    return totals.Tot - totals.SSTot + math.floor(skyshards / 3)
+end
+
+-- Match USPF's own skill-point accounting: available points plus allocations in
+-- active skill lines, excluding class-mastery points.  This avoids its stale
+-- startup snapshot while keeping the result tied to the current character.
+local function GetLiveEarnedSkillPoints()
+    local skills = SKILLS_DATA_MANAGER
+    local allocation = SKILL_POINT_ALLOCATION_MANAGER
+    if not skills or not skills.IsDataReady or not skills:IsDataReady() or not skills.SkillTypeIterator
+        or not allocation or not allocation.GetAvailableSkillPoints or not allocation.GetNumPointsAllocatedInSkillLine then
+        return nil
+    end
+    local earned = allocation:GetAvailableSkillPoints()
+    if type(earned) ~= "number" then
+        return nil
+    end
+    for _, skillTypeData in skills:SkillTypeIterator() do
+        if type(skillTypeData.orderedSkillLines) ~= "table" then
+            return nil
+        end
+        for _, skillLine in ipairs(skillTypeData.orderedSkillLines) do
+            if not skillLine.IsClassMastery then
+                return nil
+            end
+            if not skillLine:IsClassMastery() then
+                local points = allocation:GetNumPointsAllocatedInSkillLine(skillLine)
+                if type(points) ~= "number" then
+                    return nil
+                end
+                earned = earned + points
+            end
+        end
+    end
+    return earned
+end
+
+-- Without initialized USPF metadata or ready game data, show N/A and retry while
+-- the dashboard is visible instead of displaying a partial startup total.
+local function GetSkillPointText()
+    local maxPoints = GetLiveUSPFMaximum()
+    if type(maxPoints) ~= "number" or maxPoints <= 0 then
+        return GetString(KELA_DASHBOARD_VALUE_NA)
+    end
+    local earned = GetLiveEarnedSkillPoints()
+    if type(earned) ~= "number" then
         return GetString(KELA_DASHBOARD_VALUE_NA)
     end
 
@@ -1263,6 +1331,11 @@ local function OnDashboardUpdate()
         dashboardPollCount = 0
     end
     if visible then
+        -- USPF and the game can become ready after the first menu refresh.  Only
+        -- update this row, rather than rebuilding the entire dashboard.
+        if skillPointsRow then
+            SetRowValueControl(skillPointsRow)
+        end
         dashboardPollCount = dashboardPollCount + 1
         if dashboardPollCount >= DASHBOARD_RESET_UPDATE_POLLS then
             dashboardPollCount = 0
@@ -1388,6 +1461,9 @@ local function BuildDashboard()
                             getValue = row.value,
                         }
                         table.insert(dashboardRows, rowData)
+                        if row.label == KELA_DASHBOARD_SKILL_POINTS then
+                            skillPointsRow = rowData
+                        end
                         if row.countdown then
                             table.insert(countdownRows, rowData)
                         end

@@ -5,6 +5,7 @@ changelog entries; they do not imply those versions were released. Future
 entries use major.minor.patch and match the add-on manifest version.
 
 2.5.0 - 11/04/2026
+- Fixed the dashboard's initial skill-point count when USPF starts before skyshard data is ready; the row now uses live point allocations and refreshed skyshard totals.
 - Added Rumours and an Events section with Tome Challenges, PVP Veterancy, and Golden Pursuit to Quick Access.
 - Added a gamepad Trait Research browser with a full matrix, per-character progress, item availability, and active research countdowns. LibCharacterKnowledge enables other characters on the current server; without it, the current character is still available.
 - Added dashboard research progress and PVP Veterancy, plus live Golden Pursuit, Tamriel Tomes, and event countdowns.
