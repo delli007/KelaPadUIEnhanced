@@ -11,6 +11,9 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
 - `LibSets` is required (`0.9.4`, API `101051`/`101052`).
 - TTC and ATT are independent optional providers. The add-on must work with
   TTC-only, ATT-only, both, and neither.
+- Multi-file features live in subfolders of `kpui_features/`: `antiquities/`,
+  `companion/`, `filters/`, `mainmenu/`, `sets/`, and `tradinghouse/`.
+  Single-file features, including Trait Research, stay at the feature root.
 - Trading-house code lives under `kpui_features/tradinghouse/`:
   - `kpui_tradinghouse_shared.lua`
   - `kpui_tradinghouse_hooks.lua`
@@ -72,8 +75,8 @@ styles through `ZO_ColorDef:Colorize`.
 
 ## Companion snapshot notes
 
-- `kpui_features/kpui_companion.lua` handles the companion menu and rapport
-  notifications. `kpui_features/kpui_companion_collections.lua` post-hooks
+- `kpui_features/companion/kpui_companion.lua` handles the companion menu and rapport
+  notifications. `kpui_features/companion/kpui_companion_collections.lua` post-hooks
   `GAMEPAD_COLLECTIONS_BOOK.RefreshStandardTooltip` to add the extra Collections
   tooltip rows. `ZO_GamepadCollectionsBook` is file-local, so the global
   singleton must be hooked.

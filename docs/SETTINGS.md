@@ -73,12 +73,12 @@ in light red on every open.
 | `7402` | `KELA_SETTING_PANEL_FEATURES_DUNGEON_FINDER` | `true` |
 | `7403` | `KELA_SETTING_PANEL_FEATURES_CHAT_TOOLS` | `true` |
 | `7404` | `KELA_SETTING_PANEL_FEATURES_MAP_RALLY` | `true` |
-| `7405` | `KELA_SETTING_PANEL_FEATURES_ANTIQUITY_FILTERS` | `true` |
 | `7406` | `KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS` | `true` |
 | `7408` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS` | `true` |
 | `7409` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD` | `true` |
 | `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
 | `7411` | `KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS` | `false` |
+| `7412` | `KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS` | `true` |
 
 All Features toggles except the PS5 button map are reload-gated. The PS5 button
 map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
@@ -91,9 +91,14 @@ off the scene-transition callstack. The PersonalAssistant junk toggle is on by
 default and does nothing when PersonalAssistant is not installed or PA's custom
 junk rules are disabled.
 
+Additional gamepad filters (`7412`) gates Antiquities, set-name searches in Item
+Set Collections and transmute reconstruction, provisioning and furnishing recipe
+filters, achievement filters, and future filters. The former Antiquity filters
+setting `7405` is retired; existing saved filter preferences remain available.
+
 The Companion information toggle (`7401`) also gates the extra details in the
 gamepad Collections > Allies > Companions tooltip
-(`kpui_features/kpui_companion_collections.lua`). That module stores build
+(`kpui_features/companion/kpui_companion_collections.lua`). That module stores build
 snapshots account-wide in `kpuiSavedVariables.companionSnapshots.builds` and
 rapport snapshots per character in
 `kpuiSavedVariables.companionSnapshots.rapport[characterId]`; it adds no

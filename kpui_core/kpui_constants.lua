@@ -6,6 +6,10 @@ kpuiConst.stringDDS = {
 	["leftStickXBOne"] = "esoui/art/buttons/gamepad/xbox/nav_xbone_ls_press.dds",
 }
 
+-- Shared shortcut for the additional gamepad menu filters.  L3 is reserved by
+-- the crafting advisor for cycling writs, and the face buttons are occupied.
+kpuiConst.GamepadFilterKeybind = "UI_SHORTCUT_QUINARY"
+
 
 kpuiConst.Colors = {
 	COLOR_ORANGE 			= ZO_ColorDef:New(220/255, 129/255, 34/255),

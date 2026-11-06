@@ -4,16 +4,12 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 ## Open work
 
-- Replace the custom `KPUI_*` tooltip controls/XML with supported core hooks or templates where feasible; keep copied confirmation dialogs only where C API callbacks cannot be hooked.
-- Reintroduce a Research and trait knowledge submenu under the kelapadui main menu entry that reads from `craftstore` and/or `libcharacterknowledge`: implemented as the Trait Research matrix (`kpui_features/traitresearch/kpui_trait_research_gamepad.lua`) using the base-game API plus LibCharacterKnowledge, without CraftStore.
 
 ## Candidate enhancements
 
-- Extend the `LibCustomMenu` player menu to gamepad lists with whisper, invite and copy-name; keep the library optional.
-- Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
-- Additional Filters and sorting for gamepad menus: Provisioning station, Achievements, Guild Roster
-- Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
 - Add support for the Extended Journal: place in the KelaPadUI menu and in the journal menu at the end of the list.
+- Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
+- Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
 - ?? Add support for CMX Fight Stats: place in the KelaPadUI menu
 
 ## Enhancement Notes

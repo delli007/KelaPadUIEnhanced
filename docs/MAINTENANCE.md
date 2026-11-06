@@ -26,6 +26,9 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `KelaPadUI.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
+| `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
+| `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
+| `kpui_features/companion/` | Companion menu and Collections tooltip information. |
 | `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
 | `kpui_lang/` | English strings; `en.lua` is the only locale file. |
 | `kpui_data/` | Static trial and companion data used by feature modules. |
@@ -81,7 +84,7 @@ The Features category contains reload-gated toggles:
 | Dungeon finder information | on |
 | Chat tools | on |
 | Map rally point | on |
-| Antiquity filters | on |
+| Additional gamepad filters | on |
 | Antiquity lead details | on |
 | Main-menu quick access | on |
 | Main-menu daily dashboard | on |
@@ -105,9 +108,9 @@ The Item sets toggle hides the Sets entry in the KelaPadUI main-menu submenu but
 does not remove the sets list from the add-on. The KELAPADUI main-menu entry
 itself is always visible so the user cannot lock themselves out of settings.
 
-Companion information covers both `kpui_features/kpui_companion.lua` (companion
+Companion information covers both `kpui_features/companion/kpui_companion.lua` (companion
 menu details and rapport notifications) and
-`kpui_features/kpui_companion_collections.lua` (extra rows in the gamepad
+`kpui_features/companion/kpui_companion_collections.lua` (extra rows in the gamepad
 Collections companion tooltip). The Collections module post-hooks
 `GAMEPAD_COLLECTIONS_BOOK.RefreshStandardTooltip` and records build and rapport
 snapshots, because the game only exposes live level, skills, and gear for the
@@ -224,6 +227,29 @@ Manual in-game checks are still required for:
   without affecting character navigation, including at 1080p;
 - starting, cancelling and completing research while the page is open, checking
   countdown refreshes and that empty or unavailable data is not shown as active;
+- at a transmute station, search for set names (including Cyrodiil sets), test
+  mixed case, no matches, clearing and leaving/re-entering; confirm existing
+  locked-item filters and reconstruction selection and Back navigation work;
+- repeat set-name searches in Item Set Collections and check the two screens do
+  not share queries; disable Additional gamepad filters, reload, and confirm both
+  searches disappear while the game's existing filters remain available;
+- at provisioning and furnishing stations, check recipe text, quality, CP 150-160,
+  Unique Dishes and other-level selections individually and together, including
+  no matches, clear/cancel,
+  station changes, repeated filter openings, multiple active writs and the game's ingredient, skill and quest filters;
+  open the game's own options menu and confirm the same ingredient, skill and
+  quest choices are checked, then toggle them natively and confirm this dialog
+  reflects them; confirm the choices persist after `/reloadui`, crafting and
+  furniture preview still work, and the setting disables the filters;
+- search Achievements from both the category root and an achievement list; check
+  earned, unearned, in-progress and tracked filters alone and in combination,
+  with no matches and achievement chains. Verify both the custom and native
+  status choices survive zone changes, but reset after `/reloadui` or logout;
+- verify changes apply immediately and Back retains them in all filter dialogs;
+  check Antiquities text, difficulty, lead/recovery, codex and native progress
+  filters, including combinations, old saved preferences and Clear Filters;
+- verify the shared filter shortcut in Antiquities, Achievements, Item Set
+  Collections, reconstruction and recipe lists, without disrupting core actions;
 - changing and resetting settings, including reload-gated toggles;
 - entering the guild store with TTC only, ATT only, both, and neither;
 - confirming tooltips, search filters, and trading history;

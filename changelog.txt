@@ -4,7 +4,17 @@ Version numbers before 2.5.0 were assigned retrospectively to the dated
 changelog entries; they do not imply those versions were released. Future
 entries use major.minor.patch and match the add-on manifest version.
 
+2.6.0 - 11/05/2026
+- Unified Antiquity filters under Additional gamepad filters, adding name search, multi-select difficulty and progress filters, and a clear option.
+- Filter changes now apply immediately; dialogs use Back, show named color-coded qualities, and include the game's available filter choices.
+- Provisioning and furnishing ingredient, skill, and quest filters now stay in sync with the game's own filter dialog and persist with it.
+- Replaced the provisioning recipe Level 1 / CP 1 filter with Unique Dishes, which shows Delicacies.
+
 2.5.0 - 11/04/2026
+- Added session-persistent gamepad achievement search and completion, in-progress, and tracked filters; unified the filter shortcut across Antiquities and the supported additional filter screens.
+- Fixed the recipe filter shortcut disappearing after closing its dialog or conflicting with the crafting advisor.
+- Added gamepad recipe name, quality, and level filters for provisioning, and name and quality filters for furnishing plans at crafting stations.
+- Added set-name search to gamepad Item Set Collections and the transmute station's reconstruction screen, controlled by one Additional gamepad filters setting.
 - Fixed the dashboard's initial skill-point count when USPF starts before skyshard data is ready; the row now uses live point allocations and refreshed skyshard totals.
 - Added Rumours and an Events section with Tome Challenges, PVP Veterancy, and Golden Pursuit to Quick Access.
 - Added a gamepad Trait Research browser with a full matrix, per-character progress, item availability, and active research countdowns. LibCharacterKnowledge enables other characters on the current server; without it, the current character is still available.

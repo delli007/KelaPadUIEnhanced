@@ -61,9 +61,39 @@ Minion and ESOUI installations use the same folder layout.
 - Browses set bonuses and set pieces using `LibSets` data.
 - Can be hidden from the main menu with its own setting.
 
+### Item set search
+
+- Search set names in gamepad Item Set Collections and the transmute station's
+  reconstruction screen. Search filters the existing categories and respects
+  the game's item filters.
+- Use the Search Sets keybind to enter or clear a search and change the game's
+  locked-item and equipment filters. Changes apply immediately. The search is
+  cleared when leaving the screen. The Additional gamepad filters setting
+  enables these and future additional menu filters; changing it requires a reload.
+
+### Recipe filters
+
+- Use the Recipe Filters keybind at gamepad crafting stations to search recipe
+  names and select color-coded qualities. Provisioning also supports CP 150-160,
+  Unique Dishes (Delicacies), and other levels; furnishing plans have separate
+  filters.
+- Multiple selections within a group match any selected option; leaving a group
+  unchecked shows all. Ingredient, skill, and quest choices are also available
+  in this menu; filters set in the game's separate Options menu still apply.
+
+### Achievement filters
+
+- Search achievement names and descriptions from the gamepad achievement
+  category list or an individual category. Filter by earned/unearned, progress,
+  or tracked achievement.
+- Achievement selections last for the current UI session, including zone changes,
+  but are not saved across logout or `/reloadui`. These filters use the same
+  Additional gamepad filters setting and shortcut as the set and recipe filters.
+
 ### Antiquities
 
-- Adds category filters to the gamepad antiquity journal.
+- Adds name, difficulty, lead, recovery, codex, and game progress filters to the
+  gamepad antiquity journal under the Additional gamepad filters setting.
 - Shows missing lead details, including where each lead can be found.
 - Keeps the journal readable with the existing gamepad navigation.
 
@@ -178,7 +208,7 @@ All settings live in the KelaPadUI section of the gamepad settings menu. They ar
 stored account-wide in `kpuiSavedVariables`.
 
 - Feature toggles for companion info, dungeon finder, chat tools, map rally,
-  antiquity filters, antiquity lead details, main-menu quick access, the
+  additional gamepad filters, antiquity lead details, main-menu quick access, the
   dashboard, PersonalAssistant junk marking, and the PS5 button map.
 - Sets interface toggle.
 - Trading master toggle, ATT analysis period, and per-surface tooltip toggles for

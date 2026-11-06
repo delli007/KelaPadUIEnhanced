@@ -35,8 +35,9 @@ package manager, test runner, or CI, so edit files in place.
   `KelaPadUI.lua` stays last; it initializes settings and gated features on
   `EVENT_ADD_ON_LOADED`.
 - `kpui_core/` holds shared settings, constants, utilities, and tooltip code.
-  `kpui_features/` holds feature modules; `kpui_features/tradinghouse/` is a
-  load-ordered split (history, shared, hooks, tooltips, data, controls).
+  `kpui_features/` holds feature modules. Group multi-file features in their own
+  subfolders; keep single-file features at the feature root. The trading-house
+  split is load-ordered (history, shared, hooks, tooltips, data, controls).
 - Static data belongs in `kpui_data/`, not in feature modules.
 - Prefer registering hooks and scene callbacks in `KelaSetup*()` functions;
   file-scope registration depends on manifest order.
@@ -49,7 +50,7 @@ package manager, test runner, or CI, so edit files in place.
   `kpui_lang/en.lua`, settings metadata/order, and a gated `KelaSetup*()` call in
   `KelaPadUI.lua`. See `docs/SETTINGS.md`.
 - Most feature toggles are reload-gated; the PS5 button map is the exception.
-- Never reuse retired setting IDs `7503` or `7100`-`7104`.
+- Never reuse retired setting IDs `7405`, `7503` or `7100`-`7104`.
 - Read/write settings through `KelaGetSetting_*` / `KelaSetSetting`; do not
   write `kpuiSavedVariables` directly.
 - User-facing text must use `KELA_*` IDs in `kpui_lang/en.lua` (English only,

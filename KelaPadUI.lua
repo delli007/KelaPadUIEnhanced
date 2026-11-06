@@ -95,14 +95,17 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 		return KelaGetSetting_Bool(SETTING_TYPE_KELA, settingId)
 	end
 
-	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_ANTIQUITY_FILTERS) then
-		KelaSetupAntiquityFilters()
-	end
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS) then
 		KelaSetupAntiquityLeadInfo()
 	end
 	if IsFeatureEnabled(KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED) then
 		KelaSetupTraitResearch()
+	end
+	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS) then
+		KelaSetupAntiquityFilters()
+		KelaSetupMenuFilters()
+		KelaSetupRecipeFilters()
+		KelaSetupAchievementFilters()
 	end
 
 	KELA_SETS_LIST:SetMasterSetsList()

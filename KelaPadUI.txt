@@ -8,7 +8,7 @@
 
 ## APIVersion: 101051
 ## Title: KelaPadUI2
-## Version: 2.5.0
+## Version: 2.6.0
 ## Author: @slice_o'life
 ## Description: This addon improves the gamepad's UI by adding additional information and features. Original author: @rkirgizov
 ## SavedVariables: kpuiSavedVariables
@@ -33,9 +33,9 @@ kpui_features/sets/kpui_sets_gamepad.lua
 kpui_features/sets/kpui_sets_gamepad.xml
 kpui_features/sets/kpui_sets_list_gamepad.xml
 
-kpui_features/traitresearch/kpui_trait_research_gamepad.lua
+kpui_features/kpui_trait_research_gamepad.lua
 
-kpui_features/antiquities/kpui_antiquityfilters_gamepad.lua
+kpui_features/filters/kpui_antiquityfilters_gamepad.lua
 kpui_features/antiquities/kpui_antiquityleads_gamepad.lua
 
 kpui_features/tradinghouse/kpui_trading_history.lua
@@ -48,13 +48,16 @@ kpui_features/tradinghouse/kpui_tradinghouse_gamepad.xml
 
 kpui_data/kpui_data.lua
 kpui_features/kpui_info_tooltip.lua
-kpui_features/kpui_main_menu.lua
-kpui_features/kpui_main_menu_dashboard.xml
-kpui_features/kpui_main_menu_dashboard.lua
-kpui_features/kpui_main_menu_shortcuts.lua
+kpui_features/mainmenu/kpui_main_menu.lua
+kpui_features/mainmenu/kpui_main_menu_dashboard.xml
+kpui_features/mainmenu/kpui_main_menu_dashboard.lua
+kpui_features/mainmenu/kpui_main_menu_shortcuts.lua
+kpui_features/filters/kpui_reconstruct_search.lua
+kpui_features/filters/kpui_recipe_filters.lua
+kpui_features/filters/kpui_achievement_filters.lua
 kpui_features/kpui_pa_junk.lua
-kpui_features/kpui_companion.lua
-kpui_features/kpui_companion_collections.lua
+kpui_features/companion/kpui_companion.lua
+kpui_features/companion/kpui_companion_collections.lua
 kpui_features/kpui_dungeon_finder.lua
 kpui_features/kpui_chat_tools.lua
 kpui_features/kpui_map_rally.lua
