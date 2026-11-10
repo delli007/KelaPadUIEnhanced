@@ -4,6 +4,9 @@ Version numbers before 2.5.0 were assigned retrospectively to the dated
 changelog entries; they do not imply those versions were released. Future
 entries use major.minor.patch and match the add-on manifest version.
 
+2.7.0 - 11/10/2026
+- Added German, French, and Russian interface translations; the add-on loads the matching client-language file automatically and falls back to English for other languages.
+
 2.6.1 - 11/10/2026
 - Added a Base game fixes option that restores L2/R2 battle-round paging on the Battleground scoreboard.
 - Fixed the 6v6v6 and 9v9 scoreboard team panels overlapping their player rows.

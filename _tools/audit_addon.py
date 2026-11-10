@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Static audit for KelaPadUI.
 
-Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text,
-removed references, commented debug lines, TODO markers, direct SI constant
-assignments, optional library dependencies, unused virtual templates, LibSets
-API compatibility, and add-on hooks on protected dialog show functions.
+Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text
+(except localized `kpui_lang` files), removed references, commented debug
+lines, TODO markers, direct SI constant assignments, optional library
+dependencies, unused virtual templates, LibSets API compatibility, and add-on
+hooks on protected dialog show functions.
 This is a build/development helper only; ESO does not load it.
 """
 
@@ -219,6 +220,10 @@ def check_xml():
 def check_cyrillic():
     errors = []
     for path in iter_files({".lua", ".xml", ".txt"}):
+        # Localized strings legitimately use non-Latin scripts (for example
+        # kpui_lang/ru.lua). English source files must stay Latin-only.
+        if path.parent == ROOT / "kpui_lang" and path.name != "en.lua":
+            continue
         count = len(CYRILLIC.findall(read_text(path)))
         if count:
             errors.append("CYRILLIC: {} ({} characters)".format(path.relative_to(ROOT), count))

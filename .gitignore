@@ -5,6 +5,7 @@ __pycache__/
 *.bak
 *.tmp
 *.log
+_tools/.translation_cache.json
 
 # OS metadata
 Thumbs.db

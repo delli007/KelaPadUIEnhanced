@@ -117,6 +117,31 @@ styles through `ZO_ColorDef:Colorize`.
 - Other core overrides should be replaced only where a supported hook exists.
 - The future split and custom-control replacement are tracked in `TODO.md`.
 
+## Localization
+
+- `kpui_lang/en.lua` is the only hand-edited locale file and the source of
+  truth. Add new user-facing strings there first, in English, with a `KELA_*`
+  ID.
+- The manifest loads `kpui_lang/en.lua`, then `kpui_lang/$(language).lua`.
+  English clients load `en.lua` twice; other clients override the English text
+  with `SafeAddString(KELA_ID, "...", 0)`.
+- Regenerate the shipped translations from `en.lua`:
+
+  ```powershell
+  python _tools\translate_kpui_lang.py de fr ru
+  ```
+
+  The script uses the ESO client's own localized strings when the English text
+  matches exactly, and the free Google NMT endpoint for everything else. Pass
+  `--offline` to use argostranslate instead, or `--check` to validate the
+  existing files without translating.
+- The generator validates `<<1>>`, `<<1[$d item/$d items]>>`, `%s`/`%d`, and
+  newline counts. A string that changes those is retried and then left in
+  English, so a regeneration is safe to run unattended.
+- Do not hand-edit `de.lua`, `fr.lua`, or `ru.lua`; change `en.lua` and
+  regenerate. Keep the translation cache
+  (`_tools/.translation_cache.json`) out of commits.
+
 ## Standard change workflow
 
 1. Read this file, `docs/MAINTENANCE.md`, and the relevant section of `TODO.md`.

@@ -30,10 +30,11 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
 | `kpui_features/companion/` | Companion menu and Collections tooltip information. |
 | `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
-| `kpui_lang/` | English strings; `en.lua` is the only locale file. |
+| `kpui_lang/` | English source strings in `en.lua`, plus generated `de.lua`, `fr.lua`, and `ru.lua` loaded through `$(language)`. |
 | `kpui_data/` | Static trial and companion data used by feature modules. |
 | `docs/` | Maintenance, development, research, settings, trading-house, and main-menu notes. |
 | `_tools/audit_addon.py` | Static manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
+| `_tools/translate_kpui_lang.py` | Generates `kpui_lang/de.lua`, `fr.lua`, and `ru.lua` from `en.lua` and validates placeholders. |
 | `TODO.md` | Open refactors, rated enhancement candidates, and completed cleanup history. |
 | `changelog.txt` | Release-facing change history. |
 
@@ -219,7 +220,8 @@ python _tools\audit_addon.py
 The audit checks manifest entries, Lua syntax, XML well-formedness, removed
 feature references, TODO/FIXME markers, direct `SI_*` constant assignments,
 declared optional-library dependencies, unused virtual templates, and
-undefined/unused KELA strings. It counts any KELA token in Lua/XML as a
+undefined/unused KELA strings. Cyrillic is rejected everywhere except the
+localized `kpui_lang` files. It counts any KELA token in Lua/XML as a
 reference, so localization IDs passed indirectly are not reported as unused.
 Virtual-template references are counted across add-on Lua/XML, including
 `inherits`, `CreateControlFromVirtual`, and template strings. When the sibling

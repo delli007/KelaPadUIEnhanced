@@ -53,11 +53,13 @@ package manager, test runner, or CI, so edit files in place.
 - Never reuse retired setting IDs `7405`, `7503` or `7100`-`7104`.
 - Read/write settings through `KelaGetSetting_*` / `KelaSetSetting`; do not
   write `kpuiSavedVariables` directly.
-- User-facing text must use `KELA_*` IDs in `kpui_lang/en.lua` (English only,
-  UTF-8 without BOM; Cyrillic text fails the audit). Read them with the numeric
-  constant, `GetString(KELA_FOO)`; a quoted name (`GetString("KELA_FOO")`)
-  silently returns nothing. See `docs/DEVELOPMENT_NOTES.md`. The audit reports
-  undefined or unused KELA IDs.
+- User-facing text must use `KELA_*` IDs in `kpui_lang/en.lua`. That file is the
+  English source and must stay UTF-8 without BOM; localized files
+  (`kpui_lang/de.lua`, `fr.lua`, `ru.lua`, loaded through
+  `kpui_lang/$(language).lua`) may use non-Latin scripts such as Cyrillic. Read
+  strings with the numeric constant, `GetString(KELA_FOO)`; a quoted name
+  (`GetString("KELA_FOO")`) silently returns nothing. See
+  `docs/DEVELOPMENT_NOTES.md`. The audit reports undefined or unused KELA IDs.
 - Keep the KELAPADUI main-menu entry append-only; do not reindex
   `ZO_MENU_ENTRIES`.
 
