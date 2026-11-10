@@ -5,7 +5,7 @@ changelog entries; they do not imply those versions were released. Future
 entries use major.minor.patch and match the add-on manifest version.
 
 2.7.0 - 11/10/2026
-- Added German, French, and Russian interface translations; the add-on loads the matching client-language file automatically and falls back to English for other languages.
+- Added German, French, and Russian interface translations, along with a translation script to convert to other languages; the add-on loads the matching client-language file automatically and falls back to English for other languages.
 
 2.6.1 - 11/10/2026
 - Added a Base game fixes option that restores L2/R2 battle-round paging on the Battleground scoreboard.
@@ -104,7 +104,8 @@ entries use major.minor.patch and match the add-on manifest version.
 2.0.1 - 10/19/2026
 - Refactor phase 2 reorganized the code into kpui_core, kpui_features, kpui_data, and kpui_compat.
 - Made the main-menu entry append-only and completed the static manifest, syntax, and XML audit.
-- Removed retired panels and unused templates, and added the gamepad map-info rally-point keybind.
+- Removed retired panels and unused templates.
+- Added a gamepad rally-point keybind to the map.
 
 2.0.0 - 10/18/2026
 - Refactor phase 1 removed retired features and split companion, dungeon-finder, chat, and trial-link code into feature modules.
