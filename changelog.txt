@@ -4,6 +4,12 @@ Version numbers before 2.5.0 were assigned retrospectively to the dated
 changelog entries; they do not imply those versions were released. Future
 entries use major.minor.patch and match the add-on manifest version.
 
+2.6.1 - 11/10/2026
+- Added a Base game fixes option that restores L2/R2 battle-round paging on the Battleground scoreboard.
+- Fixed the 6v6v6 and 9v9 scoreboard team panels overlapping their player rows.
+- Fixed the Activity Finder's Battleground entry staying locked until the screen was closed and reopened.
+- The fixes mirror upcoming official ones and are reload-gated; turn the option off, or delete kpui_basegame_fixes.lua from the manifest, after ZOS ships them.
+
 2.6.0 - 11/05/2026
 - Unified Antiquity filters under Additional gamepad filters, adding name search, multi-select difficulty and progress filters, and a clear option.
 - Filter changes now apply immediately; dialogs use Back, show named color-coded qualities, and include the game's available filter choices.

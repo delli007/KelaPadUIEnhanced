@@ -25,7 +25,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
 | `KelaPadUI.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
-| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
+| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, base-game fixes, and trading house. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
 | `kpui_features/companion/` | Companion menu and Collections tooltip information. |
@@ -91,6 +91,7 @@ The Features category contains reload-gated toggles:
 | Trait research matrix | on |
 | PersonalAssistant junk integration | on |
 | PS5 button map | off |
+| Base game fixes | on |
 
 The PS5 button map is the exception: it is not reload-gated, and its settings
 checkbox applies or reverses the texture redirects immediately.
@@ -103,6 +104,34 @@ checks in the bootstrap when adding a new load-time feature, and add a matching
 default and string. The PersonalAssistant junk toggle depends on the optional
 PersonalAssistant add-on; it is installed regardless of load order and checks PA
 availability per item.
+
+### Base game fixes
+
+`kpui_features/kpui_basegame_fixes.lua` mirrors three base-game gamepad fixes
+that ZOS is preparing. The toggle is reload-gated and the module is
+intentionally self-contained so the whole thing can be deleted after the
+official fix ships:
+
+- L2/R2 round paging: the module adds `UI_SHORTCUTS_ACTION_LAYER_FRAGMENT` (in
+  Lua, no XML) to the scoreboard scenes and re-stacks the scoreboard action
+  layer above it, then `SecurePostHook`s `ZO_KeybindStrip_HandleKeybindDown` to
+  route `UI_SHORTCUT_LEFT_TRIGGER` / `RIGHT_TRIGGER` into
+  `BATTLEGROUND_SCOREBOARD_FRAGMENT:OnKeybindDown`. The core round actions exist
+  but inherit from unbound `*_DUMMY` actions, and the scoreboard scenes did not
+  activate the UI-shortcuts layer.
+- Scoreboard sizing: `SecurePostHook` on the team-panel `UpdatePanelHeight` /
+  `UseSmallPlayerEntries`, the fragment's `UpdateAll`, and the player row's
+  `SetupOnAcquire`. Large rows use 40 px, small rows 32 px, and the row gap is 9,
+  matching the 12.2.0 fix. Small rows keep the single `ZoFontGamepad27` font so
+  the rows stay at 32 px. The module is skipped when
+  `ZO_BATTLEGROUND_SCOREBOARD_PLAYER_SMALL_ROW_HEIGHT_GAMEPAD` exists.
+- Activity Finder: the module subscribes to
+  `ZO_ACTIVITY_FINDER_ROOT_MANAGER`'s `OnUpdateLocationData` and re-commits the
+  root list while the screen is open, because `CategoryEntrySetup` caches the
+  lock state and the gamepad root never re-evaluates it.
+
+When ZOS ships any of these, delete the matching code (or the whole module and
+its manifest entry) and the setting ID `7413`.
 
 The Item sets toggle hides the Sets entry in the KelaPadUI main-menu submenu but
 does not remove the sets list from the add-on. The KELAPADUI main-menu entry

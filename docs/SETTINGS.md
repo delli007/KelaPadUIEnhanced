@@ -79,6 +79,7 @@ in light red on every open.
 | `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
 | `7411` | `KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS` | `false` |
 | `7412` | `KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS` | `true` |
+| `7413` | `KELA_SETTING_PANEL_FEATURES_BASE_GAME_FIXES` | `true` |
 
 All Features toggles except the PS5 button map are reload-gated. The PS5 button
 map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
@@ -95,6 +96,13 @@ Additional gamepad filters (`7412`) gates Antiquities, set-name searches in Item
 Set Collections and transmute reconstruction, provisioning and furnishing recipe
 filters, achievement filters, and future filters. The former Antiquity filters
 setting `7405` is retired; existing saved filter preferences remain available.
+
+Base game fixes (`7413`) gates `kpui_features/kpui_basegame_fixes.lua`: L2/R2
+battle-round paging on the Battleground scoreboard, correct 6v6v6 / 9v9
+scoreboard panel heights, and an Activity Finder Battleground entry that
+unlocks as soon as its data loads. The module mirrors fixes ZOS is preparing and
+is deliberately standalone; once a game update ships them, delete the module,
+its manifest line, and this setting ID.
 
 The Companion information toggle (`7401`) also gates the extra details in the
 gamepad Collections > Allies > Companions tooltip

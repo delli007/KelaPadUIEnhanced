@@ -107,6 +107,9 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 		KelaSetupRecipeFilters()
 		KelaSetupAchievementFilters()
 	end
+	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_BASE_GAME_FIXES) then
+		KelaSetupBaseGameFixes()
+	end
 
 	KELA_SETS_LIST:SetMasterSetsList()
 

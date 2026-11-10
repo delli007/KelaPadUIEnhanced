@@ -207,6 +207,8 @@ do
 	Add("KELA_SETTINGS_FEATURES_PA_JUNK_TOOLTIP",		"Adds mark/unmark as permanent junk actions to the gamepad inventory actions prompt when PersonalAssistant is installed.")
 	Add("KELA_SETTINGS_FEATURES_PS5_BUTTONS",			"PS5 button map")
 	Add("KELA_SETTINGS_FEATURES_PS5_BUTTONS_TOOLTIP",	"Replaces Xbox controller button icons with PlayStation 5 icons.")
+	Add("KELA_SETTINGS_FEATURES_BASE_GAME_FIXES",		"Base game fixes")
+	Add("KELA_SETTINGS_FEATURES_BASE_GAME_FIXES_TOOLTIP",	"Fixes three base-game gamepad issues: L2/R2 now page through the battle round recaps on the Battleground scoreboard, the 6v6v6 and 9v9 scoreboard rows no longer overlap their team panels, and the Activity Finder Battleground entry unlocks as soon as its data loads instead of after backing out and re-entering. These mirror ZOS fixes; turn this option off, or delete kpui_basegame_fixes.lua, once the game update ships them.")
 	Add("KELA_SETTINGSYSTEMPANEL7300",				"Item sets")
 	Add("KELA_SETTINGS_SETS_ENABLED",				"Sets interface")
 	Add("KELA_SETTINGS_SETS_ENABLED_TOOLTIP",		"Adds the KelaPadUI sets browser to the main menu. Turn this off to hide the Sets menu entry.")
