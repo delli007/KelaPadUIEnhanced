@@ -9,8 +9,6 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 - Add support for the Extended Journal: place in the KelaPadUI menu and in the journal menu at the end of the list.
 - Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
-- Localization: new locale files, manifest entries and translated strings for DE/FR/RU. Use  `kpui_lang/*.lua`; `KelaPadUI.txt`
-- ?? Add support for CMX Fight Stats: place in the KelaPadUI menu
 
 ## Enhancement Notes
 
