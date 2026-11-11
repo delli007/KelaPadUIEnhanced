@@ -1,4 +1,4 @@
-﻿-- KelaPadUI custom trading-house tooltip controls (KPUI_* templates).
+-- KelaPadUI custom trading-house tooltip controls (KPUI_* templates).
 
 local KPUI_TRADINGHOUSE = KPUI_TRADINGHOUSE
 local colors = KPUI_TRADINGHOUSE.colors

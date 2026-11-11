@@ -1,8 +1,9 @@
 # AGENTS.md
 
-KelaPadUI is an Elder Scrolls Online gamepad-UI add-on (Lua 5.1 + XML). This
-folder is the live installed add-on; ESO loads it directly. There is no build,
-package manager, test runner, or CI, so edit files in place.
+KelaPadUI is an Elder Scrolls Online gamepad-UI add-on (Lua 5.1, with frozen
+legacy XML templates). This folder is the live installed add-on; ESO loads it
+directly. There is no build, package manager, test runner, or CI, so edit files
+in place.
 
 ## Verification
 
@@ -13,10 +14,11 @@ package manager, test runner, or CI, so edit files in place.
   ```
 
   It checks manifest files, Lua syntax, XML, KELA string coverage, retired
-  references, TODO markers, `SI_*` assignments, optional dependencies, virtual
-  templates, LibSets API compatibility, and forbidden dialog hooks. It prints
-  `AUDIT PASSED` only when no hard errors remain; undefined or unused KELA IDs
-  are reported separately.
+  references, TODO markers, `SI_*` assignments, setting ID allocation, version
+  consistency, encoding damage, broken quoted `GetString` calls, optional
+  dependencies, virtual templates, LibSets API compatibility, and forbidden
+  dialog hooks. It prints `AUDIT PASSED` only when no hard errors remain;
+  undefined or unused KELA IDs are reported separately.
 - The audit's Lua check uses `lua53.exe` from the sibling
   `ArkadiusTradeTools\ArkadiusTradeToolsExports` folder. If that file is
   missing, the audit reports failure instead of skipping the check.
@@ -43,6 +45,20 @@ package manager, test runner, or CI, so edit files in place.
   file-scope registration depends on manifest order.
 - Startup is eager. Do not reintroduce lazy loading for sets or trading history.
 
+## UI construction: Lua first, XML frozen
+
+- Do not add XML files or XML-defined controls. Build UI in Lua from a
+  `KelaSetup*()` function with `WINDOW_MANAGER:CreateControl`, `CreateControl`,
+  `CreateControlFromVirtual` for core templates, `ZO_ObjectPool` for reusable
+  rows, and `kpuiConst.TextStyles` for text.
+- The seven XML files in the audit's `XML_ALLOWLIST` are frozen legacy. Edit one
+  only for a fix that cannot be expressed in Lua. A new reusable virtual
+  template belongs in `kpui_core/kpui_templates.xml` and is the only allowed
+  XML addition; the audit fails on any other XML file.
+- XML is parsed before Lua and always loads, so a settings-gated feature still
+  creates its controls and global names when disabled. Lua setup can be gated,
+  and its failures surface as Lua errors instead of a client log line.
+
 ## Adding a feature or setting
 
 - A gated load-time feature needs a setting ID/default in
@@ -50,7 +66,10 @@ package manager, test runner, or CI, so edit files in place.
   `kpui_lang/en.lua`, settings metadata/order, and a gated `KelaSetup*()` call in
   `KelaPadUI.lua`. See `docs/SETTINGS.md`.
 - Most feature toggles are reload-gated; the PS5 button map is the exception.
-- Never reuse retired setting IDs `7405`, `7503` or `7100`-`7104`.
+- Setting IDs are private to `SETTING_TYPE_KELA` (`7000`). Allocate from the
+  blocks in `docs/SETTINGS.md`; the audit rejects IDs outside the Kela block,
+  duplicates, orphaned IDs, and any ID listed in `KELA_RETIRED_SETTING_IDS`.
+  Never reuse a number that has shipped; add it to that table instead.
 - Read/write settings through `KelaGetSetting_*` / `KelaSetSetting`; do not
   write `kpuiSavedVariables` directly.
 - User-facing text must use `KELA_*` IDs in `kpui_lang/en.lua`. That file is the
@@ -77,6 +96,33 @@ package manager, test runner, or CI, so edit files in place.
   deferred work in `TODO.md`.
 - Do not assign `SI_*` globals directly; use `SafeAddString`.
 
+## Runtime gotchas
+
+- ESO runs a Havok-flavored Lua 5.1: no `goto`, bitwise operators, or `//`, and
+  no `io`, `package`, or `coroutine`. `os.date` and `debug.traceback` are the
+  supported escapes. Use `unpack`, not `table.unpack`.
+- Never use `pairs` order for UI or saved-data order. `#` returns 0 on a table
+  with gaps, and `ipairs` stops at the first `nil`; both silently produce empty
+  loops on saved data.
+- Keep the `addonName == "KelaPadUI"` filter on `EVENT_ADD_ON_LOADED` and
+  unregister one-shot events. Do not read player or character state at add-on
+  load; it runs before `EVENT_PLAYER_ACTIVATED`.
+- Saved-variable writes persist on `/reloadui` or logout, not immediately.
+  `KELA_SETTINGS_DEFAULTS` is shared; never mutate it. Stored strings are
+  length-capped, and the profile-less account bucket is shared across NA, EU,
+  and PTS.
+- Control names and virtual-template names are global across every installed
+  add-on. Prefix them with `Kela`/`KPUI_` and make `CreateControlFromVirtual`
+  names unique per parent.
+- Optional add-ons can load after us even when listed in `OptionalDependsOn`;
+  guard every use of their globals and never `assert` on them.
+- Gamepad UI has no readable chat history. Use `LibDebugLogger` for diagnostics;
+  keep `CHAT_SYSTEM:AddMessage` for deliberate user output only.
+- Do not own globals the game defines (`ZO_*`, `SI_*`, style tables). Keep the
+  documented exceptions (`SafeAddString`, the tooltip style copy) as they are.
+- Reset anchors, colors, and texture coords when recycling pooled controls, and
+  clear cached row arrays before rebuilding.
+
 ## Compatibility invariants
 
 - Target API `101051`; `LibSets` is required.
@@ -90,7 +136,8 @@ package manager, test runner, or CI, so edit files in place.
   `ZO_CRAFTING_TOOLTIP_STYLES` copy, the flattened settings list, and the
   append-only KELAPADUI entry.
 - Update `changelog.txt` (newest first) and affected docs for user-facing
-  changes.
+  changes. Keep `## Version`, `## AddOnVersion`, and the top `changelog.txt`
+  version in sync; the audit checks all three.
 
 ## Read next
 

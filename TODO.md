@@ -4,6 +4,9 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 ## Open work
 
+- Remove the seven frozen legacy XML files by porting their controls to Lua, and
+  delete each entry from `XML_ALLOWLIST` in `_tools/audit_addon.py` as it goes.
+
 
 ## Candidate enhancements
 
@@ -14,7 +17,7 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 New runtime modules must be added to `KelaPadUI.txt` and, when gated, initialized from `KelaPadUI.lua`; new settings go in `kpui_core/kpui_settings_gamepad.lua` and `docs/SETTINGS.md`; new user-facing text goes in `kpui_lang/en.lua`; optional libraries go in `OptionalDependsOn` and must be guarded.
 
-Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and retired IDs `7503` and `7100`-`7104`; keep the KELAPADUI main-menu entry append-only; avoid xml styling in favor of dynamically initialized visual elements; avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
+Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and the setting-ID blocks in `docs/SETTINGS.md`; keep the KELAPADUI main-menu entry append-only; build new UI in Lua and do not add XML files (the legacy XML set is frozen and slated for removal); avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
 
 ## Already implemented: Do not duplicate
 

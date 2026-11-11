@@ -1,4 +1,4 @@
-﻿-- KelaPadUI TTC/ATT trading-data helpers.
+-- KelaPadUI TTC/ATT trading-data helpers.
 
 local KPUI_TRADINGHOUSE = KPUI_TRADINGHOUSE
 local colors = KPUI_TRADINGHOUSE.colors

@@ -9,8 +9,19 @@ KELA_SETTINGS_DIRTY = 1
 KELA_SETTINGS_DIRTY_DEFAULT = 2
 
 
--- setting codes
+-- Setting codes.
+-- Every KelaPadUI setting ID is private to SETTING_TYPE_KELA and stored in
+-- kpuiSavedVariables.settingsAccountWide; the ZOS GetSetting/SetSetting API is
+-- never called with these numbers. Block allocation (see docs/SETTINGS.md):
+--   7000       SETTING_TYPE_KELA (system id, not a setting)
+--   7001-7299  reserved buffer; do not allocate
+--   7300-7399  core panels
+--   7400-7499  feature toggles
+--   7500-7599  trading
+--   7600-7699  next module family
+--   7700-7999  reserve
 SETTING_TYPE_KELA = 7000
+
 -- SETS
 KELA_SETTING_PANEL_SETS 						= 7300 
 KELA_SETTING_PANEL_SETS_ENABLED 				= 7301
@@ -23,7 +34,6 @@ KELA_SETTING_PANEL_FEATURES_COMPANION 			= 7401
 KELA_SETTING_PANEL_FEATURES_DUNGEON_FINDER 		= 7402
 KELA_SETTING_PANEL_FEATURES_CHAT_TOOLS 			= 7403
 KELA_SETTING_PANEL_FEATURES_MAP_RALLY 			= 7404
--- 7405 was the separate Antiquity filters toggle; it is retired.
 KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS 	= 7406
 KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS = 7408
 KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD = 7409
@@ -45,6 +55,10 @@ KELA_SETTING_PANEL_TRADE_TOOLTIP_LISTINGS		= 7510
 KELA_SETTING_PANEL_TRADE_TOOLTIP_QUALITY		= 7511
 KELA_SETTING_PANEL_TRADE_TOOLTIP_PRODUCTION		= 7512
 KELA_SETTING_PANEL_TRADE_TOOLTIP_COMPONENTS		= 7513
+
+-- IDs that appeared in a public release must never be reused. The audit
+-- rejects any live setting ID listed here.
+KELA_RETIRED_SETTING_IDS = {}
 
 -- settings table for the auto-list
 KELA_SETTINGS_DATA =
@@ -571,6 +585,25 @@ local function ApplyMissingSettingDefaults(settings)
 	end
 end
 
+-- One-time removal of settings keys used only in pre-release builds. These IDs
+-- never shipped, so no migration is needed. The saved-variable marker keeps the
+-- purge from running again; the audit rejects any live constant that still uses
+-- one of these numbers, so remove it from this list before reusing the ID.
+local KELA_LEGACY_SETTING_IDS = { 7405, 7503, 7100, 7101, 7102, 7103, 7104 }
+
+local function PurgeLegacySettingIds(settings)
+	if type(settings) ~= "table" then
+		return
+	end
+	local systemSettings = settings[SETTING_TYPE_KELA]
+	if type(systemSettings) ~= "table" then
+		return
+	end
+	for _, settingId in ipairs(KELA_LEGACY_SETTING_IDS) do
+		systemSettings[settingId] = nil
+	end
+end
+
 -- initialize setting variables
 function KelaInitializeSettings()
 	local sv = ZO_SavedVars:NewAccountWide('kpuiSavedVariables', 0.52, nil, KELA_SETTINGS_DEFAULTS)
@@ -582,6 +615,13 @@ function KelaInitializeSettings()
 	kpuiSVSettingsDefault 	= kpuiSavedVariables["Default"][GetDisplayName()]["$AccountWide"]
 	kpuiSVSettingsSaved 	= kpuiSavedVariables["settingsAccountWide"]
 	kpuiSVSettingsCurrent 	= KelaGetTableCopy(kpuiSavedVariables["settingsAccountWide"])
+
+	if not kpuiSavedVariables.settingsLegacyPurge then
+		PurgeLegacySettingIds(kpuiSVSettingsDefault)
+		PurgeLegacySettingIds(kpuiSVSettingsSaved)
+		PurgeLegacySettingIds(kpuiSVSettingsCurrent)
+		kpuiSavedVariables.settingsLegacyPurge = 1
+	end
 
 	-- Add newly introduced settings for existing characters without resetting user choices.
 	ApplyMissingSettingDefaults(kpuiSVSettingsDefault)

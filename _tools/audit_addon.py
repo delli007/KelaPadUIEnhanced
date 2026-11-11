@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Static audit for KelaPadUI.
 
-Checks manifest entries, Lua syntax, XML well-formedness, Cyrillic text
-(except localized `kpui_lang` files), removed references, commented debug
-lines, TODO markers, direct SI constant assignments, optional library
-dependencies, unused virtual templates, LibSets API compatibility, and add-on
-hooks on protected dialog show functions.
+Checks manifest entries, Lua syntax, XML well-formedness and the frozen XML
+allowlist, Cyrillic text (except localized `kpui_lang` files), removed
+references, commented debug lines, TODO markers, direct SI constant
+assignments, setting ID allocation, version consistency, BOM/U+FFFD encoding
+damage, broken quoted `GetString` calls, optional library dependencies, unused
+virtual templates, LibSets API compatibility, and add-on hooks on protected
+dialog show functions.
 This is a build/development helper only; ESO does not load it.
 """
 
@@ -77,6 +79,31 @@ DYNAMIC_STRING_PREFIXES = (
     "KELA_TRADING_RESUMEPRICE",
     "KELA_TRADING_RESUMEPRICEDIALOG",
 )
+SETTINGS_FILE = ROOT / "kpui_core" / "kpui_settings_gamepad.lua"
+SETTING_DEF = re.compile(
+    r"(?m)^[ \t]*(KELA_SETTING_PANEL_[A-Z0-9_]+|SETTING_TYPE_KELA)[ \t]*=[ \t]*(\d+)\b"
+)
+SETTING_BLOCKS = (
+    (7300, 7399, "core"),
+    (7400, 7499, "features"),
+    (7500, 7599, "trading"),
+    (7600, 7699, "next module family"),
+    (7700, 7999, "reserve"),
+)
+# Legacy XML files, grandfathered. New UI is built in Lua; this allowlist exists
+# so the set can only shrink. Adding a file here is a deliberate exception to
+# the Lua-first rule in AGENTS.md, not a routine step.
+XML_ALLOWLIST = {
+    "kpui_core/kpui_templates.xml",
+    "kpui_core/kpui_tooltip_gamepad.xml",
+    "kpui_core/kpui_settings_gamepad.xml",
+    "kpui_features/tradinghouse/kpui_tradinghouse_gamepad.xml",
+    "kpui_features/sets/kpui_sets_list_gamepad.xml",
+    "kpui_features/sets/kpui_sets_gamepad.xml",
+    "kpui_features/mainmenu/kpui_main_menu_dashboard.xml",
+}
+CHANGELOG = ROOT / "changelog.txt"
+QUOTED_KELA_GETSTRING = re.compile(r'GetString\(\s*"(KELA_[A-Z0-9_]+)"\s*\)')
 
 
 def iter_files(suffixes):
@@ -210,11 +237,87 @@ def check_xml():
     checked = 0
     for path in iter_files({".xml"}):
         checked += 1
+        relative = path.relative_to(ROOT).as_posix()
+        if relative not in XML_ALLOWLIST:
+            errors.append(
+                "XML: {} is not in XML_ALLOWLIST; build new UI in Lua "
+                "(see AGENTS.md)".format(relative)
+            )
         try:
             ET.parse(path)
         except Exception as exc:  # noqa: BLE001 - report parser message
-            errors.append("XML: {}: {}".format(path.relative_to(ROOT), exc))
+            errors.append("XML: {}: {}".format(relative, exc))
+    for relative in sorted(XML_ALLOWLIST - {path.relative_to(ROOT).as_posix() for path in iter_files({".xml"})}):
+        errors.append("XML allowlist entry does not exist: {}".format(relative))
     return errors, checked
+
+
+def check_text_encoding():
+    """Reject a BOM or a UTF-8 replacement character in client-loaded files."""
+    errors = []
+    for path in iter_files({".lua", ".xml", ".txt"}):
+        data = path.read_bytes()
+        relative = path.relative_to(ROOT).as_posix()
+        if data.startswith(b"\xef\xbb\xbf"):
+            errors.append("ENCODING: {} starts with a UTF-8 BOM".format(relative))
+        if b"\xef\xbf\xbd" in data:
+            errors.append(
+                "ENCODING: {} contains U+FFFD (a mangled character); "
+                "rewrite the text as UTF-8 without BOM".format(relative)
+            )
+    return errors
+
+
+def check_quoted_kela_getstring():
+    """Reject GetString("KELA_FOO") without a context argument.
+
+    GetString's first argument is a string variable prefix, not an id, so this
+    form silently renders nothing. Dynamic lookups pass a second argument and
+    are allowed: GetString("KELA_SETSSOURCE", index).
+    """
+    errors = []
+    for path in iter_files({".lua"}):
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            for name in QUOTED_KELA_GETSTRING.findall(line):
+                errors.append(
+                    'GETSTRING: {}:{}: GetString("{}") has no context argument; '
+                    "pass the numeric constant instead".format(
+                        path.relative_to(ROOT), line_number, name
+                    )
+                )
+    return errors
+
+
+def check_versions():
+    metadata = manifest_metadata(MANIFEST)
+    version = metadata.get("Version", "")
+    addon_version = metadata.get("AddOnVersion", "")
+    errors = []
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", version)
+    if not match:
+        errors.append("VERSION: manifest ## Version is not major.minor.patch: {!r}".format(version))
+        return errors
+    expected = int(match.group(1)) * 10000 + int(match.group(2)) * 100 + int(match.group(3))
+    if not addon_version:
+        errors.append("VERSION: manifest is missing ## AddOnVersion")
+    elif addon_version != str(expected):
+        errors.append(
+            "VERSION: ## AddOnVersion {} does not match ## Version {} (expected {})".format(
+                addon_version, version, expected
+            )
+        )
+    if CHANGELOG.exists():
+        for line in read_text(CHANGELOG).splitlines():
+            top = re.match(r"(\d+\.\d+\.\d+)\b", line.strip())
+            if top:
+                if top.group(1) != version:
+                    errors.append(
+                        "VERSION: changelog top {} does not match manifest {}".format(
+                            top.group(1), version
+                        )
+                    )
+                break
+    return errors
 
 
 def check_cyrillic():
@@ -366,6 +469,141 @@ def string_report():
     return sorted(undefined), sorted(defined - identifiers - dynamic_defined)
 
 
+def extract_lua_table(text, name):
+    """Return the text between the braces of `name = { ... }`, or None."""
+    match = re.search(r"\b{}\s*=\s*\{{".format(re.escape(name)), text)
+    if not match:
+        return None
+    start = text.index("{", match.start())
+    depth = 0
+    index = start
+    quote = None
+    while index < len(text):
+        char = text[index]
+        if quote:
+            if char == "\\":
+                index += 2
+                continue
+            if char == quote:
+                quote = None
+            index += 1
+            continue
+        if char in ("'", '"'):
+            quote = char
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start:index + 1]
+        index += 1
+    return None
+
+
+def check_setting_ids():
+    """Validate the KelaPadUI setting ID block allocation."""
+    if not SETTINGS_FILE.exists():
+        return ["settings file missing: {}".format(SETTINGS_FILE)], []
+
+    text = strip_lua_comments(read_text(SETTINGS_FILE))
+    errors = []
+    defined = {}
+    for name, value in SETTING_DEF.findall(text):
+        number = int(value)
+        if name == "SETTING_TYPE_KELA":
+            if number != 7000:
+                errors.append("SETTING_TYPE_KELA must be 7000, found {}".format(number))
+            continue
+        if number in defined.values():
+            other = next(key for key, assigned in defined.items() if assigned == number)
+            errors.append(
+                "duplicate setting ID {}: {} and {}".format(number, other, name)
+            )
+        defined[name] = number
+        if not (7300 <= number <= 7999):
+            errors.append(
+                "setting ID {} for {} is outside the Kela block (7300-7999)".format(
+                    number, name
+                )
+            )
+
+    retired_text = extract_lua_table(text, "KELA_RETIRED_SETTING_IDS")
+    if retired_text is None:
+        errors.append("KELA_RETIRED_SETTING_IDS table not found")
+        retired = set()
+    else:
+        retired = {int(value) for value in re.findall(r"\b(\d+)\b", retired_text)}
+    for name, number in defined.items():
+        if number in retired:
+            errors.append(
+                "live setting ID {} for {} is marked retired".format(number, name)
+            )
+
+    legacy_text = extract_lua_table(text, "KELA_LEGACY_SETTING_IDS")
+    legacy = set()
+    if legacy_text:
+        legacy = {int(value) for value in re.findall(r"\b(\d+)\b", legacy_text)}
+    for name, number in defined.items():
+        if number in legacy:
+            errors.append(
+                "setting ID {} for {} collides with KELA_LEGACY_SETTING_IDS".format(
+                    number, name
+                )
+            )
+
+    data_text = extract_lua_table(text, "KELA_SETTINGS_DATA") or ""
+    defaults_text = extract_lua_table(text, "KELA_SETTINGS_DEFAULTS") or ""
+    category_text = extract_lua_table(text, "KELA_SETTINGS_CATEGORY_ORDER") or ""
+
+    panels = set(re.findall(r"\b(KELA_SETTING_PANEL_[A-Z0-9_]+)\b", category_text))
+    data_panels = set(
+        re.findall(r"\[\s*(KELA_SETTING_PANEL_[A-Z0-9_]+)\s*\]", data_text)
+    )
+    data_settings = set(
+        re.findall(r"\bsettingId\s*=\s*(KELA_SETTING_PANEL_[A-Z0-9_]+)", data_text)
+    )
+    default_settings = set(
+        re.findall(r"\[\s*(KELA_SETTING_PANEL_[A-Z0-9_]+)\s*\]", defaults_text)
+    )
+
+    for name in sorted(panels - data_panels):
+        errors.append("panel {} is not a key in KELA_SETTINGS_DATA".format(name))
+    for name in sorted(data_panels - panels):
+        errors.append(
+            "KELA_SETTINGS_DATA key {} is not in KELA_SETTINGS_CATEGORY_ORDER".format(
+                name
+            )
+        )
+    for name in sorted(data_settings - set(defined)):
+        errors.append(
+            "KELA_SETTINGS_DATA uses undefined setting constant {}".format(name)
+        )
+    for name in sorted(default_settings - set(defined)):
+        errors.append(
+            "KELA_SETTINGS_DEFAULTS uses undefined setting constant {}".format(name)
+        )
+    live_settings = set(defined) - panels
+    for name in sorted(live_settings - data_settings):
+        errors.append("setting {} has no KELA_SETTINGS_DATA entry".format(name))
+    for name in sorted(live_settings - default_settings):
+        errors.append("setting {} has no KELA_SETTINGS_DEFAULTS entry".format(name))
+
+    blocked = retired | legacy
+    info = []
+    for low, high, label in SETTING_BLOCKS:
+        used = sorted(number for number in defined.values() if low <= number <= high)
+        next_free = next(
+            (
+                candidate
+                for candidate in range(low, high + 1)
+                if candidate not in used and candidate not in blocked
+            ),
+            None,
+        )
+        info.append((label, used, next_free))
+    return errors, info
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     errors = []
@@ -379,6 +617,11 @@ def main():
     errors.extend(check_removed_references())
     errors.extend(check_todo_markers())
     errors.extend(check_si_global_assignments())
+    setting_errors, setting_info = check_setting_ids()
+    errors.extend(setting_errors)
+    errors.extend(check_text_encoding())
+    errors.extend(check_quoted_kela_getstring())
+    errors.extend(check_versions())
     errors.extend(check_library_dependencies())
     dialog_hook_errors = check_dialog_hooks()
     errors.extend(dialog_hook_errors)
@@ -391,6 +634,7 @@ def main():
     print("Manifest entries:", len(entries))
     print("Lua files checked:", lua_count)
     print("XML files checked:", xml_count)
+    print("XML allowlist: {} frozen legacy file(s)".format(len(XML_ALLOWLIST)))
     print("Virtual templates checked:", virtual_count)
     if dialog_hook_errors:
         print("Dialog hook guard: {} violation(s)".format(len(dialog_hook_errors)))
@@ -407,6 +651,10 @@ def main():
         print("LibSets check skipped: sibling LibSets add-on not found")
     for name, path in unused_virtual:
         print("  UNUSED VIRTUAL", name, "({})".format(path))
+    print("Setting ID allocation:")
+    for label, used, next_free in setting_info:
+        highest = max(used) if used else "-"
+        print("  {}: highest {}, next free {}".format(label, highest, next_free))
     print("Debug comment count:")
     for path, count in debug_line_report().items():
         print("  {}: {}".format(path, count))

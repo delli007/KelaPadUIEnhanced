@@ -1,4 +1,4 @@
-﻿-- KelaPadUI trading-house and crafting-station hooks.
+-- KelaPadUI trading-house and crafting-station hooks.
 
 local KPUI_TRADINGHOUSE = KPUI_TRADINGHOUSE
 local colors = KPUI_TRADINGHOUSE.colors

@@ -219,10 +219,21 @@ python _tools\audit_addon.py
 
 The audit checks manifest entries, Lua syntax, XML well-formedness, removed
 feature references, TODO/FIXME markers, direct `SI_*` constant assignments,
-declared optional-library dependencies, unused virtual templates, and
+setting ID allocation, version fields, encoding damage, quoted `GetString`
+calls, declared optional-library dependencies, unused virtual templates, and
 undefined/unused KELA strings. Cyrillic is rejected everywhere except the
 localized `kpui_lang` files. It counts any KELA token in Lua/XML as a
 reference, so localization IDs passed indirectly are not reported as unused.
+The setting check rejects IDs outside the `7300`-`7999` Kela block, duplicates,
+IDs listed in `KELA_RETIRED_SETTING_IDS`, and settings that are missing from
+`KELA_SETTINGS_DATA` or `KELA_SETTINGS_DEFAULTS`; it also prints the next free
+ID per block.
+The XML check fails on any `.xml` file outside `XML_ALLOWLIST`, which exists so
+the frozen legacy XML set can only shrink. The version check requires
+`## AddOnVersion` to equal `major*10000 + minor*100 + patch` for `## Version`,
+and both to match the top `changelog.txt` version. The encoding check rejects a
+UTF-8 BOM or a U+FFFD replacement character in any client-loaded file, and the
+`GetString` check rejects the context-free `GetString("KELA_FOO")` form.
 Virtual-template references are counted across add-on Lua/XML, including
 `inherits`, `CreateControlFromVirtual`, and template strings. When the sibling
 `LibSets` add-on is installed, the audit also checks its API version and that
@@ -360,19 +371,22 @@ Python, build, editor, and OS artifacts.
 1. Update the setting/string/default together when adding a setting.
 2. Keep feature-gating checks and defaults in sync.
 3. Check that removed settings are also removed from all data tables and
-   localization files; retired IDs stay retired.
-4. Run the audit and Lua parse check.
-5. Perform the relevant in-game checks.
-6. Update `changelog.txt`.
-7. Add deferred or risky work to `TODO.md` rather than leaving untracked TODOs
+   localization files; add removed IDs to `KELA_RETIRED_SETTING_IDS`.
+4. Build new UI in Lua; do not add an XML file or an XML-defined control.
+5. Run the audit and Lua parse check.
+6. Perform the relevant in-game checks.
+7. Update `changelog.txt` and keep `## Version`, `## AddOnVersion`, and its top
+   version in sync.
+8. Add deferred or risky work to `TODO.md` rather than leaving untracked TODOs
    in code.
 
 ## Known deferred work
 
 `TODO.md` is the source of truth. The current open items are the trading-house
-file split and the replacement of custom controls with supported core
-hooks/templates where feasible. Rated enhancement candidates are in the
-`Candidate enhancements` section of `TODO.md`. Ongoing maintenance also includes:
+file split, the replacement of custom controls with supported core
+hooks/templates where feasible, and the removal of the seven frozen legacy XML
+files. Rated enhancement candidates are in the `Candidate enhancements` section
+of `TODO.md`. Ongoing maintenance also includes:
 
 - verifying tooltip overrides against new core styles after each ESO update;
 - validating LibSets metadata after set/DLC updates;

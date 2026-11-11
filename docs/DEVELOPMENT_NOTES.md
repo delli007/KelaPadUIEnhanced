@@ -27,6 +27,38 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
 - Keep the manifest order. Trading-house modules load before
   `kpui_features/kpui_info_tooltip.lua`.
 
+## UI construction
+
+Build UI in Lua. The seven XML files are frozen legacy, listed in the audit's
+`XML_ALLOWLIST`; the audit fails on any XML file outside it. The reasons:
+
+- XML is parsed before add-on Lua and always loads, so a reload-gated feature
+  still creates its controls and global names while disabled.
+- An XML error surfaces as a client log line, not a Lua error, so it is
+  invisible on a gamepad UI and cannot be caught by the static audit beyond
+  well-formedness.
+- Control and virtual-template names share one namespace with every installed
+  add-on, so each XML name is a collision risk.
+
+Create screens from a `KelaSetup*()` function instead:
+
+```lua
+local pane = WINDOW_MANAGER:CreateControl("KelaThingPane", parent, CT_CONTROL)
+local label = WINDOW_MANAGER:CreateControl("KelaThingLabel", pane, CT_LABEL)
+label:SetFont(kpuiConst.TextStyles.Body.font)
+label:SetColor(kpuiConst.TextStyles.Body.color:UnpackRGBA())
+label:SetAnchor(TOPLEFT, pane, TOPLEFT, 0, 0)
+```
+
+Use `CreateControlFromVirtual` for core templates (for example
+`ZO_VerticalParametricScrollListTemplate`, `ZO_ScrollContainer_Gamepad`) and
+`ZO_ObjectPool` for reusable rows. The trait-research page and the main-menu
+dashboard are the reference implementations.
+
+A new reusable virtual template is the only allowed XML addition. Put it in
+`kpui_core/kpui_templates.xml`, give it a globally unique name, and keep it
+minimal — no colors or layout that Lua can set.
+
 ## Text styling
 
 `kpuiConst.TextStyles` in `kpui_core/kpui_constants.lua` is the single source of
@@ -64,7 +96,9 @@ styles through `ZO_ColorDef:Colorize`.
   assign to the `SI_*` constant directly.
 - Keep the flattened settings list and the KELAPADUI main-menu entry. The menu
   entry is append-only; settings use the separate KelaPadUI submenu.
-- Retired setting IDs stay retired: `7503` and `7100`-`7104`.
+- Setting IDs are allocated from the blocks in `docs/SETTINGS.md`; the audit
+  rejects duplicates, out-of-block IDs, orphaned IDs, and IDs listed in
+  `KELA_RETIRED_SETTING_IDS`. Never reuse a shipped ID.
 - Guild-specific-store purchases are not added to Kela buying history. Core item
   data has no `itemUniqueId` for those purchases.
 - `LibItemLink` is optional. Guard `LIB_ITEM_LINK`; other-quality rows are
@@ -150,8 +184,9 @@ styles through `ZO_ColorDef:Colorize`.
 3. Keep the change focused. Do not mix cleanup, behavior changes, and
    main-menu color changes in one commit.
 4. Update `changelog.txt` and any affected docs. For a release, keep the newest
-   `major.minor.patch` changelog version and the `## Version` in `KelaPadUI.txt`
-   in sync; pre-2.5.0 changelog versions were assigned retrospectively.
+   `major.minor.patch` changelog version, `## Version`, and `## AddOnVersion`
+   (`major*10000 + minor*100 + patch`) in sync; the audit checks all three.
+   Pre-2.5.0 changelog versions were assigned retrospectively.
 5. Add deferred or risky work to `TODO.md`; do not leave untracked
    `TODO`/`FIXME` markers in Lua/XML.
 6. Run the static audit:
@@ -186,9 +221,9 @@ trait research page before the real cause was found. When a label is blank:
 1. grep for `GetString\("KELA_` and fix the call before touching any styling;
 2. only then consider the font, the colour, or the control's size.
 
-The static audit cannot catch this: it verifies that the ids exist, not how they
-are read. Note also that this pattern is invisible in review, because
-`GetString(KELA_FOO)` and `GetString("KELA_FOO")` look almost identical.
+The audit rejects `GetString("KELA_FOO")` with no context argument; the dynamic
+`GetString("KELA_FOO", index)` form is valid and allowed. The pattern stays
+easy to miss in review because the two forms look almost identical.
 
 ### Do not draw a button texture without the game's texture coords
 
@@ -298,6 +333,49 @@ fail. Use `SecurePostHook` for core functions. `ZO_PreHook` and `ZO_PostHook`
 stay acceptable for add-on-owned or pure data/UI functions. ESO exposes no
 `SecurePreHook`; where a before/after value is needed, hook a separate core
 function that reports the value (for example `OnSelectionChanged`) instead.
+
+### Do not iterate saved tables with `#` or `ipairs`, or order UI with `pairs`
+
+Saved data (settings, trading history keyed by id or timestamp) has gaps.
+`#t` on such a table returns 0 or an arbitrary boundary, and `ipairs` stops
+silently at the first `nil`, so the loop body never runs. Use `pairs` to iterate
+and `next(t) ~= nil` to test for emptiness; never use `#t == 0` as an
+emptiness check.
+
+`pairs` order is not defined and can differ between clients and sessions. Never
+build an ordered list, menu, or saved array directly from it; collect into an
+array and `table.sort` with an explicit comparator.
+
+### Do not read player or character state at add-on load
+
+`EVENT_ADD_ON_LOADED` runs before `EVENT_PLAYER_ACTIVATED`. `GetUnitName`,
+zone, class, level, and inventory reads at that point can be empty or stale.
+Setup at add-on load is intentional here so the gamepad UI exists before the
+first frame; keep it, but read character state in `EVENT_PLAYER_ACTIVATED` or
+lazily at first use. `KelaPadUI.unitName` was removed for this reason and had no
+readers.
+
+### Do not assume saved variables persist immediately
+
+ESO writes `kpuiSavedVariables` on `/reloadui` and logout. Code cannot force a
+save, and a client crash loses everything since the last write.
+
+- The profile-less account bucket (`nil` profile in `ZO_SavedVars:NewAccountWide`)
+  is shared across NA, EU, and PTS, so settings and trading history mix
+  megaservers. Adding `GetWorldName()` later needs a migration; do not change it
+  casually.
+- `KELA_SETTINGS_DEFAULTS` is one shared table. Copy it before storing or
+  mutating (`KelaGetTableCopy`).
+- Stored strings are length-capped by the client (about 2000 characters). Keep
+  structured data as nested tables keyed by id, not serialized blobs.
+
+### Do not assume an optional add-on has loaded
+
+`OptionalDependsOn` influences load order but does not guarantee the add-on is
+installed, current, or exposes the API you expect. Check the global at each use
+(`local junk = PersonalAssistant and PersonalAssistant.Junk`) and never `assert`
+on it. This is why TTC, ATT, `LibItemLink`, and PersonalAssistant are guarded per
+call even though they are declared.
 
 ## Validation matrix
 

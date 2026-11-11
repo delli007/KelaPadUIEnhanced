@@ -1,4 +1,4 @@
-﻿-- KelaPadUI trading-house shared helpers. Load before the hooks,
+-- KelaPadUI trading-house shared helpers. Load before the hooks,
 -- tooltip, provider, and custom-control modules. This file keeps the
 -- original helper implementations as locals and exposes them through
 -- KPUI_TRADINGHOUSE for the split modules.

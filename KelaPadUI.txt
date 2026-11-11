@@ -1,5 +1,5 @@
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax
-; Media Inc. or its affiliates. The Elder Scrolls� and related logos are
+; Media Inc. or its affiliates. The Elder Scrolls(R) and related logos are
 ; registered trademarks or trademarks of ZeniMax Media Inc. in the United
 ; States and/or other countries. All rights reserved.
 ;
@@ -9,11 +9,12 @@
 ## APIVersion: 101051
 ## Title: KelaPadUI2 - Enhanced Gamepad
 ## Version: 2.7.0
+## AddOnVersion: 20700
 ## Author: @slice_o'life
 ## Description: This addon improves the gamepad's UI by adding additional information and features. Original author: @rkirgizov
 ## SavedVariables: kpuiSavedVariables
 ## DependsOn: LibSets
-## OptionalDependsOn: TamrielTradeCentre ArkadiusTradeTools LibCustomMenu LibItemLink USPF LibDebugLogger LibCharacterKnowledge
+## OptionalDependsOn: TamrielTradeCentre ArkadiusTradeTools LibCustomMenu LibItemLink USPF LibDebugLogger LibCharacterKnowledge PersonalAssistant
 
 kpui_lang/en.lua
 kpui_lang/$(language).lua

@@ -88,7 +88,6 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	if addonName ~= "KelaPadUI" then return end
 	EVENT_MANAGER:UnregisterForEvent("KelaPadUI", EVENT_ADD_ON_LOADED)
 
-	KelaPadUI.unitName = zo_strformat("<<1>>", GetUnitName("player"))
 	KelaInitializeSettings()
 
 	local function IsFeatureEnabled(settingId)
@@ -152,12 +151,4 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 
 end
 
-
-local function OnGamepadPreferredModeChanged(eventType, addonName)
-	if IsInGamepadPreferredMode() then
-		KelaPadUI_OnLoaded (eventType, addonName)
-	end		
-end
-
 EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_ADD_ON_LOADED, KelaPadUI_OnLoaded)
-EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_GAMEPAD_PREFERRED_MODE_CHANGED, function(code, inGamepad)  OnGamepadPreferredModeChanged(EVENT_GAMEPAD_PREFERRED_MODE_CHANGED, KelaPadUI.name) end)

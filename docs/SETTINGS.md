@@ -41,9 +41,29 @@ KelaSetSetting(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ATT_PERIOD, "20", tru
 - The ATT analysis period has a side effect: changing it calls
   `KelaUpdateGuildATTStat()`.
 
-## Current setting IDs
+## Setting ID allocation
 
-The base setting type is `SETTING_TYPE_KELA = 7000`.
+`SETTING_TYPE_KELA = 7000` is the add-on's private system id. Every setting ID
+lives inside it and is stored in `kpuiSavedVariables.settingsAccountWide`; the
+numbers are never passed to the ZOS `GetSetting`/`SetSetting` API. They only need
+to be unique within this add-on and stable across releases.
+
+| Range | Purpose |
+| --- | --- |
+| `7000` | `SETTING_TYPE_KELA` (system id, not a setting) |
+| `7001`-`7299` | Reserved buffer; do not allocate |
+| `7300`-`7399` | Core panels (Item sets, Trait research) |
+| `7400`-`7499` | Feature toggles |
+| `7500`-`7599` | Trading house |
+| `7600`-`7699` | Next module family |
+| `7700`-`7999` | Reserve |
+
+Allocate the lowest free number in the block that owns the feature. IDs are
+never reused after a public release; add a retired ID to
+`KELA_RETIRED_SETTING_IDS` in `kpui_core/kpui_settings_gamepad.lua`, and the
+audit will reject it. The unused feature IDs `7405` and `7407` and the unused
+trading ID `7503` are free; remove a number from `KELA_LEGACY_SETTING_IDS` before
+assigning it.
 
 ### Item sets
 
@@ -94,8 +114,7 @@ junk rules are disabled.
 
 Additional gamepad filters (`7412`) gates Antiquities, set-name searches in Item
 Set Collections and transmute reconstruction, provisioning and furnishing recipe
-filters, achievement filters, and future filters. The former Antiquity filters
-setting `7405` is retired; existing saved filter preferences remain available.
+filters, achievement filters, and future filters.
 
 Base game fixes (`7413`) gates `kpui_features/kpui_basegame_fixes.lua`: L2/R2
 battle-round paging on the Battleground scoreboard, correct 6v6v6 / 9v9
@@ -129,12 +148,6 @@ separate setting.
 | `7511` | `KELA_SETTING_PANEL_TRADE_TOOLTIP_QUALITY` | `true` |
 | `7512` | `KELA_SETTING_PANEL_TRADE_TOOLTIP_PRODUCTION` | `true` |
 | `7513` | `KELA_SETTING_PANEL_TRADE_TOOLTIP_COMPONENTS` | `true` |
-
-`7503` was the one-page guild-store search setting. It was nonfunctional and has
-been removed. Do not reuse that ID.
-
-The old pause-menu notes feature used `7100`-`7104`; those IDs are also retired.
-Do not reuse them.
 
 ## Screen structure
 
@@ -177,8 +190,10 @@ checkboxes, opens color pickers, or invokes callbacks.
 
 ## Adding a setting
 
-1. **Choose an ID.** Add a constant next to the related group and leave gaps
-   alone. Never reuse a retired ID.
+1. **Choose an ID.** Allocate the lowest free number in the feature's block
+   (see "Setting ID allocation") and add the constant next to the related group.
+   Never reuse a number that has shipped; when a setting is removed, list its ID
+   in `KELA_RETIRED_SETTING_IDS`.
 2. **Add ordering data.** Add a `{ panel, system, settingId }` entry to
    `KELA_SETTINGS_DATA[panel]` in the desired position. Add `header` only when a
    section heading is needed.

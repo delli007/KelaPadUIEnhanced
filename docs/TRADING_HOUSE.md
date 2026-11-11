@@ -141,7 +141,8 @@ keyboard `ZO_ProvisionerTopLevel*` controls, not the gamepad provisioner hooks.
 | `7512` | Production/result rows. |
 | `7513` | Crafting-component rows. Visible only with ATT. |
 
-The retired one-page search setting was `7503`. Do not reuse it.
+Trading settings use the `7500`-`7599` block. The unused ID `7503` is free for a
+future trading setting; remove it from `KELA_LEGACY_SETTING_IDS` first.
 
 Most sub-options are visible only when the master setting is on and at least one
 tooltip surface is enabled. `gamepadHasEnabledDependencies` refreshes the list so
@@ -251,4 +252,5 @@ maintenance also includes:
 
 The old one-page search code was removed rather than repaired. If it is ever
 reintroduced, design it as an explicit opt-in feature with its own tested search
-path; do not reuse setting ID `7503` without migrating old values.
+path and allocate a new ID from the trading block; the audit rejects any ID
+listed in `KELA_RETIRED_SETTING_IDS`.
