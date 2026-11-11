@@ -1,9 +1,27 @@
 # AGENTS.md
 
-KelaPadUI is an Elder Scrolls Online gamepad-UI add-on (Lua 5.1, with frozen
-legacy XML templates). This folder is the live installed add-on; ESO loads it
-directly. There is no build, package manager, test runner, or CI, so edit files
-in place.
+KelaPadUI Enhanced (folder and manifest `KelaPadUIEnhanced`) is an Elder Scrolls
+Online gamepad-UI add-on (Lua 5.1, with frozen legacy XML templates). This folder
+is the live installed add-on; ESO loads it directly, so edit files in place.
+There is no package manager or test runner. A static audit and a packaging script
+live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
+
+## Add-on identity
+
+- The identity is three strings that must stay identical: the folder name, the
+  manifest filename, and `KelaPadUI.name`. `_tools/audit_addon.py` derives
+  `ADDON_NAME` and fails when the folder, manifest, `name` field, or an
+  `EVENT_MANAGER` namespace disagrees.
+- Add-on managers (Minion, ESOUI) match an installed add-on by folder name plus
+  manifest filename. Changing either one makes the add-on look new to them, so
+  every rename needs a changelog note telling users to delete the old folder.
+- Never rename it back to `KelaPadUI`. That folder is the abandoned original;
+  both add-ons define the `KelaPadUI` global and write `kpuiSavedVariables`, so
+  loading both corrupts settings. `KelaPadUI.lua` refuses to initialize while
+  the original is loaded and shows a gamepad dialog instead.
+- `kpuiSavedVariables` must not be renamed: it is what preserves settings and
+  trading history across upgrades. Do not declare the retired
+  `kpuiSavedVariablesBuyingData` / `kpuiSavedVariablesListingData` again.
 
 ## Verification
 
@@ -13,15 +31,16 @@ in place.
   python _tools\audit_addon.py
   ```
 
-  It checks manifest files, Lua syntax, XML, KELA string coverage, retired
-  references, TODO markers, `SI_*` assignments, setting ID allocation, version
-  consistency, encoding damage, broken quoted `GetString` calls, optional
-  dependencies, virtual templates, LibSets API compatibility, and forbidden
-  dialog hooks. It prints `AUDIT PASSED` only when no hard errors remain;
-  undefined or unused KELA IDs are reported separately.
-- The audit's Lua check uses `lua53.exe` from the sibling
-  `ArkadiusTradeTools\ArkadiusTradeToolsExports` folder. If that file is
-  missing, the audit reports failure instead of skipping the check.
+  It checks manifest files, add-on identity, Lua syntax, XML, KELA string
+  coverage, retired references, TODO markers, `SI_*` assignments, setting ID
+  allocation, version consistency, encoding damage, broken quoted `GetString`
+  calls, optional dependencies, virtual templates, LibSets API compatibility,
+  and forbidden dialog hooks. It prints `AUDIT PASSED` only when no hard errors
+  remain; undefined or unused KELA IDs are reported separately.
+- The audit's Lua check looks for `LUA53` in the environment first, then
+  `lua53.exe` from the sibling `ArkadiusTradeTools\ArkadiusTradeToolsExports`
+  folder, then `lua5.3` on `PATH` (which is what CI installs). If none is found,
+  the audit reports failure instead of skipping the check.
 - For a quick single-file parse check:
 
   ```powershell
@@ -33,7 +52,7 @@ in place.
 
 ## Load order and wiring
 
-- `KelaPadUI.txt` is the load order. Add every new Lua/XML file there.
+- `KelaPadUIEnhanced.txt` is the load order. Add every new Lua/XML file there.
   `KelaPadUI.lua` stays last; it initializes settings and gated features on
   `EVENT_ADD_ON_LOADED`.
 - `kpui_core/` holds shared settings, constants, utilities, and tooltip code.
@@ -104,7 +123,7 @@ in place.
 - Never use `pairs` order for UI or saved-data order. `#` returns 0 on a table
   with gaps, and `ipairs` stops at the first `nil`; both silently produce empty
   loops on saved data.
-- Keep the `addonName == "KelaPadUI"` filter on `EVENT_ADD_ON_LOADED` and
+- Keep the `addonName ~= KelaPadUI.name` filter on `EVENT_ADD_ON_LOADED` and
   unregister one-shot events. Do not read player or character state at add-on
   load; it runs before `EVENT_PLAYER_ACTIVATED`.
 - Saved-variable writes persist on `/reloadui` or logout, not immediately.
@@ -136,8 +155,9 @@ in place.
   `ZO_CRAFTING_TOOLTIP_STYLES` copy, the flattened settings list, and the
   append-only KELAPADUI entry.
 - Update `changelog.txt` (newest first) and affected docs for user-facing
-  changes. Keep `## Version`, `## AddOnVersion`, and the top `changelog.txt`
-  version in sync; the audit checks all three.
+  changes. Keep `## Version`, `## AddOnVersion`, the top `changelog.txt` version,
+  and the release tag (`v<version>`) in sync; the audit checks the first three
+  and the release workflow rejects a mismatched tag.
 
 ## Read next
 
@@ -146,4 +166,5 @@ in place.
 - `docs/MAINTENANCE.md` - architecture, validation workflow, and in-game checks.
 - `docs/SETTINGS.md` - setting IDs and the add-a-setting procedure.
 - `docs/TRADING_HOUSE.md` - trading modules and test notes.
+- `docs/RELEASING.md` - packaging, GitHub Actions, and the ESOUI upload API.
 - `TODO.md` - open work and rated candidates.

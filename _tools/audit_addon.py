@@ -1,26 +1,57 @@
 #!/usr/bin/env python3
-"""Static audit for KelaPadUI.
+"""Static audit for KelaPadUI Enhanced.
 
-Checks manifest entries, Lua syntax, XML well-formedness and the frozen XML
-allowlist, Cyrillic text (except localized `kpui_lang` files), removed
-references, commented debug lines, TODO markers, direct SI constant
-assignments, setting ID allocation, version consistency, BOM/U+FFFD encoding
-damage, broken quoted `GetString` calls, optional library dependencies, unused
-virtual templates, LibSets API compatibility, and add-on hooks on protected
-dialog show functions.
+Checks manifest entries, add-on identity (folder, manifest, runtime name, event
+namespaces), Lua syntax, XML well-formedness and the frozen XML allowlist,
+Cyrillic text (except localized `kpui_lang` files), removed references,
+commented debug lines, TODO markers, direct SI constant assignments, setting ID
+allocation, version consistency, BOM/U+FFFD encoding damage, broken quoted
+`GetString` calls, optional library dependencies, unused virtual templates,
+LibSets API compatibility, and add-on hooks on protected dialog show functions.
 This is a build/development helper only; ESO does not load it.
 """
 
+import os
 import re
+import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-MANIFEST = ROOT / "KelaPadUI.txt"
+# Add-on managers identify an installed add-on by its folder name and manifest
+# filename. Keep ADDON_NAME in sync with both and with KelaPadUI.name.
+ADDON_NAME = "KelaPadUIEnhanced"
+LEGACY_ADDON_NAME = "KelaPadUI"
+MANIFEST = ROOT / (ADDON_NAME + ".txt")
 LIBSETS_ROOT = ROOT.parent / "LibSets"
-LUA53 = Path(r"lua53.exe")
+
+
+def find_lua53():
+    """Locate a Lua 5.3 interpreter for the syntax check.
+
+    LUA53 overrides everything; then the sibling ArkadiusTradeTools copy used
+    locally; then lua5.3/lua53 on PATH, which is what CI provides.
+    """
+    candidates = []
+    override = os.environ.get("LUA53")
+    if override:
+        candidates.append(Path(override))
+    candidates.append(
+        ROOT.parent / "ArkadiusTradeTools" / "ArkadiusTradeToolsExports" / "lua53.exe"
+    )
+    for name in ("lua5.3", "lua53", "lua5_3"):
+        found = shutil.which(name)
+        if found:
+            candidates.append(Path(found))
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+LUA53 = find_lua53()
 SKIP_DIRS = {"_tools", "docs"}
 CYRILLIC = re.compile(r"[\u0400-\u04FF]")
 DEBUG_PATTERNS = re.compile(r"(?i)(CHAT_SYSTEM|AddMessage\(|--\s*(print|d|trace|debug)\b|\bDEBUG\b)")
@@ -104,6 +135,10 @@ XML_ALLOWLIST = {
 }
 CHANGELOG = ROOT / "changelog.txt"
 QUOTED_KELA_GETSTRING = re.compile(r'GetString\(\s*"(KELA_[A-Z0-9_]+)"\s*\)')
+EVENT_NAMESPACE = re.compile(
+    r'EVENT_MANAGER:(?:Register|Unregister)ForEvent\(\s*"(KelaPadUI[A-Za-z0-9]*)"'
+)
+LOCALE_FILES = ("en.lua", "de.lua", "fr.lua", "ru.lua")
 
 
 def iter_files(suffixes):
@@ -183,6 +218,92 @@ def check_manifest():
     return errors, entries
 
 
+def check_identity():
+    """Keep the folder, manifest, and runtime name in sync.
+
+    Add-on managers match an installed add-on by folder name plus manifest
+    filename, and ESO matches the add-on name in EVENT_ADD_ON_LOADED. Renaming
+    only one of them leaves a dead add-on or lets the original KelaPadUI and
+    this fork load side by side, which corrupts the shared settings file.
+    """
+    errors = []
+    if ROOT.name != ADDON_NAME:
+        errors.append(
+            "IDENTITY: add-on folder is {!r}; expected {!r}".format(ROOT.name, ADDON_NAME)
+        )
+    if not MANIFEST.exists():
+        return errors + ["IDENTITY: manifest not found: {}".format(MANIFEST.name)]
+
+    metadata = manifest_metadata(MANIFEST)
+    if not metadata.get("Title"):
+        errors.append("IDENTITY: manifest has no ## Title")
+    saved = metadata.get("SavedVariables", "").split()
+    for legacy in ("kpuiSavedVariablesBuyingData", "kpuiSavedVariablesListingData"):
+        if legacy in saved:
+            errors.append(
+                "IDENTITY: legacy saved variable {} must not be declared".format(legacy)
+            )
+
+    entry_path = ROOT / "KelaPadUI.lua"
+    if not entry_path.exists():
+        return errors + ["IDENTITY: missing entry file KelaPadUI.lua"]
+    entry_text = read_text(entry_path)
+
+    name_match = re.search(
+        r'(?s)^KelaPadUI\s*=\s*\{.*?\bname\s*=\s*"([^"]+)"', entry_text
+    )
+    if not name_match:
+        errors.append("IDENTITY: cannot read KelaPadUI.name from KelaPadUI.lua")
+    elif name_match.group(1) != ADDON_NAME:
+        errors.append(
+            "IDENTITY: KelaPadUI.name is {!r}; expected {!r}".format(
+                name_match.group(1), ADDON_NAME
+            )
+        )
+
+    filter_match = re.search(r'addonName\s*~=\s*"([^"]+)"', entry_text)
+    if filter_match and filter_match.group(1) != ADDON_NAME:
+        errors.append(
+            "IDENTITY: EVENT_ADD_ON_LOADED filter is {!r}; expected {!r}".format(
+                filter_match.group(1), ADDON_NAME
+            )
+        )
+
+    for path in iter_files({".lua"}):
+        for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            for namespace in EVENT_NAMESPACE.findall(line):
+                if namespace != ADDON_NAME:
+                    errors.append(
+                        "IDENTITY: {}:{}: event namespace {!r} must be {!r}".format(
+                            path.relative_to(ROOT), line_number, namespace, ADDON_NAME
+                        )
+                    )
+
+    titles = {}
+    for name in LOCALE_FILES:
+        path = ROOT / "kpui_lang" / name
+        if not path.exists():
+            errors.append("IDENTITY: missing locale file kpui_lang/{}".format(name))
+            continue
+        found = re.search(
+            r'Add\(\s*(?:"KELA_MAINMENU_TITLE"|KELA_MAINMENU_TITLE)\s*,\s*"([^"]*)"',
+            read_text(path),
+        )
+        if not found:
+            errors.append(
+                "IDENTITY: kpui_lang/{} does not define KELA_MAINMENU_TITLE".format(name)
+            )
+            continue
+        titles[name] = found.group(1)
+    if len(set(titles.values())) > 1:
+        errors.append(
+            "IDENTITY: KELA_MAINMENU_TITLE differs across locales: {}".format(
+                ", ".join("{}={!r}".format(key, value) for key, value in sorted(titles.items()))
+            )
+        )
+    return errors
+
+
 def check_library_dependencies():
     metadata = manifest_metadata(MANIFEST)
     declared = set(
@@ -220,8 +341,11 @@ def check_dialog_hooks():
 
 def check_lua_syntax():
     errors = []
-    if not LUA53.exists():
-        return ["lua53.exe not found; Lua syntax check skipped"], 0
+    if LUA53 is None or not LUA53.exists():
+        return [
+            "Lua 5.3 interpreter not found; install lua5.3, add it to PATH, or set "
+            "the LUA53 environment variable (Lua syntax check skipped)"
+        ], 0
     checked = 0
     for path in iter_files({".lua"}):
         checked += 1
@@ -609,6 +733,7 @@ def main():
     errors = []
     manifest_errors, entries = check_manifest()
     errors.extend(manifest_errors)
+    errors.extend(check_identity())
     lua_errors, lua_count = check_lua_syntax()
     errors.extend(lua_errors)
     xml_errors, xml_count = check_xml()
@@ -632,6 +757,8 @@ def main():
     errors.extend(libsets_errors)
 
     print("Manifest entries:", len(entries))
+    print("Add-on identity: {} ({})".format(ADDON_NAME, MANIFEST.name))
+    print("Lua interpreter:", LUA53 if LUA53 else "not found")
     print("Lua files checked:", lua_count)
     print("XML files checked:", xml_count)
     print("XML allowlist: {} frozen legacy file(s)".format(len(XML_ALLOWLIST)))

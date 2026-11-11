@@ -1279,7 +1279,7 @@ function KelaSetupTradingHouse()
 			local KelaOptionsPeriod = 
 			{
 				template = "Kela_GamepadFullWidthLabelEntryTemplate",
-				header = "KelaPadUI",
+				header = GetString(KELA_MAINMENU_TITLE),
 				headerTemplate = "Kela_GamepadMenuEntryFullWidthHeaderTemplate",
 				templateData =
 				{

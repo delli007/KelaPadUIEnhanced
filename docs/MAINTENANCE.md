@@ -1,4 +1,4 @@
-# KelaPadUI Maintenance Guide
+# KelaPadUI Enhanced Maintenance Guide
 
 This guide describes the current add-on structure, load order, validation
 workflow, and the areas that are most likely to need attention after an ESO
@@ -8,7 +8,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 ## Runtime requirements
 
 - The add-on is designed for the gamepad UI.
-- `LibSets` is required and is declared in `KelaPadUI.txt`.
+- `LibSets` is required and is declared in `KelaPadUIEnhanced.txt`.
 - `Tamriel Trade Centre` (TTC) and `Arkadius Trade Tools` (ATT) are optional
   trading-data providers. At least one is required for the trading features;
   either provider can be used alone. Without either dependency, the trading
@@ -23,7 +23,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | Path | Purpose |
 | --- | --- |
 | `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
-| `KelaPadUI.txt` | Manifest and load order. |
+| `KelaPadUIEnhanced.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, base-game fixes, and trading house. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
@@ -33,10 +33,17 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `kpui_lang/` | English source strings in `en.lua`, plus generated `de.lua`, `fr.lua`, and `ru.lua` loaded through `$(language)`. |
 | `kpui_data/` | Static trial and companion data used by feature modules. |
 | `docs/` | Maintenance, development, research, settings, trading-house, and main-menu notes. |
-| `_tools/audit_addon.py` | Static manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
+| `_tools/audit_addon.py` | Static identity, manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
+| `_tools/package_addon.py` | Builds and verifies the ESOUI-ready zip in `dist/`. |
 | `_tools/translate_kpui_lang.py` | Generates `kpui_lang/de.lua`, `fr.lua`, and `ru.lua` from `en.lua` and validates placeholders. |
+| `.github/workflows/` | CI audit/package run and the tag-triggered release plus ESOUI upload. |
 | `TODO.md` | Open refactors, rated enhancement candidates, and completed cleanup history. |
 | `changelog.txt` | Release-facing change history. |
+
+The folder name, the manifest filename, and `KelaPadUI.name` are the add-on
+identity; add-on managers match on the first two. They must stay identical, and
+they must not change back to `KelaPadUI`, which is the abandoned original. The
+audit enforces this.
 
 ## Load order
 
@@ -57,7 +64,7 @@ setup functions rather than at file scope where possible.
 
 ## Settings architecture
 
-The KelaPadUI settings screen is a single gamepad options list in the
+The KelaPadUI Enhanced settings screen is a single gamepad options list in the
 `kela_options_root` scene. There is no category submenu. The category order is
 defined by `KELA_SETTINGS_CATEGORY_ORDER` in
 `kpui_core/kpui_settings_gamepad.lua`:
@@ -134,7 +141,7 @@ official fix ships:
 When ZOS ships any of these, delete the matching code (or the whole module and
 its manifest entry) and the setting ID `7413`.
 
-The Item sets toggle hides the Sets entry in the KelaPadUI main-menu submenu but
+The Item sets toggle hides the Sets entry in the KelaPadUI Enhanced main-menu submenu but
 does not remove the sets list from the add-on. The KELAPADUI main-menu entry
 itself is always visible so the user cannot lock themselves out of settings.
 
@@ -190,9 +197,9 @@ dialog that calls a private function (for example `CancelTaskbarWindowFlash`
 when a ready check is accepted) fails with "Attempt to access a private
 function ... from insecure code". Verify a descriptor with
 `IsTrustedFunction(descriptor.callback)`, and prefer add-on scenes over
-`ZO_Dialogs_ShowGamepadDialog` for KelaPadUI-owned panels.
+`ZO_Dialogs_ShowGamepadDialog` for add-on-owned panels.
 
-KelaPadUI's Quick Access uses the gamepad main menu's own submenu, opened from
+KelaPadUI Enhanced's Quick Access uses the gamepad main menu's own submenu, opened from
 the Options keybind, so it does not touch the dialog pool. Any add-on-shown
 gamepad dialog that can appear before a core dialog must either avoid core
 `buttons` and manage its own keybind group, or use an add-on scene. Reload clears
@@ -217,13 +224,17 @@ Run these checks after a change:
 python _tools\audit_addon.py
 ```
 
-The audit checks manifest entries, Lua syntax, XML well-formedness, removed
-feature references, TODO/FIXME markers, direct `SI_*` constant assignments,
-setting ID allocation, version fields, encoding damage, quoted `GetString`
-calls, declared optional-library dependencies, unused virtual templates, and
-undefined/unused KELA strings. Cyrillic is rejected everywhere except the
-localized `kpui_lang` files. It counts any KELA token in Lua/XML as a
+The audit checks manifest entries, add-on identity, Lua syntax, XML
+well-formedness, removed feature references, TODO/FIXME markers, direct `SI_*`
+constant assignments, setting ID allocation, version fields, encoding damage,
+quoted `GetString` calls, declared optional-library dependencies, unused virtual
+templates, and undefined/unused KELA strings. Cyrillic is rejected everywhere
+except the localized `kpui_lang` files. It counts any KELA token in Lua/XML as a
 reference, so localization IDs passed indirectly are not reported as unused.
+The identity check requires the folder name, the manifest filename, `ADDON_NAME`
+in the audit, `KelaPadUI.name`, and every `EVENT_MANAGER` namespace to agree; it
+also rejects the retired buying/listing saved variables and a
+`KELA_MAINMENU_TITLE` that differs between locales.
 The setting check rejects IDs outside the `7300`-`7999` Kela block, duplicates,
 IDs listed in `KELA_RETIRED_SETTING_IDS`, and settings that are missing from
 `KELA_SETTINGS_DATA` or `KELA_SETTINGS_DEFAULTS`; it also prints the next free
@@ -251,7 +262,7 @@ npx.cmd --yes luaparse path\to\file.lua > $null
 
 Manual in-game checks are still required for:
 
-- opening KelaPadUI from the gamepad main menu;
+- opening KelaPadUI Enhanced from the gamepad main menu;
 - opening Quick Access with the Options keybind, checking section spacing, and
   using Select/Back on each shortcut;
 - checking that Rumours opens the correct Journal tab, and that Tome Challenges,
@@ -299,6 +310,19 @@ Manual in-game checks are still required for:
   pieces;
 - verifying purchased listings disappear without duplicate or misaligned rows;
 - switching between gamepad and keyboard UI modes.
+
+## Packaging and release
+
+`python _tools\package_addon.py` builds `dist\KelaPadUIEnhanced-<version>.zip`
+with a single top-level `KelaPadUIEnhanced/` folder and verifies that the
+manifest and every file it lists are inside. `--check` verifies without keeping
+the archive; `--notes` writes the current changelog section for release bodies.
+
+`.github/workflows/ci.yml` runs the audit and the packaging check on every push
+and pull request. `.github/workflows/release.yml` runs on a `v<version>` tag,
+publishes the GitHub release, and uploads the same zip to ESOUI when the
+`ESOUI_API_KEY` secret and the `ESOUI_ADDON_ID` variable are configured. See
+`docs/RELEASING.md`.
 
 ## Diagnostics
 

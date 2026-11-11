@@ -5,6 +5,7 @@ __pycache__/
 *.bak
 *.tmp
 *.log
+dist/
 _tools/.translation_cache.json
 
 # OS metadata

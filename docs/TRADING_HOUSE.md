@@ -1,4 +1,4 @@
-# KelaPadUI Trading House
+# KelaPadUI Enhanced Trading House
 
 This document covers the trading-house modules, their dependencies, stored
 history, settings, and the areas that need re-testing after an ESO update.
@@ -31,7 +31,7 @@ installing a provider requires a `/reload`.
 The other-quality price rows need valid item links for each quality. They use
 the optional `LibItemLink` library to build those links; the call is guarded, and
 the rows are skipped when the library is not installed. `LibItemLink` is listed
-in `OptionalDependsOn` so it loads before KelaPadUI when present.
+in `OptionalDependsOn` so it loads before KelaPadUI Enhanced when present.
 
 When only one provider is available, that provider supplies the recommended
 price and deal rating. When both are available, the recommended price uses their
@@ -47,7 +47,7 @@ templates at load time.
 ### Trading-house modules
 
 The former `kpui_tradinghouse_gamepad.lua` is split into five load-ordered
-modules. `KelaPadUI.txt` loads them in this order after the trading history:
+modules. `KelaPadUIEnhanced.txt` loads them in this order after the trading history:
 
 - `kpui_tradinghouse_shared.lua` - shared colors, state, item-link and tooltip
   cleanup helpers. The helpers stay file-local and are exposed through the
@@ -78,7 +78,7 @@ Together these modules:
 
 #### Confirmation dialogs
 
-KelaPadUI keeps copies of `TRADING_HOUSE_CONFIRM_BUY_ITEM`,
+KelaPadUI Enhanced keeps copies of `TRADING_HOUSE_CONFIRM_BUY_ITEM`,
 `TRADING_HOUSE_CONFIRM_SELL_ITEM`, and `TRADING_HOUSE_CONFIRM_REMOVE_LISTING`
 because their confirmation actions call C API functions that cannot be hooked
 for history updates. The copies mirror the current core fields, and the sell

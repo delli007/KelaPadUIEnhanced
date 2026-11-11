@@ -1,4 +1,4 @@
-# KelaPadUI Development Notes
+# KelaPadUI Enhanced Development Notes
 
 This is the quick reference for future updates, additions, and fixes. Use it
 with `docs/MAINTENANCE.md` and `TODO.md`.
@@ -62,7 +62,7 @@ minimal — no colors or layout that Lua can set.
 ## Text styling
 
 `kpuiConst.TextStyles` in `kpui_core/kpui_constants.lua` is the single source of
-truth for how KelaPadUI text looks. Pick a style instead of hardcoding a font or
+truth for how KelaPadUI Enhanced text looks. Pick a style instead of hardcoding a font or
 a colour:
 
 | Style | Look | Use for |
@@ -95,7 +95,7 @@ styles through `ZO_ColorDef:Colorize`.
 - Keep the `SafeAddString` override for `SI_ITEM_FORMAT_STR_SET_NAME`; do not
   assign to the `SI_*` constant directly.
 - Keep the flattened settings list and the KELAPADUI main-menu entry. The menu
-  entry is append-only; settings use the separate KelaPadUI submenu.
+  entry is append-only; settings use the separate KelaPadUI Enhanced submenu.
 - Setting IDs are allocated from the blocks in `docs/SETTINGS.md`; the audit
   rejects duplicates, out-of-block IDs, orphaned IDs, and IDs listed in
   `KELA_RETIRED_SETTING_IDS`. Never reuse a shipped ID.
@@ -292,12 +292,12 @@ Instead of hooking:
 
 - decorate dialog data from a `setup` function owned by the dialog table you
   replace or register;
-- prefer a KelaPadUI scene/fragment over `ZO_Dialogs_ShowGamepadDialog` for
-  KelaPadUI's own panels;
+- prefer a KelaPadUI Enhanced scene/fragment over `ZO_Dialogs_ShowGamepadDialog` for
+  the add-on's own panels;
 - for anything else on a core path, use the `Secure*` hook variants and keep the
   hook out of the callstack that creates controls or closures.
 
-KelaPadUI's Quick Access avoids the pool by reusing the gamepad main menu's own
+KelaPadUI Enhanced's Quick Access avoids the pool by reusing the gamepad main menu's own
 submenu, opened from the Options keybind. Any add-on-shown gamepad dialog that
 can appear before a core dialog must either avoid core `buttons` and manage its
 own keybind group (passing `KEYBIND_STRIP:GetTopKeybindStateIndex()`), or use an

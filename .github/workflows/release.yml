@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Upload to ESOUI after building
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+env:
+  ESOUI_API_KEY: ${{ secrets.ESOUI_API_KEY }}
+  ESOUI_ADDON_ID: ${{ vars.ESOUI_ADDON_ID }}
+
+jobs:
+  release:
+    name: Audit, package, publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Lua 5.3
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.3
+
+      - name: Static audit
+        run: python _tools/audit_addon.py
+
+      - name: Build add-on zip
+        run: python _tools/package_addon.py --notes dist/notes.md
+
+      - name: Read manifest
+        id: meta
+        run: |
+          python - <<'PY'
+          import os
+          import pathlib
+          import re
+
+          text = pathlib.Path("KelaPadUIEnhanced.txt").read_text(encoding="utf-8")
+
+          def field(key):
+              match = re.search(r"^## %s:\s*(.+)$" % key, text, re.M)
+              if not match:
+                  raise SystemExit("manifest is missing ## %s" % key)
+              return match.group(1).strip()
+
+          version = field("Version")
+          values = {
+              "version": version,
+              "api": field("APIVersion"),
+              "zip": "dist/KelaPadUIEnhanced-%s.zip" % version,
+          }
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as handle:
+              for key, value in values.items():
+                  handle.write("%s=%s\n" % (key, value))
+          PY
+
+      - name: Check tag matches manifest version
+        if: github.ref_type == 'tag'
+        run: |
+          expected="v${{ steps.meta.outputs.version }}"
+          if [ "${GITHUB_REF_NAME}" != "$expected" ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} does not match manifest version ${expected}"
+            exit 1
+          fi
+
+      - name: Create GitHub release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.meta.outputs.version }}
+          body_path: dist/notes.md
+          files: ${{ steps.meta.outputs.zip }}
+
+      - name: Upload to ESOUI
+        if: (github.ref_type == 'tag' || inputs.deploy) && env.ESOUI_API_KEY != '' && env.ESOUI_ADDON_ID != ''
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --request POST https://api.esoui.com/addons/update \
+            --header "x-api-token: ${ESOUI_API_KEY}" \
+            --form "id=${ESOUI_ADDON_ID}" \
+            --form "version=${{ steps.meta.outputs.version }}" \
+            --form "compatible=${{ steps.meta.outputs.api }}" \
+            --form "changelog=<dist/notes.md" \
+            --form "updatefile=@${{ steps.meta.outputs.zip }}"
+
+      - name: Report skipped ESOUI upload
+        if: (github.ref_type == 'tag' || inputs.deploy) && (env.ESOUI_API_KEY == '' || env.ESOUI_ADDON_ID == '')
+        run: |
+          echo "::notice::ESOUI upload skipped; set the ESOUI_API_KEY secret and the ESOUI_ADDON_ID variable to enable it."

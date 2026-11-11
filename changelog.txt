@@ -1,8 +1,13 @@
-KelaPadUI changelog (newest first)
+KelaPadUI Enhanced changelog (newest first)
 
 Version numbers before 2.5.0 were assigned retrospectively to the dated
 changelog entries; they do not imply those versions were released. Future
 entries use major.minor.patch and match the add-on manifest version.
+
+2.8.0 - 11/11/2026
+- Renamed the add-on to KelaPadUI Enhanced and moved it to its own folder and manifest, so add-on managers no longer treat it as the abandoned original KelaPadUI. Delete the old KelaPadUI folder, and the KelaPadUIBuyingData and KelaPadUIListingData folders if present, before installing. Settings and trading history are preserved.
+- The add-on now stays disabled while the original KelaPadUI is loaded and shows a gamepad dialog explaining how to fix it, instead of letting both copies share one settings file.
+- Added a packaging script that builds the ESOUI upload zip, and GitHub Actions that audit, package, and publish tagged releases to ESOUI.
 
 2.7.0 - 11/10/2026
 - Added German, French, and Russian interface translations, along with a translation script to convert to other languages; the add-on loads the matching client-language file automatically and falls back to English for other languages.

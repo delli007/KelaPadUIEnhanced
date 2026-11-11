@@ -1,6 +1,6 @@
 KelaPadUI = {
-	name = "KelaPadUI",	
-	displayName = "|cFF00FF" .. "KelaPadUI interface for Gamepad UI" .. "|r",
+	name = "KelaPadUIEnhanced",
+	displayName = "|cFF00FF" .. "KelaPadUI Enhanced interface for Gamepad UI" .. "|r",
 }
 
 -- Optional diagnostics channel.  LibDebugLogger writes to the saved variables
@@ -8,7 +8,61 @@ KelaPadUI = {
 -- text cannot be copied out.  Nil when the library is not installed.
 KelaPadUI.log = LibDebugLogger and LibDebugLogger:Create(KelaPadUI.name)
 
+-- The abandoned original add-on installs as the folder "KelaPadUI" and shares
+-- both the KelaPadUI global and the kpuiSavedVariables file. Running the two
+-- together corrupts settings, so this build stays inert while it is present.
+local KELA_LEGACY_ADDON_NAME = "KelaPadUI"
+
 local _initialized = false
+
+local function KelaLegacyAddonLoaded()
+	local isLoaded = C_AddOns and C_AddOns.IsAddOnLoaded
+	if not isLoaded then return false end
+	local ok, loaded = pcall(isLoaded, KELA_LEGACY_ADDON_NAME)
+	return ok and loaded == true
+end
+
+local function KelaShowLegacyConflictDialog()
+	ZO_Dialogs_RegisterCustomDialog("KELA_LEGACY_ADDON_CONFLICT",
+	{
+		gamepadInfo =
+		{
+			dialogType = GAMEPAD_DIALOGS.BASIC,
+		},
+		title =
+		{
+			text = KELA_LEGACY_CONFLICT_TITLE,
+		},
+		mainText =
+		{
+			text = KELA_LEGACY_CONFLICT_MESSAGE,
+		},
+		buttons =
+		{
+			[1] =
+			{
+				text = SI_DIALOG_EXIT,
+			},
+		},
+	})
+	pcall(ZO_Dialogs_ShowGamepadDialog, "KELA_LEGACY_ADDON_CONFLICT")
+end
+
+local function KelaWarnLegacyAddon()
+	KelaPadUI.legacyConflict = true
+	if KelaPadUI.log then
+		KelaPadUI.log:Error(
+			"The original KelaPadUI add-on is still installed, so KelaPadUI Enhanced did not start. "
+			.. "Delete the KelaPadUI, KelaPadUIBuyingData and KelaPadUIListingData folders, then reload the UI."
+		)
+	end
+	-- Dialogs are unreliable before the gamepad UI exists, so show the notice
+	-- once the player is in game.
+	EVENT_MANAGER:RegisterForEvent(KelaPadUI.name, EVENT_PLAYER_ACTIVATED, function()
+		EVENT_MANAGER:UnregisterForEvent(KelaPadUI.name, EVENT_PLAYER_ACTIVATED)
+		zo_callLater(KelaShowLegacyConflictDialog, 2000)
+	end)
+end
 
 --KelaPadUI scenes
 local kelaSetsScene = SCENE_MANAGER:GetScene("kelaSets")
@@ -85,8 +139,16 @@ end
 
 local function KelaPadUI_OnLoaded(eventType, addonName)
 	if _initialized then return end
-	if addonName ~= "KelaPadUI" then return end
-	EVENT_MANAGER:UnregisterForEvent("KelaPadUI", EVENT_ADD_ON_LOADED)
+	if addonName ~= KelaPadUI.name then return end
+	EVENT_MANAGER:UnregisterForEvent(KelaPadUI.name, EVENT_ADD_ON_LOADED)
+
+	-- "KelaPadUI" sorts before "KelaPadUIEnhanced", so the original add-on has
+	-- already registered its own load handler by the time this one runs.
+	if KelaLegacyAddonLoaded() then
+		KelaWarnLegacyAddon()
+		_initialized = true
+		return
+	end
 
 	KelaInitializeSettings()
 
@@ -151,4 +213,4 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 
 end
 
-EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_ADD_ON_LOADED, KelaPadUI_OnLoaded)
+EVENT_MANAGER:RegisterForEvent(KelaPadUI.name, EVENT_ADD_ON_LOADED, KelaPadUI_OnLoaded)

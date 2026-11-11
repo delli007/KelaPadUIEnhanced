@@ -2,7 +2,7 @@
 -- Extracted from KelaPadUI.lua; uses KELA_TRIALS_DATA from kpui_data/kpui_data.lua.
 
 local function AddContextMenuItems()
-	EVENT_MANAGER:UnregisterForEvent("KelaPadUI", EVENT_PLAYER_ACTIVATED)
+	EVENT_MANAGER:UnregisterForEvent("KelaPadUIEnhanced", EVENT_PLAYER_ACTIVATED)
 
 	local LCM = LibCustomMenu or LibStub("LibCustomMenu", true)
 	if not LCM then
@@ -75,5 +75,5 @@ function KelaSetupChatTools()
 	KelaPadUI.KelaChatToolsInitialized = true
 
 	AddChatCommands()
-	EVENT_MANAGER:RegisterForEvent("KelaPadUI", EVENT_PLAYER_ACTIVATED, AddContextMenuItems)
+	EVENT_MANAGER:RegisterForEvent("KelaPadUIEnhanced", EVENT_PLAYER_ACTIVATED, AddContextMenuItems)
 end

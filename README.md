@@ -1,6 +1,7 @@
-# KelaPadUI
+# KelaPadUI Enhanced
 
-KelaPadUI enhances the Elder Scrolls Online gamepad interface with extra item
+KelaPadUI Enhanced is a maintained successor to the original KelaPadUI add-on.
+It enhances the Elder Scrolls Online gamepad interface with extra item
 information, trading data, daily-progress tracking, and quick access to the
 screens you use most. It is designed for the gamepad UI and keeps the core
 controller layout intact.
@@ -32,13 +33,25 @@ alone, and both are used together when installed.
 ## Installation
 
 1. Close The Elder Scrolls Online.
-2. Copy the `KelaPadUI` folder into:
+2. Delete the old `KelaPadUI`, `KelaPadUIBuyingData`, and `KelaPadUIListingData`
+   folders from `Documents/Elder Scrolls Online/live/AddOns/` if they exist.
+   KelaPadUI Enhanced refuses to start while the original is installed, because
+   both use the same settings file.
+3. Copy the `KelaPadUIEnhanced` folder into:
    `Documents/Elder Scrolls Online/live/AddOns/`
-3. Install `LibSets` and any optional add-ons you want to use.
-4. Start the game and enable the add-on from the Add-Ons menu.
-5. Use `/reloadui` after changing reload-gated settings.
+4. Install `LibSets` and any optional add-ons you want to use.
+5. Start the game and enable the add-on from the Add-Ons menu.
+6. Use `/reloadui` after changing reload-gated settings.
 
 Minion and ESOUI installations use the same folder layout.
+
+### Upgrading from the original KelaPadUI
+
+Settings and trading history are preserved: the saved-variables file is still
+`kpuiSavedVariables`. The add-on deliberately does not declare the removed
+`kpuiSavedVariablesBuyingData` and `kpuiSavedVariablesListingData` files, so
+buying and listing history recorded by the old companion add-ons is not
+imported. Export anything you need from them before deleting those folders.
 
 ## Features
 
@@ -245,6 +258,7 @@ and IDs.
 - `docs/TRADING_HOUSE.md` - trading modules, history storage, and test checklist.
 - `docs/MAINTENANCE.md` - structure, load order, and update workflow.
 - `docs/DEVELOPMENT_NOTES.md` - conventions, invariants, and common pitfalls.
+- `docs/RELEASING.md` - packaging, GitHub Actions, and ESOUI upload.
 - `TODO.md` - deferred work and rated candidate enhancements.
 - `changelog.txt` - release history.
 

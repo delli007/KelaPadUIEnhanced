@@ -59,7 +59,7 @@ TOKEN = re.compile(
 )
 PLAIN_TOKEN = re.compile(r"<<(?:(?:[A-Za-z]:)?\d+)>>")
 PERCENT = re.compile(r"%(?:%|[-+ #0]*\d*(?:\.\d+)?[sdif])")
-BRAND_TOKENS = ("KelaPadUI", "ESO+", "USPF")
+BRAND_TOKENS = ("KelaPadUI Enhanced", "KelaPadUI", "ESO+", "USPF")
 
 # Hand-checked terminology that is ambiguous as a bare exact match.
 OVERRIDES = {

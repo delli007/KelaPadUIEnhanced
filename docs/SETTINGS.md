@@ -1,4 +1,4 @@
-# KelaPadUI Settings
+# KelaPadUI Enhanced Settings
 
 This document covers the gamepad settings screen, the account-wide settings
 store, the current setting IDs, and the steps for adding or retiring a setting.
@@ -104,7 +104,7 @@ in light red on every open.
 All Features toggles except the PS5 button map are reload-gated. The PS5 button
 map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
 and the bootstrap also applies the saved value during `KelaPadUI_OnLoaded()`.
-Leaving the KelaPadUI options after changing a reload-gated toggle shows a
+Leaving the KelaPadUI Enhanced options after changing a reload-gated toggle shows a
 "reload required" dialog
 (`KELA_OPTIONS_RELOAD_REQUIRED`) with Reload UI and Later, so the reload is
 requested only once the player is done with the options; the prompt is deferred
@@ -269,7 +269,7 @@ state is true.
 
 ## Testing checklist
 
-- Open KelaPadUI, then Settings, and confirm all four category headings are
+- Open KelaPadUI Enhanced, then Settings, and confirm all four category headings are
   visible in one scrollable list.
 - Confirm `Sets` is visible or hidden according to the Item sets setting,
   `Trait Research` according to the Trait research setting, and that Settings
