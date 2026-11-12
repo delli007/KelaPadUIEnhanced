@@ -657,17 +657,23 @@ end
 -- Evaluated before the options scene saves, so leaving the options can prompt
 -- the player to reload the UI.
 local function KelaSettingsNeedReload()
-	for _, settings in pairs(kela_SettingsData) do
-		for _, setting in ipairs(settings) do
-			local panelData = kela_SettingsData[setting.panel]
-			local data = panelData and panelData[setting.system] and panelData[setting.system][setting.settingId]
-			if data and data.requiresReload then
-				local currentSystem = kpuiSVSettingsCurrent[data.system]
-				local savedSystem = kpuiSVSettingsSaved[data.system]
-				local currentValue = currentSystem and currentSystem[data.settingId]
-				local savedValue = savedSystem and savedSystem[data.settingId]
-				if currentValue ~= savedValue then
-					return true
+	-- kela_SettingsData is [panel][system][settingId], so every level has to be
+	-- walked with pairs. The previous ipairs over the system table (keyed by
+	-- SETTING_TYPE_KELA) ran zero iterations, so the prompt never appeared.
+	for _, panelData in pairs(kela_SettingsData) do
+		for _, systemData in pairs(panelData) do
+			for _, data in pairs(systemData) do
+				if data.requiresReload then
+					local currentSystem = kpuiSVSettingsCurrent[data.system]
+					local savedSystem = kpuiSVSettingsSaved[data.system]
+					local currentValue = currentSystem and currentSystem[data.settingId]
+					local savedValue = savedSystem and savedSystem[data.settingId]
+					-- KelaSetSetting stores strings while the defaults table holds
+					-- booleans and numbers; compare string forms so reverting a
+					-- toggle to its saved value does not prompt.
+					if tostring(currentValue) ~= tostring(savedValue) then
+						return true
+					end
 				end
 			end
 		end

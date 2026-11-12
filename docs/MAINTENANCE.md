@@ -121,12 +121,15 @@ intentionally self-contained so the whole thing can be deleted after the
 official fix ships:
 
 - L2/R2 round paging: the module adds `UI_SHORTCUTS_ACTION_LAYER_FRAGMENT` (in
-  Lua, no XML) to the scoreboard scenes and re-stacks the scoreboard action
-  layer above it, then `SecurePostHook`s `ZO_KeybindStrip_HandleKeybindDown` to
-  route `UI_SHORTCUT_LEFT_TRIGGER` / `RIGHT_TRIGGER` into
+  Lua, no XML) to the scoreboard scenes and registers an ethereal
+  `UI_SHORTCUT_LEFT_TRIGGER` / `RIGHT_TRIGGER` group that calls
   `BATTLEGROUND_SCOREBOARD_FRAGMENT:OnKeybindDown`. The core round actions exist
   but inherit from unbound `*_DUMMY` actions, and the scoreboard scenes did not
-  activate the UI-shortcuts layer.
+  activate the UI-shortcuts layer. Ethereal entries are dispatched but draw no
+  button. The in-game scene already shows the gamepad keybind strip; the
+  end-of-game recap keeps it hidden, so the module adds
+  `KEYBIND_STRIP_GAMEPAD_FRAGMENT` there (without the backdrop group) to make the
+  strip control visible with nothing drawn. Nothing hooks the dispatcher.
 - Scoreboard sizing: `SecurePostHook` on the team-panel `UpdatePanelHeight` /
   `UseSmallPlayerEntries`, the fragment's `UpdateAll`, and the player row's
   `SetupOnAcquire`. Large rows use 40 px, small rows 32 px, and the row gap is 9,
@@ -204,6 +207,23 @@ the Options keybind, so it does not touch the dialog pool. Any add-on-shown
 gamepad dialog that can appear before a core dialog must either avoid core
 `buttons` and manage its own keybind group, or use an add-on scene. Reload clears
 an already-poisoned pool.
+
+### Keybind dispatcher hooks
+
+A secure post-hook on an input dispatcher taints the whole press.
+`SecurePostHook` runs the original body through the engine's `PostHookFunction`
+trampoline, so every keybind that reaches `ZO_KeybindStrip_HandleKeybindDown`
+executes with that frame on the callstack. `ZO_Dialogs_ButtonKeybindPressed`
+falls through to the keybind strip when it does not handle the button itself
+(`handledButton` is false in its locals), which is why accepting a duel or a
+ready check failed inside `ZO_PlayerToPlayer:Accept` ->
+`RemoveEntryFromIncomingQueueTable` on the private `CancelTaskbarWindowFlash`.
+
+Do not hook the input dispatchers (`ZO_KeybindStrip_HandleKeybindDown`,
+`ZO_KeybindStrip_HandleKeybindUp`, `ZO_KeybindStrip:TryHandlingKeybindDown`);
+`_tools/audit_addon.py` rejects them. Register a keybind button group on the
+scene that owns the input instead, as `kpui_map_rally.lua` and the Battleground
+scoreboard paging in `kpui_basegame_fixes.lua` do.
 
 ## Tooltip styles
 

@@ -111,6 +111,13 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   `ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog`. It poisons the
   shared gamepad dialog keybind pool for the rest of the session, and the audit
   fails on these hooks. Use a dialog-owned `setup` function or an add-on scene.
+- Never hook a keybind dispatcher (`ZO_KeybindStrip_HandleKeybindDown`,
+  `ZO_KeybindStrip_HandleKeybindUp`, `ZO_KeybindStrip:TryHandlingKeybindDown`)
+  either. A secure post-hook runs the dispatcher's original body inside the
+  engine's `PostHookFunction` trampoline, so every press that reaches it is
+  insecure; dialog buttons that fall through to the strip then fail on private
+  calls (duel and ready-check accepts raised `CancelTaskbarWindowFlash`). Add a
+  keybind button group on the owning scene. The audit fails on these hooks too.
 - Do not leave `TODO` / `FIXME` / `HACK` / `XXX` markers in Lua/XML; record
   deferred work in `TODO.md`.
 - Do not assign `SI_*` globals directly; use `SafeAddString`.

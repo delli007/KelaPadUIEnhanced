@@ -85,4 +85,41 @@ end
 kelaEntry.id = #ZO_MENU_ENTRIES + 1
 table.insert(ZO_MENU_ENTRIES, kelaEntry)
 
+-- The submenu opens with a section header carrying the root entry's name so the
+-- list does not start with an unlabeled row. Sets and Trait Research can each be
+-- turned off, Settings is always listed, so the header follows the first visible
+-- entry.
+local KELAPADUI_MENU_HEADER = GetString(KELA_MAINMENU_TITLE)
+
+local function ApplySubMenuHeader()
+	local headerAssigned = false
+	for _, entry in ipairs(kelaEntry.subMenu) do
+		local data = entry.data
+		local isVisible = not data.isVisibleCallback or data.isVisibleCallback()
+		if isVisible and not headerAssigned then
+			entry:SetHeader(KELAPADUI_MENU_HEADER)
+			headerAssigned = true
+		else
+			entry:SetHeader(nil)
+		end
+	end
+end
+
+function KelaSetupMainMenuHeader()
+	ApplySubMenuHeader()
+
+	if not MAIN_MENU_GAMEPAD_SCENE or MAIN_MENU_GAMEPAD_SCENE.kelaMenuHeaderRegistered then
+		return
+	end
+
+	MAIN_MENU_GAMEPAD_SCENE.kelaMenuHeaderRegistered = true
+	-- Re-evaluate when the menu opens so a setting changed without a reload
+	-- still moves the header to the first visible entry.
+	MAIN_MENU_GAMEPAD_SCENE:RegisterCallback("StateChange", function(_, newState)
+		if newState == SCENE_SHOWING then
+			ApplySubMenuHeader()
+		end
+	end)
+end
+
 

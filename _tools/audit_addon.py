@@ -94,6 +94,17 @@ DIALOG_HOOK_TARGETS = (
     "ZO_Dialogs_ButtonKeybindPressed",
     "ZO_GamepadTradingHouse_Dialogs_DisplayConfirmationDialog",
 )
+# Hooked keybind dispatch runs the original body inside the engine's secure-hook
+# trampoline. Every press that falls through to the keybind strip then executes
+# with add-on code on the callstack, so dialog buttons that call private
+# functions fail ("Attempt to access a private function
+# 'CancelTaskbarWindowFlash' from insecure code"). Register a keybind group on
+# the owning scene instead.
+INPUT_HOOK_TARGETS = (
+    "ZO_KeybindStrip_HandleKeybindDown",
+    "ZO_KeybindStrip_HandleKeybindUp",
+    "TryHandlingKeybindDown",
+)
 HOOK_CALLS = ("ZO_PreHook", "ZO_PostHook", "SecurePreHook", "SecurePostHook")
 KELA_STRING = re.compile(r"\b(KELA_[A-Z0-9_]+)\b")
 LOCALIZATION_USE = re.compile(
@@ -333,6 +344,14 @@ def check_dialog_hooks():
                     errors.append(
                         "DIALOG HOOK: {}:{}: {} must not be hooked; decorate from a dialog-owned "
                         "setup function instead (see docs/DEVELOPMENT_NOTES.md)".format(
+                            path.relative_to(ROOT), line_number, target
+                        )
+                    )
+            for target in INPUT_HOOK_TARGETS:
+                if re.search(r"(?<![A-Za-z0-9_])" + re.escape(target) + r"(?![A-Za-z0-9_])", line):
+                    errors.append(
+                        "INPUT HOOK: {}:{}: {} must not be hooked; add a keybind group to the "
+                        "owning scene instead (see docs/MAINTENANCE.md)".format(
                             path.relative_to(ROOT), line_number, target
                         )
                     )
@@ -766,7 +785,11 @@ def main():
     if dialog_hook_errors:
         print("Dialog hook guard: {} violation(s)".format(len(dialog_hook_errors)))
     else:
-        print("Dialog hook guard: clean ({} protected functions)".format(len(DIALOG_HOOK_TARGETS)))
+        print(
+            "Dialog hook guard: clean ({} dialog, {} input dispatcher)".format(
+                len(DIALOG_HOOK_TARGETS), len(INPUT_HOOK_TARGETS)
+            )
+        )
     if libsets_info["available"]:
         print(
             "LibSets version: {} (API {})".format(

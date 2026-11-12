@@ -152,6 +152,8 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 
 	KelaInitializeSettings()
 
+	KelaSetupMainMenuHeader()
+
 	local function IsFeatureEnabled(settingId)
 		return KelaGetSetting_Bool(SETTING_TYPE_KELA, settingId)
 	end
