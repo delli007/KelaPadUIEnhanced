@@ -397,7 +397,7 @@ def read_state(repo):
                 "--limit",
                 "200",
                 "--json",
-                "number,title,body,labels,createdAt",
+                "number,title,body,labels,createdAt,comments",
                 repo=repo,
             )
         )
@@ -409,6 +409,11 @@ def read_state(repo):
         body = issue.get("body") or ""
         for match in re.finditer(r"<!-- esoui-comment:(\d+) -->", body):
             known.add(int(match.group(1)))
+        for comment in issue.get("comments") or []:
+            for match in re.finditer(
+                r"<!-- esoui-comment:(\d+) -->", comment.get("body") or ""
+            ):
+                known.add(int(match.group(1)))
 
         labels = {label["name"] for label in issue.get("labels") or []}
         if FEED_TITLE.lower() in (issue.get("title") or "").lower() and "esoui-feed" in labels:
@@ -567,6 +572,19 @@ def main(argv=None):
 
     if not pending:
         print("No new comments (newest seen: {})".format(last_seen))
+        if newest > last_seen and not args.check:
+            if feed:
+                update_cursor(args.repo, feed, newest, args.addon_id)
+            else:
+                ensure_labels(args.repo)
+                body = FEED_ISSUE_BODY.format(
+                    addon_url=addon_page_url(args.addon_id),
+                    marker=FEED_MARKER.format(comment_id=newest),
+                )
+                feed = {
+                    "number": int(create_issue(args.repo, FEED_TITLE, body, ["esoui-feed"]).rsplit("/", 1)[-1])
+                }
+                print("Created feed issue #{}".format(feed["number"]))
         return 0
 
     if not args.check:
