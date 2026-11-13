@@ -1,3 +1,5 @@
+# Builds the add-on zip, creates the GitHub release for a v* tag, and publishes
+# to ESOUI. Every upload is validated against ESOUI's test endpoint first.
 name: Release
 
 on:
