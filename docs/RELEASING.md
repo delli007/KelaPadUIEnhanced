@@ -67,7 +67,7 @@ x-api-token: <token>
 
 id=<add-on id>
 version=<manifest version>
-compatible=<manifest APIVersion>
+compatible=<game version, for example 12.1.0>
 changelog=<release notes text>
 description=<README.bbcode>
 updatefile=<the zip>
@@ -80,6 +80,31 @@ is accepted, so a malformed field fails the job without touching the listing.
 with every release. Keep it in sync with `README.md` and in the ESOUI dialect:
 no tables and no `[code]` (use `[font=Courier New][color=#4682B4]` for inline
 code), and one indented `[*]` item per line between `[list]` and `[/list]`.
+
+### Compatibility field
+
+`compatible` is the game version, not the add-on API version. ESOUI shows it as
+the Compatibility list on the listing, and `12.1.0` is what marks the add-on as
+compatible with the latest live game build. The API version `101051` is
+rejected silently, leaving the listing with no compatibility at all.
+
+`_tools/esoui_compat.py` maps `## APIVersion` to the game version:
+
+```powershell
+python _tools\esoui_compat.py 101051     # prints 12.1.0
+python _tools\esoui_compat.py --list     # the whole table
+```
+
+The release workflow runs it with `--verify`, which checks the value against
+`https://api.esoui.com/addons/compatible.json` using `ESOUI_API_KEY`. A value
+missing from that list fails the job before the GitHub release is created.
+
+When a game update lands, bump `## APIVersion` and add the matching pair to
+`COMPATIBLE_VERSIONS` in `_tools/esoui_compat.py`. Take the version from the
+Compatibility selector on the manual upload page,
+<https://www.esoui.com/downloads/upload-update.php>. Only add versions that are
+live; adding the next one early claims compatibility with a build the add-on has
+not run against.
 
 ## GitHub Actions
 

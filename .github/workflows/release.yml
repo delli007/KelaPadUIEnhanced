@@ -87,6 +87,14 @@ jobs:
             exit 1
           fi
 
+      - name: Resolve ESOUI compatibility
+        id: compat
+        if: (github.ref_type == 'tag' || inputs.deploy) && env.ESOUI_API_KEY != '' && env.ESOUI_ADDON_ID != ''
+        run: |
+          value=$(python _tools/esoui_compat.py "${{ steps.meta.outputs.api }}" --verify)
+          echo "value=${value}" >> "$GITHUB_OUTPUT"
+          echo "ESOUI compatibility: ${value}"
+
       - name: Create GitHub release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
@@ -103,7 +111,7 @@ jobs:
             --header "x-api-token: ${ESOUI_API_KEY}" \
             --form "id=${ESOUI_ADDON_ID}" \
             --form "version=${{ steps.meta.outputs.version }}" \
-            --form "compatible=${{ steps.meta.outputs.api }}" \
+            --form "compatible=${{ steps.compat.outputs.value }}" \
             --form "changelog=<dist/notes.md" \
             --form "description=<README.bbcode" \
             --form "updatefile=@${{ steps.meta.outputs.zip }}"
@@ -116,7 +124,7 @@ jobs:
             --header "x-api-token: ${ESOUI_API_KEY}" \
             --form "id=${ESOUI_ADDON_ID}" \
             --form "version=${{ steps.meta.outputs.version }}" \
-            --form "compatible=${{ steps.meta.outputs.api }}" \
+            --form "compatible=${{ steps.compat.outputs.value }}" \
             --form "changelog=<dist/notes.md" \
             --form "description=<README.bbcode" \
             --form "updatefile=@${{ steps.meta.outputs.zip }}"
