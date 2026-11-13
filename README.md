@@ -6,7 +6,8 @@ information, trading data, daily-progress tracking, and quick access to the
 screens you use most. It is designed for the gamepad UI and keeps the core
 controller layout intact.
 
-Original add-on by @rkirgizov. Current maintenance by @slice_o'life.
+U51 Note: This addon fixes some base-game bugs in battlegrounds that should be resolved
+in U52. I'll remove the fixes when ZOS gets their sh** together.
 
 ## Requirements
 
@@ -266,9 +267,8 @@ Tag the comment with `#bug`, `#enhancement`, `#request`, or `#issue` so it is
 mirrored into this tracker automatically.
 
 Include the add-on version from the listing or `changelog.txt`, your platform
-(PC, PS5, or Xbox), whether ESO Plus is active if the problem involves bank or
-backpack space, the steps that reproduce it, and the expected and actual result.
-`LibDebugLogger` output helps when the game logs an error.
+(PC, PS5, or Xbox), whether ESO Plus is active, the steps that reproduce it, and the expected and actual result.
+`LibDebugLogger` (https://www.esoui.com/downloads/info2275-LibDebugLogger.html) output helps when the game logs an error.
 
 ## Documentation
 
@@ -283,7 +283,7 @@ backpack space, the steps that reproduce it, and the expected and actual result.
 ## Credits
 
 - Original add-on: @rkirgizov.
-- Current maintenance: @slice_o'life.
+- Current maintenance: Only me for now.
 - `LibSets` and the optional libraries listed above are maintained by their
   respective authors.
 - The Elder Scrolls Online is a trademark of ZeniMax Media Inc. This add-on is
