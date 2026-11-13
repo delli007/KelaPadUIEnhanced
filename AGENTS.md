@@ -161,6 +161,10 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
 - Preserve the five tooltip types, `QUAD1*` styles, `getStyleHeaderLine`, the
   `ZO_CRAFTING_TOOLTIP_STYLES` copy, the flattened settings list, and the
   KELAPADUI entry directly below Options.
+- Keep `README.bbcode` in sync with `README.md`; it is the ESOUI listing
+  description. It has no tables and no `[code]` (use
+  `[font=Courier New][color=#4682B4]` for inline code), and each `[*]` item sits
+  on its own line inside `[list]` / `[/list]`.
 - Update `changelog.txt` (newest first) and affected docs for user-facing
   changes. Keep `## Version`, `## AddOnVersion`, the top `changelog.txt` version,
   and the release tag (`v<version>`) in sync; the audit checks the first three

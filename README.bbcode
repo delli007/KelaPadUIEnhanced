@@ -8,19 +8,38 @@ It enhances the Elder Scrolls Online gamepad interface with extra item informati
 
 [size=3][b][color=#D4A843]Requirements[/color][/b][/size]
 
-[list] [*]The Elder Scrolls Online gamepad UI (controller mode). [*][font=Courier New][color=#4682B4]LibSets[/color][/font] (required). [*]API version [font=Courier New][color=#4682B4]101051[/color][/font]. [/list]
+[list]
+  [*] The Elder Scrolls Online gamepad UI (controller mode).
+  [*] [font=Courier New][color=#4682B4]LibSets[/color][/font] (required).
+  [*] API version [font=Courier New][color=#4682B4]101051[/color][/font].
+[/list]
 
 Optional integrations are detected at runtime. Missing libraries only disable the features that use them.
 
 [b][color=#C49A45]Optional integrations[/color][/b]
 
-[list] [*][b]Tamriel Trade Centre (TTC):[/b] TTC price data in tooltips and trading screens. [*][b]Arkadius Trade Tools (ATT):[/b] ATT sales data, guild statistics, and guild colors. [*][b]LibCustomMenu:[/b] Player context-menu actions in chat and social lists. [*][b]LibItemLink:[/b] Other-quality price comparison rows in trading tooltips. [*][b]USPF:[/b] The Skill Points row on the dashboard. [*][b]LibDebugLogger:[/b] Optional diagnostic logging. [*][b]PersonalAssistant:[/b] Permanent-junk marking actions in the gamepad inventory. [/list]
+[list]
+  [*] [b]Tamriel Trade Centre (TTC):[/b] TTC price data in tooltips and trading screens.
+  [*] [b]Arkadius Trade Tools (ATT):[/b] ATT sales data, guild statistics, and guild colors.
+  [*] [b]LibCustomMenu:[/b] Player context-menu actions in chat and social lists.
+  [*] [b]LibItemLink:[/b] Other-quality price comparison rows in trading tooltips.
+  [*] [b]USPF:[/b] The Skill Points row on the dashboard.
+  [*] [b]LibDebugLogger:[/b] Optional diagnostic logging.
+  [*] [b]PersonalAssistant:[/b] Permanent-junk marking actions in the gamepad inventory.
+[/list]
 
 The trading features need at least one of TTC or ATT. Either provider works alone, and both are used together when installed.
 
 [size=3][b][color=#D4A843]Installation[/color][/b][/size]
 
-[list=1] [*]Close The Elder Scrolls Online. [*]Delete the old [font=Courier New][color=#4682B4]KelaPadUI[/color][/font], [font=Courier New][color=#4682B4]KelaPadUIBuyingData[/color][/font], and [font=Courier New][color=#4682B4]KelaPadUIListingData[/color][/font] folders from [font=Courier New][color=#4682B4]Documents/Elder Scrolls Online/live/AddOns/[/color][/font] if they exist. KelaPadUI Enhanced refuses to start while the original is installed, because both use the same settings file. [*]Copy the [font=Courier New][color=#4682B4]KelaPadUIEnhanced[/color][/font] folder into [font=Courier New][color=#4682B4]Documents/Elder Scrolls Online/live/AddOns/[/color][/font]. [*]Install [font=Courier New][color=#4682B4]LibSets[/color][/font] and any optional add-ons you want to use. [*]Start the game and enable the add-on from the Add-Ons menu. [*]Use [font=Courier New][color=#4682B4]/reloadui[/color][/font] after changing reload-gated settings. [/list]
+[list=1]
+  [*] Close The Elder Scrolls Online.
+  [*] Delete the old [font=Courier New][color=#4682B4]KelaPadUI[/color][/font], [font=Courier New][color=#4682B4]KelaPadUIBuyingData[/color][/font], and [font=Courier New][color=#4682B4]KelaPadUIListingData[/color][/font] folders from [font=Courier New][color=#4682B4]Documents/Elder Scrolls Online/live/AddOns/[/color][/font] if they exist. KelaPadUI Enhanced refuses to start while the original is installed, because both use the same settings file.
+  [*] Copy the [font=Courier New][color=#4682B4]KelaPadUIEnhanced[/color][/font] folder into [font=Courier New][color=#4682B4]Documents/Elder Scrolls Online/live/AddOns/[/color][/font].
+  [*] Install [font=Courier New][color=#4682B4]LibSets[/color][/font] and any optional add-ons you want to use.
+  [*] Start the game and enable the add-on from the Add-Ons menu.
+  [*] Use [font=Courier New][color=#4682B4]/reloadui[/color][/font] after changing reload-gated settings.
+[/list]
 
 Minion and ESOUI installations use the same folder layout.
 
@@ -36,47 +55,107 @@ Export anything you need from them before deleting those folders.
 
 [size=2][b][color=#C49A45]Gamepad item and trading tooltips[/color][/b][/size]
 
-[list] [*]Adds TTC price data and ATT sales data to gamepad tooltips. [*]Works in the guild store, bank, vendors, and crafting stations. [*]Shows deal ratings, price comparisons, quality rows, production rows, and crafting-component rows. [*]Keeps TTC and ATT independent: each provider fills only the rows it supports, and unavailable data is shown as [font=Courier New][color=#4682B4]N/A[/color][/font]. [*]Adds a known-item filter and price-effect filter to guild-store searches while keeping the normal paginated results. [*]Tracks buying, listing, and removal history, with retention cleanup on load. [*]Adds ATT guild statistics and guild colors to trading tooltips. [/list]
+[list]
+  [*] Adds TTC price data and ATT sales data to gamepad tooltips.
+  [*] Works in the guild store, bank, vendors, and crafting stations.
+  [*] Shows deal ratings, price comparisons, quality rows, production rows, and crafting-component rows.
+  [*] Keeps TTC and ATT independent: each provider fills only the rows it supports, and unavailable data is shown as [font=Courier New][color=#4682B4]N/A[/color][/font].
+  [*] Adds a known-item filter and price-effect filter to guild-store searches while keeping the normal paginated results.
+  [*] Tracks buying, listing, and removal history, with retention cleanup on load.
+  [*] Adds ATT guild statistics and guild colors to trading tooltips.
+[/list]
 
 [size=2][b][color=#C49A45]Sets browser[/color][/b][/size]
 
-[list] [*]Adds a dedicated gamepad sets browser to the main menu. [*]Browses set bonuses and set pieces using [font=Courier New][color=#4682B4]LibSets[/color][/font] data. [*]Can be hidden from the main menu with its own setting. [/list]
+[list]
+  [*] Adds a dedicated gamepad sets browser to the main menu.
+  [*] Browses set bonuses and set pieces using [font=Courier New][color=#4682B4]LibSets[/color][/font] data.
+  [*] Can be hidden from the main menu with its own setting.
+[/list]
 
 [size=2][b][color=#C49A45]Item set search[/color][/b][/size]
 
-[list] [*]Search set names in gamepad Item Set Collections and the transmute station's reconstruction screen. [*]Search filters the existing categories and respects the game's item filters. [*]Use the Search Sets keybind to enter or clear a search and change the game's locked-item and equipment filters. [*]Changes apply immediately. [*]The search is cleared when leaving the screen. [*]The Additional gamepad filters setting enables these and future additional menu filters; changing it requires a reload. [/list]
+[list]
+  [*] Search set names in gamepad Item Set Collections and the transmute station's reconstruction screen.
+  [*] Search filters the existing categories and respects the game's item filters.
+  [*] Use the Search Sets keybind to enter or clear a search and change the game's locked-item and equipment filters.
+  [*] Changes apply immediately.
+  [*] The search is cleared when leaving the screen.
+  [*] The Additional gamepad filters setting enables these and future additional menu filters; changing it requires a reload.
+[/list]
 
 [size=2][b][color=#C49A45]Recipe filters[/color][/b][/size]
 
-[list] [*]Use the Recipe Filters keybind at gamepad crafting stations to search recipe names and select color-coded qualities. [*]Provisioning also supports CP 150-160, Unique Dishes (Delicacies), and other levels. [*]Furnishing plans have separate filters. [*]Multiple selections within a group match any selected option; leaving a group unchecked shows all. [*]Ingredient, skill, and quest choices are also available in this menu. [*]Filters set in the game's separate Options menu still apply. [/list]
+[list]
+  [*] Use the Recipe Filters keybind at gamepad crafting stations to search recipe names and select color-coded qualities.
+  [*] Provisioning also supports CP 150-160, Unique Dishes (Delicacies), and other levels.
+  [*] Furnishing plans have separate filters.
+  [*] Multiple selections within a group match any selected option; leaving a group unchecked shows all.
+  [*] Ingredient, skill, and quest choices are also available in this menu.
+  [*] Filters set in the game's separate Options menu still apply.
+[/list]
 
 [size=2][b][color=#C49A45]Achievement filters[/color][/b][/size]
 
-[list] [*]Search achievement names and descriptions from the gamepad achievement category list or an individual category. [*]Filter by earned/unearned, progress, or tracked achievement. [*]Achievement selections last for the current UI session, including zone changes, but are not saved across logout or [font=Courier New][color=#4682B4]/reloadui[/color][/font]. [*]These filters use the same Additional gamepad filters setting and shortcut as the set and recipe filters. [/list]
+[list]
+  [*] Search achievement names and descriptions from the gamepad achievement category list or an individual category.
+  [*] Filter by earned/unearned, progress, or tracked achievement.
+  [*] Achievement selections last for the current UI session, including zone changes, but are not saved across logout or [font=Courier New][color=#4682B4]/reloadui[/color][/font].
+  [*] These filters use the same Additional gamepad filters setting and shortcut as the set and recipe filters.
+[/list]
 
 [size=2][b][color=#C49A45]Antiquities[/color][/b][/size]
 
-[list] [*]Adds name, difficulty, lead, recovery, codex, and game progress filters to the gamepad antiquity journal under the Additional gamepad filters setting. [*]Shows missing lead details, including where each lead can be found. [*]Keeps the journal readable with the existing gamepad navigation. [/list]
+[list]
+  [*] Adds name, difficulty, lead, recovery, codex, and game progress filters to the gamepad antiquity journal under the Additional gamepad filters setting.
+  [*] Shows missing lead details, including where each lead can be found.
+  [*] Keeps the journal readable with the existing gamepad navigation.
+[/list]
 
 [size=2][b][color=#C49A45]Companion information[/color][/b][/size]
 
-[list] [*]Shows companion level, rapport, and active-companion details when talking to a companion. [*]Adds rapport stages and sources to the companion tooltip. [*]Adds the passive perk and its description, level and XP, rapport progress and tier, and equipped gear with weight and trait to the gamepad Collections > Allies > Companions tooltip, so off-duty companions can be inspected. [*]Slotted skills and the ultimate are recorded with the build but are not displayed for now. [*]Companion builds are recorded while the companion is summoned and shared by all characters; rapport is recorded per character. [*]Missing data is never invented, and cached rows are labeled as recorded while summoned. [/list]
+[list]
+  [*] Shows companion level, rapport, and active-companion details when talking to a companion.
+  [*] Adds rapport stages and sources to the companion tooltip.
+  [*] Adds the passive perk and its description, level and XP, rapport progress and tier, and equipped gear with weight and trait to the gamepad Collections > Allies > Companions tooltip, so off-duty companions can be inspected.
+  [*] Slotted skills and the ultimate are recorded with the build but are not displayed for now.
+  [*] Companion builds are recorded while the companion is summoned and shared by all characters; rapport is recorded per character.
+  [*] Missing data is never invented, and cached rows are labeled as recorded while summoned.
+[/list]
 
 [size=2][b][color=#C49A45]Dungeon finder and pledges[/color][/b][/size]
 
-[list] [*]Adds role, activity, and pledge details to the dungeon finder. [*]Tracks Undaunted pledges for the current character and reset day. [*][font=Courier New][color=#4682B4]/pledges[/color][/font] (or [font=Courier New][color=#4682B4]/pledge[/color][/font]) prints the current pledge status in chat. [/list]
+[list]
+  [*] Adds role, activity, and pledge details to the dungeon finder.
+  [*] Tracks Undaunted pledges for the current character and reset day.
+  [*] [font=Courier New][color=#4682B4]/pledges[/color][/font] (or [font=Courier New][color=#4682B4]/pledge[/color][/font]) prints the current pledge status in chat.
+[/list]
 
 [size=2][b][color=#C49A45]Chat tools[/color][/b][/size]
 
-[list] [*]Adds Send Mail and Jump to Player actions to the player context menu when [font=Courier New][color=#4682B4]LibCustomMenu[/color][/font] is installed. [*][font=Courier New][color=#4682B4]/keyboardmap[/color][/font] opens the world map. [*][font=Courier New][color=#4682B4]/achievementsearch text[/color][/font] opens Achievements with the search box filled. [*][font=Courier New][color=#4682B4]/linkachievement trial[/color][/font] links your highest completed achievement for a trial. [*][font=Courier New][color=#4682B4]/linkachiev[/color][/font] and [font=Courier New][color=#4682B4]/link[/color][/font] are aliases. [/list]
+[list]
+  [*] Adds Send Mail and Jump to Player actions to the player context menu when [font=Courier New][color=#4682B4]LibCustomMenu[/color][/font] is installed.
+  [*] [font=Courier New][color=#4682B4]/keyboardmap[/color][/font] opens the world map.
+  [*] [font=Courier New][color=#4682B4]/achievementsearch text[/color][/font] opens Achievements with the search box filled.
+  [*] [font=Courier New][color=#4682B4]/linkachievement trial[/color][/font] links your highest completed achievement for a trial.
+  [*] [font=Courier New][color=#4682B4]/linkachiev[/color][/font] and [font=Courier New][color=#4682B4]/link[/color][/font] are aliases.
+[/list]
 
 [size=2][b][color=#C49A45]Map rally point[/color][/b][/size]
 
-[list] [*]Adds a gamepad keybind to the world map for setting or removing the group rally point at the map cursor. [*]The keybind stays available while the map options are open. [/list]
+[list]
+  [*] Adds a gamepad keybind to the world map for setting or removing the group rally point at the map cursor.
+  [*] The keybind stays available while the map options are open.
+[/list]
 
 [size=2][b][color=#C49A45]Main-menu quick access[/color][/b][/size]
 
-[list] [*]Adds a Quick Access submenu to the gamepad main menu, opened with the Options (tertiary) button. [*]Uses the menu's built-in Select and Back keybinds and adds no main-menu row. [*]Shortcuts to the group finder, Rumours, Mail, antiquities, the Sticker Book, the Companions collection page, and your primary house. [*]The Events section provides Tome Challenges, PVP Veterancy, and Golden Pursuit; unavailable seasonal activities are disabled. [/list]
+[list]
+  [*] Adds a Quick Access submenu to the gamepad main menu, opened with the Options (tertiary) button.
+  [*] Uses the menu's built-in Select and Back keybinds and adds no main-menu row.
+  [*] Shortcuts to the group finder, Rumours, Mail, antiquities, the Sticker Book, the Companions collection page, and your primary house.
+  [*] The Events section provides Tome Challenges, PVP Veterancy, and Golden Pursuit; unavailable seasonal activities are disabled.
+[/list]
 
 [size=2][b][color=#C49A45]KELAPAD dashboard[/color][/b][/size]
 
@@ -86,19 +165,36 @@ It is filled when the menu opens, so nothing is polled while it is hidden, and i
 
 [b]Daily[/b]
 
-[list] [*]Daily reset countdown. [*]Crafting writs. [*]Random Dungeon and Battleground rewards. [*]Infinite Archive progress. [*]Undaunted pledges with per-pledge status. [/list]
+[list]
+  [*] Daily reset countdown.
+  [*] Crafting writs.
+  [*] Random Dungeon and Battleground rewards.
+  [*] Infinite Archive progress.
+  [*] Undaunted pledges with per-pledge status.
+[/list]
 
 [b]Events[/b]
 
-[list] [*]Golden Pursuit, Tamriel Tomes, and PVP Veterancy progress. [*]Time left in each event or season. [*]Additional active promotional campaigns published by the client. [/list]
+[list]
+  [*] Golden Pursuit, Tamriel Tomes, and PVP Veterancy progress.
+  [*] Time left in each event or season.
+  [*] Additional active promotional campaigns published by the client.
+[/list]
 
 [b]Character[/b]
 
-[list] [*]ESO Plus status. [*]Level, Champion Points, and PvP rank. [*]Research progress with the time to the next research completion. [*]Skill points and skyshards. [/list]
+[list]
+  [*] ESO Plus status.
+  [*] Level, Champion Points, and PvP rank.
+  [*] Research progress with the time to the next research completion.
+  [*] Skill points and skyshards.
+[/list]
 
 [b]Capacity[/b]
 
-[list] [*]Backpack, bank, and transmute-crystal usage with warning colors. [/list]
+[list]
+  [*] Backpack, bank, and transmute-crystal usage with warning colors.
+[/list]
 
 Daily progress is tracked per character and survives [font=Courier New][color=#4682B4]/reloadui[/color][/font]. The writ, archive, and pledge rows share one journal scan and clear after the daily reset.
 
@@ -110,15 +206,29 @@ Shows every crafting research trait against every research line, on one page, fo
 
 [b]Left pane[/b]
 
-[list] [*]The characters on the server you are playing, logged-in character first, with the research summary on two lines under each name. [*]Any other character's knowledge comes from LibCharacterKnowledge when it is installed; without it only the current character is listed. [/list]
+[list]
+  [*] The characters on the server you are playing, logged-in character first, with the research summary on two lines under each name.
+  [*] Any other character's knowledge comes from LibCharacterKnowledge when it is installed; without it only the current character is listed.
+[/list]
 
 [b]Right pane[/b]
 
-[list] [*]The whole matrix at once, split into weapon, armor, and jewelry sections because the game uses a separate trait set for each. [*]The weapon and jewelry sections share the first row (jewelry against the right edge) and armor takes the second. [*]Each section is named, and every group has a single-line heading with its researched / total count, such as Heavy Armor 24/63. [*]All sections share one column width, so the weapon and armor columns line up vertically. [*]Neighbouring groups are separated by a small gap. [/list]
+[list]
+  [*] The whole matrix at once, split into weapon, armor, and jewelry sections because the game uses a separate trait set for each.
+  [*] The weapon and jewelry sections share the first row (jewelry against the right edge) and armor takes the second.
+  [*] Each section is named, and every group has a single-line heading with its researched / total count, such as Heavy Armor 24/63.
+  [*] All sections share one column width, so the weapon and armor columns line up vertically.
+  [*] Neighbouring groups are separated by a small gap.
+[/list]
 
 [b]Cell states[/b]
 
-[list] [*][color=#00AA00]Green check:[/color] Researched. [*][color=#FFFF00]Yellow timer:[/color] Research in progress. [*][color=#FF8800]Orange plus:[/color] An unlocked item for that trait exists. [*][color=#FF0000]Red cross:[/color] There is no available item. [/list]
+[list]
+  [*] [color=#00AA00]Green check:[/color] Researched.
+  [*] [color=#FFFF00]Yellow timer:[/color] Research in progress.
+  [*] [color=#FF8800]Orange plus:[/color] An unlocked item for that trait exists.
+  [*] [color=#FF0000]Red cross:[/color] There is no available item.
+[/list]
 
 [b]Item availability[/b]
 
@@ -132,17 +242,28 @@ Use the right stick to scroll the right pane when its contents do not fit on scr
 
 [size=2][b][color=#C49A45]PersonalAssistant junk integration[/color][/b][/size]
 
-[list] [*]Adds Mark as Permanent Junk and Unmark as Permanent Junk to the gamepad inventory actions prompt when PersonalAssistant is installed. [*]Enabled by default when PersonalAssistant is present. [/list]
+[list]
+  [*] Adds Mark as Permanent Junk and Unmark as Permanent Junk to the gamepad inventory actions prompt when PersonalAssistant is installed.
+  [*] Enabled by default when PersonalAssistant is present.
+[/list]
 
 [size=2][b][color=#C49A45]PS5 button map[/color][/b][/size]
 
-[list] [*]Replaces Xbox controller button icons with PlayStation 5 icons. [*]Off by default; the setting applies without a reload. [/list]
+[list]
+  [*] Replaces Xbox controller button icons with PlayStation 5 icons.
+  [*] Off by default; the setting applies without a reload.
+[/list]
 
 [size=3][b][color=#D4A843]Settings[/color][/b][/size]
 
 All settings live in the KelaPadUI section of the gamepad settings menu. They are stored account-wide in [font=Courier New][color=#4682B4]kpuiSavedVariables[/color][/font].
 
-[list] [*]Feature toggles for companion info, dungeon finder, chat tools, map rally, additional gamepad filters, antiquity lead details, main-menu quick access, the dashboard, PersonalAssistant junk marking, and the PS5 button map. [*]Sets interface toggle. [*]Trading master toggle, ATT analysis period, and per-surface tooltip toggles for the guild store, bank, vendors, and crafting stations. [*]Guild statistics, ATT price information, listing rows, quality rows, production rows, and crafting-component rows. [/list]
+[list]
+  [*] Feature toggles for companion info, dungeon finder, chat tools, map rally, additional gamepad filters, antiquity lead details, main-menu quick access, the dashboard, PersonalAssistant junk marking, and the PS5 button map.
+  [*] Sets interface toggle.
+  [*] Trading master toggle, ATT analysis period, and per-surface tooltip toggles for the guild store, bank, vendors, and crafting stations.
+  [*] Guild statistics, ATT price information, listing rows, quality rows, production rows, and crafting-component rows.
+[/list]
 
 Some settings require a reload to take effect; the settings screen shows a prompt when that is the case.
 
@@ -150,17 +271,31 @@ See [font=Courier New][color=#4682B4]docs/SETTINGS.md[/color][/font] for the ful
 
 [size=3][b][color=#D4A843]Commands[/color][/b][/size]
 
-[list] [*][font=Courier New][color=#4682B4]/pledges[/color][/font], [font=Courier New][color=#4682B4]/pledge[/color][/font] - Show current Undaunted pledge status. [*][font=Courier New][color=#4682B4]/keyboardmap[/color][/font] - Open the world map. [*][font=Courier New][color=#4682B4]/achievementsearch text[/color][/font] - Open Achievements with a search. [*][font=Courier New][color=#4682B4]/linkachievement trial[/color][/font] - Link the highest completed trial achievement. [*][font=Courier New][color=#4682B4]/linkachiev[/color][/font], [font=Courier New][color=#4682B4]/link[/color][/font] - Aliases for /linkachievement. [/list]
+[list]
+  [*] [font=Courier New][color=#4682B4]/pledges[/color][/font], [font=Courier New][color=#4682B4]/pledge[/color][/font] - Show current Undaunted pledge status.
+  [*] [font=Courier New][color=#4682B4]/keyboardmap[/color][/font] - Open the world map.
+  [*] [font=Courier New][color=#4682B4]/achievementsearch text[/color][/font] - Open Achievements with a search.
+  [*] [font=Courier New][color=#4682B4]/linkachievement trial[/color][/font] - Link the highest completed trial achievement.
+  [*] [font=Courier New][color=#4682B4]/linkachiev[/color][/font], [font=Courier New][color=#4682B4]/link[/color][/font] - Aliases for /linkachievement.
+[/list]
 
 [size=3][b][color=#D4A843]Compatibility[/color][/b][/size]
 
-[list] [*]Built for API [font=Courier New][color=#4682B4]101051[/color][/font] and the gamepad UI. [*]TTC-only, ATT-only, both, and neither are supported; trading features stay off without a provider. [*]Optional libraries are guarded, so missing add-ons do not break loading. [*]No automation, botting, or gameplay automation is included. All features are read-only information or UI shortcuts. [/list]
+[list]
+  [*] Built for API [font=Courier New][color=#4682B4]101051[/color][/font] and the gamepad UI.
+  [*] TTC-only, ATT-only, both, and neither are supported; trading features stay off without a provider.
+  [*] Optional libraries are guarded, so missing add-ons do not break loading.
+  [*] No automation, botting, or gameplay automation is included. All features are read-only information or UI shortcuts.
+[/list]
 
 [size=3][b][color=#D4A843]Reporting bugs and requesting features[/color][/b][/size]
 
 The preferred place for bug reports and feature requests is the GitHub issue tracker:
 
-[list] [*][url=https://github.com/delli007/KelaPadUIEnhanced/issues/new/choose]Open a bug report or feature request[/url] [*][url=https://github.com/delli007/KelaPadUIEnhanced/issues]Browse open and closed issues[/url] [/list]
+[list]
+  [*] [url=https://github.com/delli007/KelaPadUIEnhanced/issues/new/choose]Open a bug report or feature request[/url]
+  [*] [url=https://github.com/delli007/KelaPadUIEnhanced/issues]Browse open and closed issues[/url]
+[/list]
 
 If you do not have a GitHub account, you can also comment on this add-on. Start the comment with [font=Courier New][color=#4682B4]#bug[/color][/font], [font=Courier New][color=#4682B4]#enhancement[/color][/font], [font=Courier New][color=#4682B4]#request[/color][/font], or [font=Courier New][color=#4682B4]#issue[/color][/font] and it is mirrored into the GitHub tracker automatically.
 
@@ -168,4 +303,9 @@ Include the add-on version from this listing or [font=Courier New][color=#4682B4
 
 [size=3][b][color=#D4A843]Credits[/color][/b][/size]
 
-[list] [*]Original add-on: @rkirgizov. [*]Current maintenance: Only me for now. [*]LibSets and the optional libraries listed above are maintained by their respective authors. [*]The Elder Scrolls Online is a trademark of ZeniMax Media Inc. This add-on is not created by, affiliated with, or sponsored by ZeniMax Media Inc. [/list]
+[list]
+  [*] Original add-on: @rkirgizov.
+  [*] Current maintenance: Only me for now.
+  [*] LibSets and the optional libraries listed above are maintained by their respective authors.
+  [*] The Elder Scrolls Online is a trademark of ZeniMax Media Inc. This add-on is not created by, affiliated with, or sponsored by ZeniMax Media Inc.
+[/list]

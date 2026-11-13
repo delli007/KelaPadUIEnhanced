@@ -77,7 +77,9 @@ updatefile=<the zip>
 release workflow posts the same request there first and only publishes when it
 is accepted, so a malformed field fails the job without touching the listing.
 `README.bbcode` is the source of the listing's long description and is uploaded
-with every release.
+with every release. Keep it in sync with `README.md` and in the ESOUI dialect:
+no tables and no `[code]` (use `[font=Courier New][color=#4682B4]` for inline
+code), and one indented `[*]` item per line between `[list]` and `[/list]`.
 
 ## GitHub Actions
 
