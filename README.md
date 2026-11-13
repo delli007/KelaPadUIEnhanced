@@ -252,6 +252,22 @@ and IDs.
 - No automation, botting, or gameplay automation is included. All features are
   read-only information or UI shortcuts.
 
+## Reporting bugs and requesting features
+
+The preferred place for bug reports and feature requests is the GitHub issue
+tracker:
+
+- [Open a bug report or feature request](https://github.com/delli007/KelaPadUIEnhanced/issues/new/choose)
+- [Browse open and closed issues](https://github.com/delli007/KelaPadUIEnhanced/issues)
+
+If you do not have a GitHub account, you can also comment on the add-on page:
+[KelaPadUI Enhanced on ESOUI](https://www.esoui.com/downloads/info5044-KelaPadUIEnhanced.html).
+
+Include the add-on version from the listing or `changelog.txt`, your platform
+(PC, PS5, or Xbox), whether ESO Plus is active if the problem involves bank or
+backpack space, the steps that reproduce it, and the expected and actual result.
+`LibDebugLogger` output helps when the game logs an error.
+
 ## Documentation
 
 - `docs/SETTINGS.md` - settings model, IDs, and how to add or retire a setting.
