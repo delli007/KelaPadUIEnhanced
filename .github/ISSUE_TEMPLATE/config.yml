@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Comment on the ESOUI add-on page
+    url: https://www.esoui.com/downloads/info5044-KelaPadUIEnhanced.html
+    about: No GitHub account? Tag the comment with #bug, #enhancement, #request, or #issue and it is mirrored into this tracker.
+  - name: Documentation
+    url: https://github.com/delli007/KelaPadUIEnhanced/tree/master/docs
+    about: Architecture, settings, trading modules, and release notes.

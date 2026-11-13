@@ -262,6 +262,8 @@ tracker:
 
 If you do not have a GitHub account, you can also comment on the add-on page:
 [KelaPadUI Enhanced on ESOUI](https://www.esoui.com/downloads/info5044-KelaPadUIEnhanced.html).
+Tag the comment with `#bug`, `#enhancement`, `#request`, or `#issue` so it is
+mirrored into this tracker automatically.
 
 Include the add-on version from the listing or `changelog.txt`, your platform
 (PC, PS5, or Xbox), whether ESO Plus is active if the problem involves bank or

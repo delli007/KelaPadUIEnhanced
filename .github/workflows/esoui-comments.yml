@@ -1,0 +1,48 @@
+# Mirrors ESOUI add-on comments into GitHub issues.
+#
+# Comments tagged #bug, #enhancement, #request or #issue become issues; replies
+# to a tracked comment are appended to its issue; everything else goes to the
+# rolling "ESOUI comments feed" issue. See docs/FEEDBACK.md.
+name: ESOUI comments
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only print the routing plan, write nothing
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: esoui-comments
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync ESOUI comments
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ESOUI_ADDON_ID: ${{ vars.ESOUI_ADDON_ID }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sync comments
+        run: |
+          args=()
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            args+=(--check)
+          fi
+          python _tools/esoui_comments.py "${args[@]}"

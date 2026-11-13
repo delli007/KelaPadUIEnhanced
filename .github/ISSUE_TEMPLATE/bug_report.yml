@@ -1,0 +1,110 @@
+name: Bug report
+description: Something in KelaPadUI Enhanced does not work as expected.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. A bug report that names the screen and the exact
+        steps is much faster to reproduce. Logs from `LibDebugLogger` help when
+        the game shows an error.
+
+  - type: input
+    id: version
+    attributes:
+      label: Add-on version
+      description: From the KelaPadUI Enhanced listing, the changelog, or the manifest.
+      placeholder: "2.8.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - PC (Windows)
+        - PC (Steam / Epic)
+        - PC (macOS)
+        - PlayStation 5
+        - Xbox Series X|S
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: subscriptions
+    attributes:
+      label: Account
+      options:
+        - label: ESO Plus is active (matters for bank and backpack capacity rows)
+        - label: The issue happens with every other add-on disabled
+
+  - type: dropdown
+    id: providers
+    attributes:
+      label: Trading providers installed
+      options:
+        - Tamriel Trade Centre (TTC) only
+        - Arkadius Trade Tools (ATT) only
+        - Both TTC and ATT
+        - Neither
+    validations:
+      required: true
+
+  - type: input
+    id: screen
+    attributes:
+      label: Where does it happen?
+      description: The screen or feature, for example a guild-store tooltip or the main-menu dashboard.
+      placeholder: "Guild store tooltip, Bank row"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps, starting from a clean `/reloadui` where possible.
+      placeholder: |
+        1. Open the gamepad UI.
+        2. Open the guild store.
+        3. Hover an item with a TTC price.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      placeholder: "The tooltip shows the TTC price."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include the exact text of any error, or attach a screenshot.
+      placeholder: "The price row shows N/A."
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Optional. Paste the relevant `LibDebugLogger` output, or the Lua error
+        from `Documents/Elder Scrolls Online/live/Logs/`.
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      description: Other add-ons, settings you changed, or when it started.
+    validations:
+      required: false

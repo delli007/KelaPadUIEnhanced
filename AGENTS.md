@@ -174,4 +174,5 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
 - `docs/SETTINGS.md` - setting IDs and the add-a-setting procedure.
 - `docs/TRADING_HOUSE.md` - trading modules and test notes.
 - `docs/RELEASING.md` - packaging, GitHub Actions, and the ESOUI upload API.
+- `docs/FEEDBACK.md` - the ESOUI comment to GitHub issue pipeline and its tags.
 - `TODO.md` - open work and rated candidates.

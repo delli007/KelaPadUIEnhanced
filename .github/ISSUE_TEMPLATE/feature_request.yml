@@ -1,0 +1,68 @@
+name: Feature request
+description: Suggest an improvement or a new gamepad screen for KelaPadUI Enhanced.
+title: "[Request]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        KelaPadUI Enhanced is read-only information and UI shortcuts. Gameplay
+        automation (auto-loot, auto-accept, macros) is out of scope.
+
+  - type: input
+    id: version
+    attributes:
+      label: Add-on version
+      placeholder: "2.8.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area does this affect?
+      options:
+        - Main menu and dashboard
+        - Item tooltips
+        - Trading house and guild store
+        - Crafting (recipe filters, research grid)
+        - Inventory and bank
+        - Map, quests, or antiquity leads
+        - Settings
+        - Something new
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation rather than only the proposed button.
+      placeholder: "On the bank screen I cannot tell which items are for a different character."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: What should the gamepad UI show or do, and where?
+      placeholder: "Add a Bind on pickup row to the bank tooltip."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing settings, other add-ons, or a workaround.
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
+      description: Screenshots, mockups, or links are welcome.
+    validations:
+      required: false
