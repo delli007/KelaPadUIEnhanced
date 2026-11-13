@@ -17,7 +17,7 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 New runtime modules must be added to `KelaPadUIEnhanced.txt` and, when gated, initialized from `KelaPadUI.lua`; new settings go in `kpui_core/kpui_settings_gamepad.lua` and `docs/SETTINGS.md`; new user-facing text goes in `kpui_lang/en.lua`; optional libraries go in `OptionalDependsOn` and must be guarded.
 
-Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and the setting-ID blocks in `docs/SETTINGS.md`; keep the KELAPADUI main-menu entry append-only; build new UI in Lua and do not add XML files (the legacy XML set is frozen and slated for removal); avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
+Any candidate must preserve the current invariants: TTC and ATT stay independent optional providers; keep the five tooltip types, `QUAD1*` styles and `getStyleHeaderLine`; keep the flattened settings list and the setting-ID blocks in `docs/SETTINGS.md`; keep the KELAPADUI main-menu entry directly below Options without reindexing `ZO_MENU_ENTRIES`; build new UI in Lua and do not add XML files (the legacy XML set is frozen and slated for removal); avoid overwriting or rewriting core base-game elements to prevent issues when the game is updated;
 
 ## Already implemented: Do not duplicate
 

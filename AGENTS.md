@@ -98,7 +98,7 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   strings with the numeric constant, `GetString(KELA_FOO)`; a quoted name
   (`GetString("KELA_FOO")`) silently returns nothing. See
   `docs/DEVELOPMENT_NOTES.md`. The audit reports undefined or unused KELA IDs.
-- Keep the KELAPADUI main-menu entry append-only; do not reindex
+- Keep the KELAPADUI main-menu entry directly below Options; do not reindex
   `ZO_MENU_ENTRIES`.
 
 ## Hooks and core safety
@@ -160,7 +160,7 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   `LibDebugLogger`, PersonalAssistant).
 - Preserve the five tooltip types, `QUAD1*` styles, `getStyleHeaderLine`, the
   `ZO_CRAFTING_TOOLTIP_STYLES` copy, the flattened settings list, and the
-  append-only KELAPADUI entry.
+  KELAPADUI entry directly below Options.
 - Update `changelog.txt` (newest first) and affected docs for user-facing
   changes. Keep `## Version`, `## AddOnVersion`, the top `changelog.txt` version,
   and the release tag (`v<version>`) in sync; the audit checks the first three

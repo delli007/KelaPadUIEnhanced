@@ -2,7 +2,7 @@ do
    local Add = ZO_CreateStringId
 
     -- Main Menu
-	Add("KELA_MAINMENU_TITLE",												"KelaPadUI Enhanced")
+	Add("KELA_MAINMENU_TITLE",												"KelaPadUI²")
 	Add("KELA_MAINMENU_SETS",												"Sets")
 	Add("KELA_MAINMENU_TRAIT_RESEARCH",										"Trait Research")
 

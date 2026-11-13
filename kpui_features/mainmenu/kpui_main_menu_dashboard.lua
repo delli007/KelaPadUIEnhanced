@@ -945,6 +945,10 @@ local function GetBagText(bagId)
 
     local used = GetNumBagUsedSlots(bagId) or 0
     local size = GetBagSize(bagId) or 0
+    -- ESO Plus doubles the bank's capacity
+    if bagId == BAG_BANK and IsESOPlusSubscriber and IsESOPlusSubscriber() then
+        size = size * 2
+    end
     if size <= 0 then
         return string.format("%d / %d", used, size)
     end

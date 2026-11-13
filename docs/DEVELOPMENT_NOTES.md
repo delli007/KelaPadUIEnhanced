@@ -95,7 +95,8 @@ styles through `ZO_ColorDef:Colorize`.
 - Keep the `SafeAddString` override for `SI_ITEM_FORMAT_STR_SET_NAME`; do not
   assign to the `SI_*` constant directly.
 - Keep the flattened settings list and the KELAPADUI main-menu entry. The menu
-  entry is append-only; settings use the separate KelaPadUI Enhanced submenu.
+  entry sits directly below Options and is inserted without renumbering the
+  existing entries; settings use the separate KelaPadUI Enhanced submenu.
 - Setting IDs are allocated from the blocks in `docs/SETTINGS.md`; the audit
   rejects duplicates, out-of-block IDs, orphaned IDs, and IDs listed in
   `KELA_RETIRED_SETTING_IDS`. Never reuse a shipped ID.

@@ -146,7 +146,8 @@ its manifest entry) and the setting ID `7413`.
 
 The Item sets toggle hides the Sets entry in the KelaPadUI Enhanced main-menu submenu but
 does not remove the sets list from the add-on. The KELAPADUI main-menu entry
-itself is always visible so the user cannot lock themselves out of settings.
+itself is always visible so the user cannot lock themselves out of settings. It
+sits directly below Options; the game's Quit and Log Out entries follow it.
 
 Companion information covers both `kpui_features/companion/kpui_companion.lua` (companion
 menu details and rapport notifications) and
@@ -282,7 +283,8 @@ npx.cmd --yes luaparse path\to\file.lua > $null
 
 Manual in-game checks are still required for:
 
-- opening KelaPadUI Enhanced from the gamepad main menu;
+- opening KelaPadUI Enhanced from the gamepad main menu and confirming it sits
+  directly below Options;
 - opening Quick Access with the Options keybind, checking section spacing, and
   using Select/Back on each shortcut;
 - checking that Rumours opens the correct Journal tab, and that Tome Challenges,

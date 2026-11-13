@@ -6,7 +6,7 @@ do
    local Add = SafeAddString
 
     -- Main Menu
-	Add(KELA_MAINMENU_TITLE, "KelaPadUI Enhanced", 0)
+	Add(KELA_MAINMENU_TITLE, "KelaPadUI²", 0)
 	Add(KELA_MAINMENU_SETS, "Ensembles", 0)
 	Add(KELA_MAINMENU_TRAIT_RESEARCH, "Recherche sur les traits", 0)
 

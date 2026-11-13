@@ -81,9 +81,22 @@ if KELAPADUI_MENU_ENTRY_DATA.subMenu then
     end
 end
 
--- Append the Kela Menu Entry without re-indexing existing menu entries.
+-- Place the Kela Menu Entry directly below Options, matching where users look
+-- for the add-on's settings. Existing entries keep their ids: the game maps
+-- entry id to list index in MAIN_MENU_GAMEPAD.mainMenuEntryToListIndex, so
+-- inserting without renumbering keeps SelectMenuEntry() calls valid.
 kelaEntry.id = #ZO_MENU_ENTRIES + 1
-table.insert(ZO_MENU_ENTRIES, kelaEntry)
+local kelaInsertIndex = #ZO_MENU_ENTRIES + 1
+local kelaOptionsId = ZO_MENU_MAIN_ENTRIES and ZO_MENU_MAIN_ENTRIES.OPTIONS
+if kelaOptionsId then
+    for index, entry in ipairs(ZO_MENU_ENTRIES) do
+        if entry.id == kelaOptionsId then
+            kelaInsertIndex = index + 1
+            break
+        end
+    end
+end
+table.insert(ZO_MENU_ENTRIES, kelaInsertIndex, kelaEntry)
 
 -- The submenu opens with a section header carrying the root entry's name so the
 -- list does not start with an unlabeled row. Sets and Trait Research can each be
