@@ -9,9 +9,17 @@ on:
         description: Upload to ESOUI after building
         type: boolean
         default: false
+      dry_run:
+        description: Only validate the ESOUI upload against the test endpoint
+        type: boolean
+        default: false
 
 permissions:
   contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   ESOUI_API_KEY: ${{ secrets.ESOUI_API_KEY }}
@@ -85,8 +93,21 @@ jobs:
           body_path: dist/notes.md
           files: ${{ steps.meta.outputs.zip }}
 
-      - name: Upload to ESOUI
+      - name: Validate ESOUI upload
         if: (github.ref_type == 'tag' || inputs.deploy) && env.ESOUI_API_KEY != '' && env.ESOUI_ADDON_ID != ''
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --request POST https://api.esoui.com/addons/updatetest \
+            --header "x-api-token: ${ESOUI_API_KEY}" \
+            --form "id=${ESOUI_ADDON_ID}" \
+            --form "version=${{ steps.meta.outputs.version }}" \
+            --form "compatible=${{ steps.meta.outputs.api }}" \
+            --form "changelog=<dist/notes.md" \
+            --form "description=<README.bbcode" \
+            --form "updatefile=@${{ steps.meta.outputs.zip }}"
+
+      - name: Upload to ESOUI
+        if: (github.ref_type == 'tag' || inputs.deploy) && inputs.dry_run != true && env.ESOUI_API_KEY != '' && env.ESOUI_ADDON_ID != ''
         run: |
           curl --fail-with-body --silent --show-error \
             --request POST https://api.esoui.com/addons/update \
@@ -95,9 +116,15 @@ jobs:
             --form "version=${{ steps.meta.outputs.version }}" \
             --form "compatible=${{ steps.meta.outputs.api }}" \
             --form "changelog=<dist/notes.md" \
+            --form "description=<README.bbcode" \
             --form "updatefile=@${{ steps.meta.outputs.zip }}"
 
       - name: Report skipped ESOUI upload
         if: (github.ref_type == 'tag' || inputs.deploy) && (env.ESOUI_API_KEY == '' || env.ESOUI_ADDON_ID == '')
         run: |
           echo "::notice::ESOUI upload skipped; set the ESOUI_API_KEY secret and the ESOUI_ADDON_ID variable to enable it."
+
+      - name: Report dry run
+        if: (github.ref_type == 'tag' || inputs.deploy) && inputs.dry_run == true
+        run: |
+          echo "::notice::ESOUI upload validated against the test endpoint only; rerun without dry_run to publish."

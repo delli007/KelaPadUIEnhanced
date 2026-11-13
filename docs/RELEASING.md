@@ -38,8 +38,8 @@ The script verifies its own output and fails when:
 - the manifest is not at the archive root of the add-on folder;
 - a manifest-listed file is missing;
 - a development path (`_tools`, `docs`, `.git`, `.github`, `dist`,
-  `__pycache__`) or file (`*.py`, `AGENTS.md`, `TODO.md`, `.gitignore` or a
-  build artifact) leaked into the archive.
+  `__pycache__`) or file (`*.py`, `*.bbcode`, `AGENTS.md`, `TODO.md`,
+  `.gitignore` or a build artifact) leaked into the archive.
 
 Everything else in the tree ships, so new textures and data files need no
 change to the script. `changelog.txt` and `README.md` ship as well; ESO ignores
@@ -48,7 +48,8 @@ files the manifest does not list.
 ## ESOUI listing
 
 ESOUI numbers add-ons and only accepts API updates to an add-on that already
-exists. The first upload has to be done by hand:
+exists. Ours is <https://www.esoui.com/downloads/info5044-KelaPadUIEnhanced.html>,
+so the add-on ID is `5044`. The first upload had to be done by hand:
 
 1. Upload `dist\KelaPadUIEnhanced-<version>.zip` once through
    <https://www.esoui.com/downloads/upload-update.php>.
@@ -68,10 +69,15 @@ id=<add-on id>
 version=<manifest version>
 compatible=<manifest APIVersion>
 changelog=<release notes text>
+description=<README.bbcode>
 updatefile=<the zip>
 ```
 
-`https://api.esoui.com/addons/updatetest` is the equivalent test endpoint.
+`https://api.esoui.com/addons/updatetest` is the equivalent test endpoint. The
+release workflow posts the same request there first and only publishes when it
+is accepted, so a malformed field fails the job without touching the listing.
+`README.bbcode` is the source of the listing's long description and is uploaded
+with every release.
 
 ## GitHub Actions
 
@@ -85,15 +91,21 @@ Two workflows live in `.github/workflows/`:
 Set these once in the repository:
 
 - **Secret** `ESOUI_API_KEY` - the token from the ESOUI API token page.
-- **Variable** `ESOUI_ADDON_ID` - the numeric ESOUI add-on ID.
+- **Variable** `ESOUI_ADDON_ID` - `5044`, from the add-on page URL.
 
 With both present, pushing a `v<version>` tag builds the zip, creates the GitHub
-release with the changelog section as its body, and uploads the same zip to
-ESOUI. Without them the ESOUI step is skipped with a notice and the GitHub
-release still happens.
+release with the changelog section as its body, validates the upload against the
+ESOUI test endpoint, and then publishes the same zip to ESOUI. Without them the
+ESOUI steps are skipped with a notice and the GitHub release still happens.
 
-To re-upload without a new tag, run `release.yml` manually with the `deploy`
-input enabled. ESOUI rejects a duplicate version, so bump the version first.
+`release.yml` is safe to run before tagging: a manual run with `deploy` enabled
+audits, packages, and validates the ESOUI upload without creating a GitHub
+release. Add `dry_run` to stop after the test endpoint. Manual runs do not
+create a GitHub release.
+
+To publish again without a new tag, run `release.yml` manually with `deploy`
+enabled. ESOUI rejects a duplicate version, so bump the version first. The
+workflow is serialized per ref, so two runs for the same tag cannot race.
 
 The token is only read from the secret. Never commit it, paste it into an
 issue, or add it to a workflow file.

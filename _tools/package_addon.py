@@ -31,7 +31,7 @@ CHANGELOG = ROOT / "changelog.txt"
 # Never shipped. Everything else in the tree is included, so new textures or
 # data files are picked up without editing this list.
 EXCLUDE_DIRS = {".git", ".github", "_tools", "docs", "dist", "__pycache__"}
-EXCLUDE_SUFFIXES = {".py", ".pyc", ".pyo", ".bak", ".tmp", ".log", ".zip"}
+EXCLUDE_SUFFIXES = {".py", ".pyc", ".pyo", ".bak", ".tmp", ".log", ".zip", ".bbcode"}
 EXCLUDE_FILES = {"AGENTS.md", "TODO.md", ".gitignore"}
 
 ZIP_DATE = (1980, 1, 1, 0, 0, 0)
