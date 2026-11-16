@@ -4,7 +4,9 @@
 ESOUI expects the archive to contain a single top-level folder named after the
 add-on, holding the manifest and the files it lists. This script produces
 `dist/<ADDON_NAME>-<version>.zip` from the working tree, verifies the result,
-and can also emit the release notes for the current version.
+and can also emit the two texts a release publishes: the current version's
+changelog section for the GitHub release body, and the whole `changelog.txt`
+for the ESOUI changelog field.
 
 The output is deterministic: entries are sorted and stamped with a fixed
 timestamp, so the same tree always produces the same bytes.
@@ -12,6 +14,7 @@ timestamp, so the same tree always produces the same bytes.
 Usage:
     python _tools/package_addon.py
     python _tools/package_addon.py --out dist --notes dist/notes.md
+    python _tools/package_addon.py --esoui-changelog dist/changelog.txt
     python _tools/package_addon.py --check
 This is a build helper only; ESO does not load it.
 """
@@ -116,6 +119,25 @@ def changelog_section(ver):
     return "\n".join(body).strip()
 
 
+def changelog_text():
+    """Return the whole changelog, which is what ESOUI shows on the file page.
+
+    ESOUI wants a running log: each version with its date, then a bulleted list,
+    newest entry first. The file is already kept in that shape, so it is sent
+    as-is after normalising line endings.
+    """
+    text = read_text(CHANGELOG).replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not text:
+        raise SystemExit("changelog.txt is empty")
+    first = next(line.strip() for line in text.splitlines() if line.strip())
+    ver = version()
+    if not re.match(r"^{}\b".format(re.escape(ver)), first):
+        raise SystemExit(
+            "changelog.txt must start with the manifest version {}: {!r}".format(ver, first)
+        )
+    return text
+
+
 def build_zip(destination, files):
     ver = version()
     with zipfile.ZipFile(destination, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -166,7 +188,9 @@ def main():
     parser.add_argument("--out", type=Path, default=ROOT / "dist",
                         help="output directory (default: dist/)")
     parser.add_argument("--notes", type=Path,
-                        help="write the current version's changelog section here")
+                        help="write the current version's changelog section here (GitHub release body)")
+    parser.add_argument("--esoui-changelog", type=Path,
+                        help="write the full changelog here (ESOUI changelog field)")
     parser.add_argument("--check", action="store_true",
                         help="build into a temporary file, verify, and discard")
     args = parser.parse_args()
@@ -210,6 +234,12 @@ def main():
         args.notes.parent.mkdir(parents=True, exist_ok=True)
         args.notes.write_text(body + "\n", encoding="utf-8", newline="\n")
         print("Release notes: {}".format(args.notes))
+
+    if args.esoui_changelog:
+        text = changelog_text()
+        args.esoui_changelog.parent.mkdir(parents=True, exist_ok=True)
+        args.esoui_changelog.write_text(text + "\n", encoding="utf-8", newline="\n")
+        print("ESOUI changelog: {}".format(args.esoui_changelog))
 
     return 0
 

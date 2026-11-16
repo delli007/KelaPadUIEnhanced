@@ -49,7 +49,7 @@ jobs:
         run: python _tools/audit_addon.py
 
       - name: Build add-on zip
-        run: python _tools/package_addon.py --notes dist/notes.md
+        run: python _tools/package_addon.py --notes dist/notes.md --esoui-changelog dist/esoui-changelog.txt
 
       - name: Read manifest
         id: meta
@@ -112,7 +112,7 @@ jobs:
             --form "id=${ESOUI_ADDON_ID}" \
             --form "version=${{ steps.meta.outputs.version }}" \
             --form "compatible=${{ steps.compat.outputs.value }}" \
-            --form "changelog=<dist/notes.md" \
+            --form "changelog=<dist/esoui-changelog.txt" \
             --form "description=<README.bbcode" \
             --form "updatefile=@${{ steps.meta.outputs.zip }}"
 
@@ -125,7 +125,7 @@ jobs:
             --form "id=${ESOUI_ADDON_ID}" \
             --form "version=${{ steps.meta.outputs.version }}" \
             --form "compatible=${{ steps.compat.outputs.value }}" \
-            --form "changelog=<dist/notes.md" \
+            --form "changelog=<dist/esoui-changelog.txt" \
             --form "description=<README.bbcode" \
             --form "updatefile=@${{ steps.meta.outputs.zip }}"
 

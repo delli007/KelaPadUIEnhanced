@@ -31,7 +31,7 @@ jobs:
         run: python _tools/audit_addon.py
 
       - name: Build add-on zip
-        run: python _tools/package_addon.py --notes dist/notes.md
+        run: python _tools/package_addon.py --notes dist/notes.md --esoui-changelog dist/esoui-changelog.txt
 
       - name: Upload zip
         uses: actions/upload-artifact@v4

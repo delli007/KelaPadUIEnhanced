@@ -386,7 +386,9 @@ Manual in-game checks are still required for:
 `python _tools\package_addon.py` builds `dist\KelaPadUIEnhanced-<version>.zip`
 with a single top-level `KelaPadUIEnhanced/` folder and verifies that the
 manifest and every file it lists are inside. `--check` verifies without keeping
-the archive; `--notes` writes the current changelog section for release bodies.
+the archive; `--notes` writes the current changelog section for the GitHub release
+body, and `--esoui-changelog` writes the whole `changelog.txt` for the ESOUI
+changelog field.
 
 `.github/workflows/ci.yml` runs the audit and the packaging check on every push
 and pull request. `.github/workflows/release.yml` runs on a `v<version>` tag,

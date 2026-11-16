@@ -171,6 +171,9 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   changes. Keep `## Version`, `## AddOnVersion`, the top `changelog.txt` version,
   and the release tag (`v<version>`) in sync; the audit checks the first three
   and the release workflow rejects a mismatched tag.
+- `changelog.txt` is also the ESOUI changelog, uploaded in full on every release.
+  Keep it a running log: `major.minor.patch - mm/dd/yyyy` followed by `- ` bullets,
+  newest entry at the top, with no header text above it.
 - ESOUI's `compatible` field takes the game version (`12.1.0`), not
   `## APIVersion` (`101051`). Bump `## APIVersion` and add the pair to
   `COMPATIBLE_VERSIONS` in `_tools/esoui_compat.py` on every game update; the

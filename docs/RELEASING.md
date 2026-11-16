@@ -30,7 +30,8 @@ Useful flags:
 | Flag | Effect |
 | --- | --- |
 | `--check` | Build into a temporary file, verify it, and discard it. |
-| `--notes <path>` | Also write the current changelog section to `<path>`. |
+| `--notes <path>` | Also write the current changelog section to `<path>`; this is the GitHub release body. |
+| `--esoui-changelog <path>` | Also write the whole `changelog.txt` to `<path>`; this is the ESOUI changelog field. |
 | `--out <dir>` | Write the zip somewhere other than `dist\`. |
 
 The script verifies its own output and fails when:
@@ -68,7 +69,7 @@ x-api-token: <token>
 id=<add-on id>
 version=<manifest version>
 compatible=<game version, for example 12.1.0>
-changelog=<release notes text>
+changelog=<the whole changelog.txt>
 description=<README.bbcode>
 updatefile=<the zip>
 ```
@@ -80,6 +81,21 @@ is accepted, so a malformed field fails the job without touching the listing.
 with every release. Keep it in sync with `README.md` and in the ESOUI dialect:
 no tables and no `[code]` (use `[font=Courier New][color=#4682B4]` for inline
 code), and one indented `[*]` item per line between `[list]` and `[/list]`.
+
+### Changelog field
+
+ESOUI shows the changelog as a running log on the file page, not as one release's
+notes, so the upload sends the whole `changelog.txt`. Keep that file in the shape
+ESOUI expects:
+
+- one entry per version, `major.minor.patch - mm/dd/yyyy`, newest entry at the top;
+- a bulleted list under each entry, one `- ` line per change;
+- no header paragraph or version-history note above the newest entry.
+
+The audit already fails when the newest entry's version differs from the
+manifest, and `--esoui-changelog` repeats that check before writing the file.
+Only the newest section becomes the GitHub release body (`--notes`); the full log
+goes to ESOUI.
 
 ### Compatibility field
 
@@ -121,9 +137,10 @@ Set these once in the repository:
 - **Variable** `ESOUI_ADDON_ID` - `5044`, from the add-on page URL.
 
 With both present, pushing a `v<version>` tag builds the zip, creates the GitHub
-release with the changelog section as its body, validates the upload against the
-ESOUI test endpoint, and then publishes the same zip to ESOUI. Without them the
-ESOUI steps are skipped with a notice and the GitHub release still happens.
+release with the current changelog section as its body, validates the upload
+against the ESOUI test endpoint, and then publishes the same zip to ESOUI with the
+whole `changelog.txt` as the changelog field. Without them the ESOUI steps are
+skipped with a notice and the GitHub release still happens.
 
 `release.yml` is safe to run before tagging: a manual run with `deploy` enabled
 audits, packages, and validates the ESOUI upload without creating a GitHub

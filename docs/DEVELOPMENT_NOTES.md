@@ -189,7 +189,9 @@ styles through `ZO_ColorDef:Colorize`.
 4. Update `changelog.txt` and any affected docs. For a release, keep the newest
    `major.minor.patch` changelog version, `## Version`, and `## AddOnVersion`
    (`major*10000 + minor*100 + patch`) in sync; the audit checks all three.
-   Pre-2.5.0 changelog versions were assigned retrospectively.
+   Pre-2.5.0 changelog versions were assigned retrospectively. The file is also
+   the ESOUI changelog, so keep it a running log (`major.minor.patch - mm/dd/yyyy`
+   plus `- ` bullets, newest first) with no header text above the newest entry.
 5. Add deferred or risky work to `TODO.md`; do not leave untracked
    `TODO`/`FIXME` markers in Lua/XML.
 6. Run the static audit:
