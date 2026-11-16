@@ -57,8 +57,10 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   `EVENT_ADD_ON_LOADED`.
 - `kpui_core/` holds shared settings, constants, utilities, and tooltip code.
   `kpui_features/` holds feature modules. Group multi-file features in their own
-  subfolders; keep single-file features at the feature root. The trading-house
-  split is load-ordered (history, shared, hooks, tooltips, data, controls).
+  subfolders; keep single-file features at the feature root. Base-game
+  workarounds live in `kpui_features/fixes/` and are gated from the Fixes and
+  Patches panel (`7600`). The trading-house split is load-ordered (history,
+  shared, hooks, tooltips, data, controls).
 - Static data belongs in `kpui_data/`, not in feature modules.
 - Prefer registering hooks and scene callbacks in `KelaSetup*()` functions;
   file-scope registration depends on manifest order.

@@ -6,6 +6,8 @@ It enhances the Elder Scrolls Online gamepad interface with extra item informati
 
 [b][color=#C49A45]U51 note:[/color][/b] This addon fixes some base-game bugs in battlegrounds that should be resolved in U52. I'll remove the fixes when ZOS gets their sh** together.
 
+It also works around a long-standing gamepad bug where the group menu's empty member list pops up over the HUD at random while playing.
+
 [size=3][b][color=#D4A843]Requirements[/color][/b][/size]
 
 [list]
@@ -254,12 +256,25 @@ Use the right stick to scroll the right pane when its contents do not fit on scr
   [*] Off by default; the setting applies without a reload.
 [/list]
 
+[size=2][b][color=#C49A45]Fixes and patches[/color][/b][/size]
+
+[list]
+  [*] [b]Group menu fix:[/b] Stops the gamepad group menu from reacting to group events while it is closed.
+  [*] This is a long-standing gamepad bug: a background rebuild attaches the menu's empty member list and background panel to whichever scene is current, and clears that scene's help or item panel.
+  [*] Summoning or dismissing a pet is enough to trigger it.
+  [*] Add-ons that rebuild the closed menu are covered as well.
+  [*] On by default and reload-gated.
+  [*] [b]U51 BG Fixes:[/b] Restores L2/R2 battle-round paging on the Battleground scoreboard, corrects the 6v6v6 and 9v9 scoreboard row heights, and unlocks the Activity Finder Battleground entry as soon as its data loads.
+  [*] The battleground fixes mirror the ZOS fixes expected in U52.
+[/list]
+
 [size=3][b][color=#D4A843]Settings[/color][/b][/size]
 
 All settings live in the KelaPadUI section of the gamepad settings menu. They are stored account-wide in [font=Courier New][color=#4682B4]kpuiSavedVariables[/color][/font].
 
 [list]
   [*] Feature toggles for companion info, dungeon finder, chat tools, map rally, additional gamepad filters, antiquity lead details, main-menu quick access, the dashboard, PersonalAssistant junk marking, and the PS5 button map.
+  [*] Fixes and Patches toggles for the group menu fix and the U51 battleground fixes.
   [*] Sets interface toggle.
   [*] Trading master toggle, ATT analysis period, and per-surface tooltip toggles for the guild store, bank, vendors, and crafting stations.
   [*] Guild statistics, ATT price information, listing rows, quality rows, production rows, and crafting-component rows.

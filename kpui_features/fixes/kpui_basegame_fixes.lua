@@ -1,7 +1,7 @@
--- KelaPadUI base-game gamepad UI fixes.
+-- KelaPadUI U51 battleground fixes.
 --
--- These mirror fixes that ZOS is preparing for a later game update and are
--- deliberately kept in their own module so they can be deleted in one step:
+-- These mirror fixes that ZOS is preparing for U52 and are deliberately kept in
+-- their own module so they can be deleted in one step:
 --   1. L2/R2 did not page battle round recaps on the Battleground scoreboard.
 --      BATTLEGROUND_SCOREBOARD_PREVIOUS_ROUND / ..._NEXT_ROUND inherit from
 --      DUMMY actions that have no default binding, and the scoreboard scenes
@@ -18,8 +18,8 @@
 --      data arrived while the root screen was already open, because the gamepad
 --      root never subscribes to the manager's "OnUpdateLocationData".
 --
--- Remove this file and the KELA_SETTING_PANEL_FEATURES_BASE_GAME_FIXES setting
--- once the official fixes ship.
+-- Remove this file and the KELA_SETTING_PANEL_FIXES_BG_U51 setting once the
+-- official fixes ship.
 
 local KELA_ROW_HEIGHT_GAMEPAD = 40
 local KELA_SMALL_ROW_HEIGHT_GAMEPAD = 32

@@ -14,6 +14,8 @@ with `docs/MAINTENANCE.md` and `TODO.md`.
 - Multi-file features live in subfolders of `kpui_features/`: `antiquities/`,
   `companion/`, `filters/`, `mainmenu/`, `sets/`, and `tradinghouse/`.
   Single-file features, including Trait Research, stay at the feature root.
+  Base-game workarounds live in `kpui_features/fixes/` and are gated from the
+  Fixes and Patches panel (`7600`).
 - Trading-house code lives under `kpui_features/tradinghouse/`:
   - `kpui_tradinghouse_shared.lua`
   - `kpui_tradinghouse_hooks.lua`

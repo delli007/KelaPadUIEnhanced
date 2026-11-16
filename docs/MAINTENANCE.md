@@ -25,7 +25,8 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
 | `KelaPadUIEnhanced.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
-| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, base-game fixes, and trading house. |
+| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
+| `kpui_features/fixes/` | Base-game fixes: the group menu panel leak and the U51 battleground fixes. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
 | `kpui_features/companion/` | Companion menu and Collections tooltip information. |
@@ -70,9 +71,10 @@ defined by `KELA_SETTINGS_CATEGORY_ORDER` in
 `kpui_core/kpui_settings_gamepad.lua`:
 
 1. Features (`7400`)
-2. Trait research (`7302`)
-3. Item sets (`7300`)
-4. Trading Interface (`7500`)
+2. Fixes and Patches (`7600`)
+3. Trait research (`7302`)
+4. Item sets (`7300`)
+5. Trading Interface (`7500`)
 
 `Kela_GamepadOptions:RefreshOptionsList()` clears the list and calls
 `AddSettingGroup(panelId, categoryHeader)` for each category. The first visible
@@ -99,7 +101,13 @@ The Features category contains reload-gated toggles:
 | Trait research matrix | on |
 | PersonalAssistant junk integration | on |
 | PS5 button map | off |
-| Base game fixes | on |
+
+The Fixes and Patches category follows it:
+
+| Setting | Default |
+| --- | --- |
+| Group menu fix | on |
+| U51 BG fixes | on |
 
 The PS5 button map is the exception: it is not reload-gated, and its settings
 checkbox applies or reverses the texture redirects immediately.
@@ -113,10 +121,50 @@ default and string. The PersonalAssistant junk toggle depends on the optional
 PersonalAssistant add-on; it is installed regardless of load order and checks PA
 availability per item.
 
-### Base game fixes
+### Group menu fix
 
-`kpui_features/kpui_basegame_fixes.lua` mirrors three base-game gamepad fixes
-that ZOS is preparing. The toggle is reload-gated and the module is
+`kpui_features/fixes/kpui_group_menu_fix.lua` stops the gamepad group menu from
+acting on group events while it is closed. Two core behaviours combine:
+
+- The group menu's handlers are guarded by `self.control:IsControlHidden()`, but
+  the group scene's fragment is a `ZO_FadeSceneFragment` on that control, and
+  `ZO_AnimatedSceneFragment:Hide()` only animates alpha. It never calls
+  `SetHidden(true)`, so the guard passes for the whole session.
+- A rebuild calls `UpdateMenuList()`, which reselects the list's default index 2,
+  the **Current Group** row. That selection callback runs
+  `SCENE_MANAGER:AddFragmentGroup(...)` without checking the group scene, so the
+  panel lands on whichever scene is current and stays until that scene hides. The
+  same callback calls `GAMEPAD_TOOLTIPS:ClearTooltip` and, through
+  `GAMEPAD_GROUP_ROLES_BAR:Deactivate()`, `Reset` on `GAMEPAD_LEFT_TOOLTIP`, which
+  removes the open screen's help or item panel from the current scene.
+
+The module hides the menu control whenever `GAMEPAD_GROUP_SCENE` is not showing,
+so the game's own guard returns early and no rebuild reaches the screen. Its
+`StateChange` callback is registered with a priority, because
+`ZO_Scene:SetState` fires callbacks before it refreshes fragments, so the control
+is visible again before the screen's own handler runs. A `SelectedDataChanged`
+callback and the reset detach anything that was already attached when the scene
+hid.
+
+Hiding the control is not sufficient on its own, because `UpdateMenuList()` has
+no hidden guard and other add-ons call it directly: LibGroupBroadcast's
+LibGroupSocket rebuilds the closed menu from its unit events
+(`LibGroupSocket.lua:128`), so dismissing a pet used to clear the open screen's
+left tooltip again. The module therefore also `ZO_PreHook`s `UpdateMenuList`, a
+pure UI rebuild, and skips it while the group scene is hidden. Nothing is lost,
+because `OnStateChanged` rebuilds the list when the scene shows. It hooks no
+secure, dialog, or keybind function.
+
+To check it: open the group menu and close it, then summon or dismiss a pet (or
+have a group member join or leave) while the KelaPadUI settings, Guilds, bank or
+Activity Finder screen is open. The help or item panel must stay, and no panel
+may appear over the HUD. Open the group menu again to confirm the member list,
+roles bar and tooltips still work.
+
+### U51 battleground fixes
+
+`kpui_features/fixes/kpui_basegame_fixes.lua` mirrors three battleground gamepad
+fixes that ZOS is preparing. The toggle is reload-gated and the module is
 intentionally self-contained so the whole thing can be deleted after the
 official fix ships:
 
@@ -224,7 +272,7 @@ Do not hook the input dispatchers (`ZO_KeybindStrip_HandleKeybindDown`,
 `ZO_KeybindStrip_HandleKeybindUp`, `ZO_KeybindStrip:TryHandlingKeybindDown`);
 `_tools/audit_addon.py` rejects them. Register a keybind button group on the
 scene that owns the input instead, as `kpui_map_rally.lua` and the Battleground
-scoreboard paging in `kpui_basegame_fixes.lua` do.
+scoreboard paging in `kpui_features/fixes/kpui_basegame_fixes.lua` do.
 
 ## Tooltip styles
 

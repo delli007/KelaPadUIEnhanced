@@ -55,7 +55,7 @@ to be unique within this add-on and stable across releases.
 | `7300`-`7399` | Core panels (Item sets, Trait research) |
 | `7400`-`7499` | Feature toggles |
 | `7500`-`7599` | Trading house |
-| `7600`-`7699` | Next module family |
+| `7600`-`7699` | Fixes and Patches panel |
 | `7700`-`7999` | Reserve |
 
 Allocate the lowest free number in the block that owns the feature. IDs are
@@ -99,7 +99,6 @@ in light red on every open.
 | `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
 | `7411` | `KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS` | `false` |
 | `7412` | `KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS` | `true` |
-| `7413` | `KELA_SETTING_PANEL_FEATURES_BASE_GAME_FIXES` | `true` |
 
 All Features toggles except the PS5 button map are reload-gated. The PS5 button
 map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
@@ -116,12 +115,38 @@ Additional gamepad filters (`7412`) gates Antiquities, set-name searches in Item
 Set Collections and transmute reconstruction, provisioning and furnishing recipe
 filters, achievement filters, and future filters.
 
-Base game fixes (`7413`) gates `kpui_features/kpui_basegame_fixes.lua`: L2/R2
-battle-round paging on the Battleground scoreboard, correct 6v6v6 / 9v9
-scoreboard panel heights, and an Activity Finder Battleground entry that
-unlocks as soon as its data loads. The module mirrors fixes ZOS is preparing and
-is deliberately standalone; once a game update ships them, delete the module,
-its manifest line, and this setting ID.
+### Fixes and patches
+
+| ID | Constant | Default |
+| --- | --- | --- |
+| `7600` | `KELA_SETTING_PANEL_FIXES` (panel) | - |
+| `7601` | `KELA_SETTING_PANEL_FIXES_GROUP_MENU` | `true` |
+| `7413` | `KELA_SETTING_PANEL_FIXES_BG_U51` | `true` |
+
+Fixes and Patches sits directly below Features in the settings list. Both toggles
+are reload-gated.
+
+The group menu fix (`7601`) gates
+`kpui_features/fixes/kpui_group_menu_fix.lua`. The gamepad group menu attaches
+its "Current Group" panel (the member list plus a background panel) to whichever
+scene is current when the list selection changes, so a rebuild while the menu is
+closed puts the panel on the HUD scene, where it stays until that scene hides or
+the UI reloads. The module registers a `SelectedDataChanged` callback on the
+group menu's main list and a `StateChange` callback on `GAMEPAD_GROUP_SCENE`, and
+detaches the panel whenever the group scene is not showing. It hooks no core
+function.
+
+The U51 BG fixes toggle (`7413`) gates
+`kpui_features/fixes/kpui_basegame_fixes.lua`: L2/R2 battle-round paging on the
+Battleground scoreboard, correct 6v6v6 / 9v9 scoreboard panel heights, and an
+Activity Finder Battleground entry that unlocks as soon as its data loads. The
+module mirrors fixes ZOS is preparing and is deliberately standalone; once a game
+update ships them, delete the module, its manifest line, and this setting ID.
+`7413` keeps the number it shipped with inside the Features panel, so existing
+saved values survive the move. The constant was renamed from
+`KELA_SETTING_PANEL_FEATURES_BASE_GAME_FIXES`; the label and tooltip keep their
+`KELA_SETTINGS_FEATURES_BASE_GAME_FIXES*` string IDs so the generated
+translations continue to apply.
 
 The Companion information toggle (`7401`) also gates the extra details in the
 gamepad Collections > Allies > Companions tooltip
