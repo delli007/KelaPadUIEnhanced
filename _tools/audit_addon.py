@@ -120,6 +120,7 @@ DYNAMIC_STRING_PREFIXES = (
     "KELA_TRADING_ITEMTYPE_SALES_BYGUILDS",
     "KELA_TRADING_RESUMEPRICE",
     "KELA_TRADING_RESUMEPRICEDIALOG",
+    "KELA_TRADING_DEALRATING",
 )
 SETTINGS_FILE = ROOT / "kpui_core" / "kpui_settings_gamepad.lua"
 SETTING_DEF = re.compile(
@@ -337,6 +338,13 @@ def check_dialog_hooks():
     errors = []
     for path in iter_files({".lua"}):
         for line_number, line in enumerate(read_text(path).splitlines(), start=1):
+            if (re.search(r"\bZO_Dialogs_RegisterCustomDialog\s*\(", line)
+                    and path.relative_to(ROOT).as_posix() != "kpui_core/kpui_dialogs.lua"):
+                errors.append(
+                    "DIALOG POOL: {}:{}: register add-on dialogs with KelaRegisterGamepadDialog "
+                    "so their buttons stay out of the core dialog keybind pool "
+                    "(see docs/DEVELOPMENT_NOTES.md)".format(path.relative_to(ROOT), line_number)
+                )
             if not any(re.search(r"\b" + re.escape(hook) + r"\s*\(", line) for hook in HOOK_CALLS):
                 continue
             for target in DIALOG_HOOK_TARGETS:

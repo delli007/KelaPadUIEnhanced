@@ -1,3 +1,13 @@
+2.8.3 - 11/17/2026
+- New: a Summary page in Trait Research shows every character's progress, station by station, plus a research queue sorted by what finishes next. Spot the idle stations at a glance!
+- Set browser glow-up: a search box at the top of the filters, four new bonus groups (Critical, Penetration, Healing, Recovery), readable Composition and Search Area columns, and correct armor, weapon, and jewelry detection.
+- Guild store tooltips got room to breathe: more spacing, a roomier price graph, and a colored Deal evaluation line right above the item name.
+- Trading history is sharper: the Traded, Sold, and Recalled icons are back, ATT sales match the right listing, and store searches feel snappier.
+- Ready checks and duels stay happy even when a KelaPadUI Enhanced dialog was the first one you opened.
+- PS5 button glyphs switch instantly in both directions, no reload needed.
+- Fresh German, French, and Russian translations, with proper number separators for each language.
+- Plus a big round of fixes and tidying: trait research keeps refreshing, the dungeon finder no longer trips up on non-English clients, settings resets prompt for a reload, and a pile of old code is gone.
+
 2.8.2 - 11/15/2026
 - Added a Fixes and Patches settings group directly below Features.
 - Added a Group menu fix option that stops the gamepad group menu from reacting to group events while it is closed. The game attaches the menu's panel to whatever scene is current when it rebuilds its list, even while the menu is closed.

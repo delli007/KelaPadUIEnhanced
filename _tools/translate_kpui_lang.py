@@ -61,9 +61,15 @@ PLAIN_TOKEN = re.compile(r"<<(?:(?:[A-Za-z]:)?\d+)>>")
 PERCENT = re.compile(r"%(?:%|[-+ #0]*\d*(?:\.\d+)?[sdif])")
 BRAND_TOKENS = ("KelaPadUI Enhanced", "KelaPadUI", "ESO+", "USPF")
 
-# Hand-checked terminology that is ambiguous as a bare exact match.
+# Hand-checked text. Applies to any string, per language, before machine
+# translation; entries that are also ESO client strings need every language.
 OVERRIDES = {
     "Undaunted": {"de": "Unerschrockene", "fr": "Indomptables", "ru": "Неустрашимые"},
+    # KELA_THOUSANDS_SEPARATOR: machine translation returns the English comma.
+    ",": {"de": ".", "fr": " ", "ru": " "},
+    # "character" means a player character here, not a letter.
+    "<<1[$d character/$d characters]>>": {"de": "<<1[$d Charakter/$d Charaktere]>>", "fr": "<<1[$d personnage/$d personnages]>>", "ru": "<<1[$d персонаж/$d персонажей]>>"},
+    "Idle": {"ru": "Простаивает"},
 }
 
 
@@ -475,7 +481,14 @@ def build_translations(entries, targets, official, backend, cache, force):
                 stats[target]["official"] += 1
             continue
 
+        override = OVERRIDES.get(text, {})
         for target in targets:
+            # Hand-pinned text wins for any string, per language; the official
+            # map above only covers strings that also exist in the ESO client.
+            if target in override:
+                results[target][text] = override[target]
+                stats[target]["official"] += 1
+                continue
             translated, kind = translate_text(backend, cache, target, text, force)
             results[target][text] = translated
             if kind == "cache":

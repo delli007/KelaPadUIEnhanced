@@ -6,6 +6,62 @@ is the live installed add-on; ESO loads it directly, so edit files in place.
 There is no package manager or test runner. A static audit and a packaging script
 live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
 
+## Working method (read this first)
+
+The rules below come from real bugs found in review. Follow them literally;
+each one exists because the shortcut it forbids shipped a defect.
+
+- **The user tests in game; you do not ship.** Edit files in place, run the
+  audit, then stop and ask the user to test. Commit or push only when the user
+  says so. Split large work into phases and stop after each one.
+- **Prove every API exists before using it.** The base-game UI source is at
+  `..\..\..\esoui-sourcecode\esoui` (read-only) and the full API list is
+  `..\..\..\esoui-sourcecode\ESOUIDocumentation.txt`. Grep both. Things that
+  looked plausible and did not exist: `C_AddOns` (a WoW API), `ID_STONEFALLS`
+  and other zone constants, the font `ZoFontGamepadCondensed22`, and core
+  `ZO_Tooltip:LayoutCollectible`. A missing global is `nil` and fails silently;
+  a missing font falls back to a tiny default.
+- **Check library signatures in their own source.** Libraries and optional
+  add-ons are sibling folders (`..\LibSets`, `..\ArkadiusTradeTools`,
+  `..\TamrielTradeCentre`). `LibSets.GetSetItemId(setId, isNoESOSetId,
+  equipType)` once received the equip type as the second argument for years.
+- **Before deleting "dead" code, grep the whole add-on for the name**, including
+  after `..` concatenation and inside other features. `GetATTPriceStats` looked
+  unused inside trading but the item tooltip called it.
+- **User text and game names are plain text, never Lua patterns.** Use
+  `zo_plainstrfind(zo_strlower(haystack), zo_strlower(needle))`. A `%` or `(`
+  in a search box raised "malformed pattern"; `string.find(name, "I")` cut
+  "Imperial City" in half.
+- **Every variable is `local`.** An implicit global leaked a stack count from
+  the trading house into the smithing tooltip. After editing, scan for globals
+  assigned without `local` (luaparse with `scope: true`, or read carefully);
+  only `Kela`/`KPUI_`/`KELA_` names may be global, and only when another file
+  needs them.
+- **Store codes in saved variables, not presentation.** Listing results were
+  stored as icon markup with a folder path, so a folder rename broke every
+  saved entry. Save a code and map it to text or an icon when drawing.
+- **Size controls from their real content.** Do not paper over overlap with
+  magic offsets (`offsetY = 35 when two rows`); set the height from the rows
+  shown. Shared spacing lives in named constants (for example
+  `KPUI_SECTION_GAP` in `kpui_tradinghouse_shared.lua`).
+- **Settings rows may use functions.** A row's `enabled` or `visible` can be a
+  function; read `enabled` through `KelaIsSettingEnabled(data)`.
+- **Strings:** add to `en.lua`, then run
+  `python _tools\translate_kpui_lang.py --all` and
+  `python _tools\translate_kpui_lang.py --check --all`. Read the new lines in
+  `de.lua`, `fr.lua` and `ru.lua`: machine translation turned "characters" into
+  "letters" and dropped trailing spaces. Pin a wrong translation in `OVERRIDES`
+  in the script, and keep spacing and punctuation that matters in code, not at
+  the end of a string. Strings read as `GetString("KELA_PREFIX", n)` need the
+  prefix in the audit's `DYNAMIC_STRING_PREFIXES`.
+- **The word TODO in any Lua/XML comment fails the audit**, even in prose.
+- **Editing with scripts:** detect each file's line ending and write it back
+  unchanged (`newline=""` in Python). Shell heredocs break on quotes; write a
+  long snippet to a scratch file first. After any scripted edit, run a Lua parse
+  check before moving on.
+- **Changelog voice:** short, friendly, user-facing bullets, one per area of
+  the game, no internal file or function names.
+
 ## Add-on identity
 
 - The identity is three strings that must stay identical: the folder name, the
@@ -61,7 +117,16 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   workarounds live in `kpui_features/fixes/` and are gated from the Fixes and
   Patches panel (`7600`). The trading-house split is load-ordered (history,
   shared, hooks, tooltips, data, controls).
-- Static data belongs in `kpui_data/`, not in feature modules.
+- Static data belongs in `kpui_data/`, not in feature modules. Generated data
+  (antiquity leads, rewritten by `_tools/generate_antiquity_lead_data.py`) lives
+  there too.
+- Shared helpers worth knowing before writing new ones: `KelaCompareLink` (item
+  identity, ignoring link style), `KelaLocalizedFormatNumber`,
+  `KelaApplyTextStyle` / `KelaApplyEntryTextStyle`, `KelaRegisterGamepadDialog`
+  and `KelaParametricSelectBackButtons` (`kpui_core/kpui_dialogs.lua`),
+  `KelaGetDailyResetBoundary` and `KelaGetPledgeDungeon` (dashboard), and the
+  trading-house helpers exported on `KPUI_TRADINGHOUSE` in
+  `kpui_tradinghouse_shared.lua`.
 - Prefer registering hooks and scene callbacks in `KelaSetup*()` functions;
   file-scope registration depends on manifest order.
 - Startup is eager. Do not reintroduce lazy loading for sets or trading history.
@@ -120,6 +185,11 @@ live in `_tools/`, and GitHub Actions runs both (see `docs/RELEASING.md`).
   insecure; dialog buttons that fall through to the strip then fail on private
   calls (duel and ready-check accepts raised `CancelTaskbarWindowFlash`). Add a
   keybind button group on the owning scene. The audit fails on these hooks too.
+- Register add-on dialogs with `KelaRegisterGamepadDialog`
+  (`kpui_core/kpui_dialogs.lua`), never `ZO_Dialogs_RegisterCustomDialog`. Core
+  `buttons` on an add-on dialog grow the shared dialog keybind pool from add-on
+  code when it is the first dialog after a reload, with the same result as a
+  dialog hook. The audit fails on the direct call.
 - Do not leave `TODO` / `FIXME` / `HACK` / `XXX` markers in Lua/XML; record
   deferred work in `TODO.md`.
 - Do not assign `SI_*` globals directly; use `SafeAddString`.

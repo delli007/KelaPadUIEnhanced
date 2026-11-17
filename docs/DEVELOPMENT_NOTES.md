@@ -308,6 +308,17 @@ can appear before a core dialog must either avoid core `buttons` and manage its
 own keybind group (passing `KEYBIND_STRIP:GetTopKeybindStateIndex()`), or use an
 add-on scene. A reload clears an already-poisoned pool.
 
+`kpui_core/kpui_dialogs.lua` does this for every add-on dialog. Register with
+`KelaRegisterGamepadDialog(name, info)` instead of
+`ZO_Dialogs_RegisterCustomDialog`: it takes the same dialog table, moves its
+`buttons` (same shape as core) into an add-on keybind group on the dialog's
+keybind state, and removes them when the dialog hides. Use
+`KelaRefreshGamepadDialogKeybinds(name)` in place of
+`ZO_GenericGamepadDialog_RefreshKeybinds`, and
+`KelaParametricSelectBackButtons(name)` for the usual Select/Back pair. The
+audit fails on `ZO_Dialogs_RegisterCustomDialog` anywhere else. Replacing an
+`ESO_Dialogs` entry that the core shows itself is unaffected.
+
 The Quick Access entry is deliberately not in `ZO_MENU_ENTRIES`. The keybind
 flags an override, pushes `playerSubmenu`, and replaces the sublist from the
 scene's `SCENE_SHOWING` callback (with a `SCENE_SHOWN` check as a safety net).

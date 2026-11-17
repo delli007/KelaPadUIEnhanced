@@ -53,7 +53,7 @@
 -- fragment still reports shown leaves an invisible but open menu whose
 -- IsControlHidden guards block every update.
 
-local KELA_ADDON_NAME = "KelaPadUIEnhanced"
+local KELA_ADDON_NAME = "KelaPadUIEnhanced_GroupMenuFix"
 
 -- ZO_CallbackObject sorts prioritized callbacks ahead of unprioritized ones.
 local KELA_GROUP_MENU_FIX_CALLBACK_PRIORITY = 1
@@ -84,7 +84,7 @@ end
 -- Returns the group menu to an inert state. Everything is guarded: the menu
 -- finishes its deferred initialization on the first show, and the group list
 -- and roles bar are separate gamepad panels.
-function KelaGroupMenuFixReset()
+local function KelaGroupMenuFixReset()
 	if KelaGroupMenuFixIsGroupSceneShowing() then
 		return
 	end

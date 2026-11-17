@@ -18,15 +18,14 @@ if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) the
     KelaInitializeTradingHistory()
     KelaSetupTradingHouse()
     KelaSetupCraftingStation()
-elseif not hasTradingProvider then
-    KelaSetSetting(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ENABLED, false)
 end
 ```
 
 TTC-only and ATT-only modes are supported. The trading settings panel enables
-the master checkbox when at least one provider is installed, and provider-specific
-settings are hidden when their provider is absent. Re-enabling trading after
-installing a provider requires a `/reload`.
+the master checkbox when at least one provider is installed, and hides the
+trading rows (and provider-specific rows) when their provider is absent. The
+saved value is never forced off, so installing a provider later turns trading
+back on after a `/reload`. The master toggle is reload-gated.
 
 The other-quality price rows need valid item links for each quality. They use
 the optional `LibItemLink` library to build those links; the call is guarded, and
@@ -233,8 +232,9 @@ provider installed:
 - Change the ATT analysis period when ATT is installed and confirm the
   guild-stat period changes.
 - Disable each tooltip module and confirm only that section disappears.
-- Remove both providers, reload, and confirm trading is forced off with no Lua
-  errors.
+- Remove both providers, reload, and confirm the trading rows are hidden, the
+  master checkbox is disabled, and there are no Lua errors. Reinstall one and
+  confirm trading works again after a reload without touching the setting.
 
 ## Known deferred work
 

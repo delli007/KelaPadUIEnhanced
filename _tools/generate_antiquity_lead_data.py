@@ -4,7 +4,7 @@
 Fetches the UESP "Antiquities by Zone" pages, reads every {{ESO Antiquity}}
 template, extracts the numeric ESO antiquity id and the ``lead=`` text, cleans
 the wiki markup, and rewrites the block between the two markers in
-kpui_features/antiquities/kpui_antiquityleads_gamepad.lua.
+kpui_data/kpui_antiquity_lead_data.lua.
 
 The generated data is derived from the UESP Wiki and remains under CC BY-SA 2.5:
 https://en.uesp.net/wiki/UESPWiki:Copyright
@@ -28,7 +28,7 @@ API = "https://en.uesp.net/w/api.php"
 INDEX_PAGE = "Online:Antiquities by Zone"
 USER_AGENT = "KelaPadUI-antiquity-lead-data/1.0 (addon build helper)"
 FETCH_WORKERS = 5
-TARGET_FILE = Path(__file__).resolve().parent.parent / "kpui_features" / "antiquities" / "kpui_antiquityleads_gamepad.lua"
+TARGET_FILE = Path(__file__).resolve().parent.parent / "kpui_data" / "kpui_antiquity_lead_data.lua"
 BEGIN_MARKER = "-- BEGIN KELA GENERATED ANTIQUITY LEAD DATA"
 END_MARKER = "-- END KELA GENERATED ANTIQUITY LEAD DATA"
 

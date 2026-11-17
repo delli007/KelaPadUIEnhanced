@@ -24,7 +24,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | --- | --- |
 | `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
 | `KelaPadUIEnhanced.txt` | Manifest and load order. |
-| `kpui_core/` | Settings, constants, utilities, tooltip styles, and gamepad tooltip code. |
+| `kpui_core/` | Settings, constants, utilities, add-on dialogs (`kpui_dialogs.lua`), tooltip styles, and gamepad tooltip code. |
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
 | `kpui_features/fixes/` | Base-game fixes: the group menu panel leak and the U51 battleground fixes. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
@@ -32,7 +32,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `kpui_features/companion/` | Companion menu and Collections tooltip information. |
 | `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
 | `kpui_lang/` | English source strings in `en.lua`, plus generated `de.lua`, `fr.lua`, and `ru.lua` loaded through `$(language)`. |
-| `kpui_data/` | Static trial and companion data used by feature modules. |
+| `kpui_data/` | Static trial, companion, and generated antiquity-lead data used by feature modules. |
 | `docs/` | Maintenance, development, research, settings, trading-house, and main-menu notes. |
 | `_tools/audit_addon.py` | Static identity, manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
 | `_tools/package_addon.py` | Builds and verifies the ESOUI-ready zip in `dist/`. |
@@ -261,7 +261,9 @@ KelaPadUI Enhanced's Quick Access uses the gamepad main menu's own submenu, open
 the Options keybind, so it does not touch the dialog pool. Any add-on-shown
 gamepad dialog that can appear before a core dialog must either avoid core
 `buttons` and manage its own keybind group, or use an add-on scene. Reload clears
-an already-poisoned pool.
+an already-poisoned pool. `KelaRegisterGamepadDialog` in
+`kpui_core/kpui_dialogs.lua` handles the keybind group for every add-on dialog,
+and the audit rejects `ZO_Dialogs_RegisterCustomDialog` outside that file.
 
 ### Keybind dispatcher hooks
 

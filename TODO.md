@@ -6,6 +6,10 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 - Remove the seven frozen legacy XML files by porting their controls to Lua, and
   delete each entry from `XML_ALLOWLIST` in `_tools/audit_addon.py` as it goes.
+- Pledge status in the dungeon finder and dashboard matches the English
+  "Pledge: " quest-name prefix, so it is blank on DE/FR/RU clients. Match by
+  quest or zone ID instead (`kpui_features/kpui_dungeon_finder.lua`,
+  `kpui_features/mainmenu/kpui_main_menu_dashboard.lua`).
 
 
 ## Candidate enhancements
