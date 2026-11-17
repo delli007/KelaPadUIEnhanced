@@ -124,12 +124,19 @@ availability per item.
 ### Group menu fix
 
 `kpui_features/fixes/kpui_group_menu_fix.lua` stops the gamepad group menu from
-acting on group events while it is closed. Two core behaviours combine:
+acting on group and unit events while it is closed. Three core behaviours
+combine:
 
-- The group menu's handlers are guarded by `self.control:IsControlHidden()`, but
-  the group scene's fragment is a `ZO_FadeSceneFragment` on that control, and
-  `ZO_AnimatedSceneFragment:Hide()` only animates alpha. It never calls
-  `SetHidden(true)`, so the guard passes for the whole session.
+- The handlers are guarded by `self.control:IsControlHidden()`, but that test is
+  only true once the close animation has finished: the group scene's fragment is
+  a `ZO_FadeSceneFragment` on the control, and
+  `ZO_AnimatedSceneFragment.animationReverseOnStop` calls `SetHidden(true)`
+  (`zo_scenefragmenttemplates.lua:68`) when the fade ends. A group event during
+  the fade therefore still rebuilds the closed menu.
+- `UpdateMenuList()` has no open-state guard of its own, and other add-ons call
+  it directly. LibGroupBroadcast's LibGroupSocket does so from its unit events
+  (`LibGroupSocket.lua:128`), so dismissing a pet rebuilds the closed menu long
+  after the fade finished.
 - A rebuild calls `UpdateMenuList()`, which reselects the list's default index 2,
   the **Current Group** row. That selection callback runs
   `SCENE_MANAGER:AddFragmentGroup(...)` without checking the group scene, so the
@@ -138,22 +145,21 @@ acting on group events while it is closed. Two core behaviours combine:
   `GAMEPAD_GROUP_ROLES_BAR:Deactivate()`, `Reset` on `GAMEPAD_LEFT_TOOLTIP`, which
   removes the open screen's help or item panel from the current scene.
 
-The module hides the menu control whenever `GAMEPAD_GROUP_SCENE` is not showing,
-so the game's own guard returns early and no rebuild reaches the screen. Its
-`StateChange` callback is registered with a priority, because
-`ZO_Scene:SetState` fires callbacks before it refreshes fragments, so the control
-is visible again before the screen's own handler runs. A `SelectedDataChanged`
-callback and the reset detach anything that was already attached when the scene
-hid.
+The module `ZO_PreHook`s `UpdateMenuList`, a pure UI rebuild, and skips it while
+`GAMEPAD_GROUP_SCENE` is not showing; this is what fixes both symptoms.
+`OnStateChanged` rebuilds the list when the scene shows, so nothing is lost. A
+`SelectedDataChanged` callback and the reset detach anything that was already
+attached when the scene hid. The module also keeps the menu control hidden while
+the scene is not showing, as a belt-and-braces guard for the fade window; the
+engine already hides it at the end of the fade. Its `StateChange` callback is
+registered with a priority, because `ZO_Scene:SetState` fires callbacks before it
+refreshes fragments, so the control is visible again before the screen's own
+handler runs. It hooks no secure, dialog, or keybind function.
 
-Hiding the control is not sufficient on its own, because `UpdateMenuList()` has
-no hidden guard and other add-ons call it directly: LibGroupBroadcast's
-LibGroupSocket rebuilds the closed menu from its unit events
-(`LibGroupSocket.lua:128`), so dismissing a pet used to clear the open screen's
-left tooltip again. The module therefore also `ZO_PreHook`s `UpdateMenuList`, a
-pure UI rebuild, and skips it while the group scene is hidden. Nothing is lost,
-because `OnStateChanged` rebuilds the list when the scene shows. It hooks no
-secure, dialog, or keybind function.
+Do not hide the control earlier than the fade-out, and never hide it while the
+scene is showing: the fade is an alpha animation on that control, and a control
+hidden out of band while the fragment still reports shown leaves an invisible but
+open menu whose `IsControlHidden` guards block every update.
 
 To check it: open the group menu and close it, then summon or dismiss a pet (or
 have a group member join or leave) while the KelaPadUI settings, Guilds, bank or
