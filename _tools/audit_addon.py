@@ -150,7 +150,7 @@ QUOTED_KELA_GETSTRING = re.compile(r'GetString\(\s*"(KELA_[A-Z0-9_]+)"\s*\)')
 EVENT_NAMESPACE = re.compile(
     r'EVENT_MANAGER:(?:Register|Unregister)ForEvent\(\s*"(KelaPadUI[A-Za-z0-9]*)"'
 )
-LOCALE_FILES = ("en.lua", "de.lua", "fr.lua", "ru.lua")
+LOCALE_FILES = ("en.lua", "de.lua", "fr.lua", "ru.lua", "jp.lua", "es.lua", "zh.lua")
 
 
 def iter_files(suffixes):

@@ -31,12 +31,12 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
 | `kpui_features/companion/` | Companion menu and Collections tooltip information. |
 | `kpui_features/tradinghouse/` | Trading-house tooltips, hooks, custom XML, and trading history. |
-| `kpui_lang/` | English source strings in `en.lua`, plus generated `de.lua`, `fr.lua`, and `ru.lua` loaded through `$(language)`. |
+| `kpui_lang/` | English source strings in `en.lua`, plus generated `de.lua`, `fr.lua`, `ru.lua`, `jp.lua`, `es.lua`, and `zh.lua` loaded through `$(language)`. |
 | `kpui_data/` | Static trial, companion, and generated antiquity-lead data used by feature modules. |
 | `docs/` | Maintenance, development, research, settings, trading-house, and main-menu notes. |
 | `_tools/audit_addon.py` | Static identity, manifest, XML, string, optional-library, `SI_*` assignment, and removed-reference audit. |
 | `_tools/package_addon.py` | Builds and verifies the ESOUI-ready zip in `dist/`. |
-| `_tools/translate_kpui_lang.py` | Generates `kpui_lang/de.lua`, `fr.lua`, and `ru.lua` from `en.lua` and validates placeholders. |
+| `_tools/translate_kpui_lang.py` | Generates the six locale files in `kpui_lang/` from `en.lua` and validates placeholders. |
 | `.github/workflows/` | CI audit/package run and the tag-triggered release plus ESOUI upload. |
 | `TODO.md` | Open refactors, rated enhancement candidates, and completed cleanup history. |
 | `changelog.txt` | Release-facing change history. |

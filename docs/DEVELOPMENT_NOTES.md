@@ -165,17 +165,24 @@ styles through `ZO_ColorDef:Colorize`.
 - Regenerate the shipped translations from `en.lua`:
 
   ```powershell
-  python _tools\translate_kpui_lang.py de fr ru
+  python _tools\translate_kpui_lang.py --all
   ```
 
-  The script uses the ESO client's own localized strings when the English text
-  matches exactly, and the free Google NMT endpoint for everything else. Pass
-  `--offline` to use argostranslate instead, or `--check` to validate the
-  existing files without translating.
+  `--all` covers de, fr, ru, jp, es, and zh. The script uses the ESO client's own
+  localized strings when the English text matches exactly, hand-pinned text from
+  its `OVERRIDES` table, and the free Google NMT endpoint for everything else.
+  Pass `--offline` to use argostranslate instead, or `--check` to validate the
+  existing files without translating. Files use ESO client codes (`jp.lua`);
+  `BACKEND_CODES` maps them to the translation service's codes (`ja`).
+- Adding a language: add its client code to `SUPPORTED` and `CAMPAIGN` in the
+  script (and to `BACKEND_CODES` when the service code differs), add the file to
+  `LOCALE_FILES` in `_tools/audit_addon.py`, generate it, then read the result
+  and pin game terms in `OVERRIDES` using the client's own wording from
+  `esoui-sourcecode/esoui/lang/<code>_client.lua`.
 - The generator validates `<<1>>`, `<<1[$d item/$d items]>>`, `%s`/`%d`, and
   newline counts. A string that changes those is retried and then left in
   English, so a regeneration is safe to run unattended.
-- Do not hand-edit `de.lua`, `fr.lua`, or `ru.lua`; change `en.lua` and
+- Do not hand-edit the generated locale files (`de`, `fr`, `ru`, `jp`, `es`, `zh`); change `en.lua` and
   regenerate. Keep the translation cache
   (`_tools/.translation_cache.json`) out of commits.
 

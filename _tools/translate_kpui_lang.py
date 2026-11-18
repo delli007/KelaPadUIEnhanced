@@ -38,8 +38,15 @@ EN_PATH = ROOT / "kpui_lang" / "en.lua"
 LANG_DIR = ROOT / "kpui_lang"
 DEFAULT_CACHE = Path(__file__).resolve().parent / ".translation_cache.json"
 DEFAULT_CLIENT_LANG_DIR = ROOT.parents[2] / "esoui-sourcecode" / "esoui" / "lang"
-SUPPORTED = ("de", "fr", "ru")
-CAMPAIGN = ("de", "fr", "ru")
+SUPPORTED = ("de", "fr", "ru", "jp", "es", "zh")
+CAMPAIGN = ("de", "fr", "ru", "jp", "es", "zh")
+# ESO names its locales by client code (kpui_lang/jp.lua is loaded through
+# $(language)); the translation services use ISO codes.
+BACKEND_CODES = {"jp": "ja", "zh": "zh-CN"}
+
+
+def backend_code(target: str) -> str:
+    return BACKEND_CODES.get(target, target)
 
 ADD_LINE = re.compile(
     r'^(?P<indent>[ \t]*)Add\("(?P<id>KELA_[A-Z0-9_]+)"\s*,\s*'
@@ -66,10 +73,26 @@ BRAND_TOKENS = ("KelaPadUI Enhanced", "KelaPadUI", "ESO+", "USPF")
 OVERRIDES = {
     "Undaunted": {"de": "Unerschrockene", "fr": "Indomptables", "ru": "Неустрашимые"},
     # KELA_THOUSANDS_SEPARATOR: machine translation returns the English comma.
-    ",": {"de": ".", "fr": " ", "ru": " "},
+    ",": {"de": ".", "fr": " ", "ru": " ", "jp": ",", "es": ".", "zh": ","},
     # "character" means a player character here, not a letter.
-    "<<1[$d character/$d characters]>>": {"de": "<<1[$d Charakter/$d Charaktere]>>", "fr": "<<1[$d personnage/$d personnages]>>", "ru": "<<1[$d персонаж/$d персонажей]>>"},
-    "Idle": {"ru": "Простаивает"},
+    "<<1[$d character/$d characters]>>": {"de": "<<1[$d Charakter/$d Charaktere]>>", "fr": "<<1[$d personnage/$d personnages]>>", "ru": "<<1[$d персонаж/$d персонажей]>>", "jp": "<<1[$dキャラクター/$dキャラクター]>>", "es": "<<1[$d personaje/$d personajes]>>", "zh": "<<1[$d个角色/$d个角色]>>"},
+    "Idle": {"ru": "Простаивает", "jp": "待機中", "zh": "空闲"},
+    # Japanese: match the client's stat wording (SI_DERIVEDSTATS*).
+    "Critical": {"jp": "クリティカル", "zh": "暴击"},
+    "Penetration": {"jp": "貫通", "zh": "穿透"},
+    "Healing": {"jp": "回復力", "es": "Curación", "zh": "治疗"},
+    "Recovery": {"jp": "再生"},
+    "Normal": {"jp": "普通", "zh": "一般"},
+    "Researched: <<1>>": {"jp": "研究済み: <<1>>", "zh": "已研究：<<1>>"},
+    # Deal ratings agree with "oferta" in Spanish; plain adjectives in Chinese.
+    "Good": {"es": "Buena", "zh": "好"},
+    "Bad": {"es": "Mala", "zh": "差"},
+    "Terrible": {"zh": "很差"},
+    "Excellent": {"zh": "极好"},
+    "Complete": {"zh": "已完成"},
+    "Summary": {"zh": "总览"},
+    "Sets": {"zh": "套装"},
+    "<<1>> active - <<2>>": {"zh": "<<1>> 项进行中 - <<2>>"},
 }
 
 
@@ -279,7 +302,7 @@ class GoogleBackend:
 
     def translate(self, text: str, target: str, retries: int = 4) -> str:
         params = urllib.parse.urlencode(
-            {"client": "gtx", "sl": "en", "tl": target, "dt": "t", "q": text}
+            {"client": "gtx", "sl": "en", "tl": backend_code(target), "dt": "t", "q": text}
         )
         request = urllib.request.Request(
             "{}?{}".format(self.ENDPOINT, params),
@@ -336,7 +359,7 @@ class ArgosBackend:
             (package.from_code, package.to_code)
             for package in self.package.get_installed_packages()
         }
-        for target in targets:
+        for target in (backend_code(code) for code in targets):
             if ("en", target) in installed:
                 continue
             package = next(
@@ -355,7 +378,7 @@ class ArgosBackend:
             self.package.install_from_path(package.download())
 
     def translate(self, text: str, target: str, retries: int = 0) -> str:
-        translation = self.translate_module.get_translation_from_codes("en", target)
+        translation = self.translate_module.get_translation_from_codes("en", backend_code(target).split("-")[0])
         return translation.translate(text)
 
 

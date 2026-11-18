@@ -274,6 +274,9 @@ and IDs.
 - TTC-only, ATT-only, both, and neither are supported; trading features stay off
   without a provider.
 - Optional libraries are guarded, so missing add-ons do not break loading.
+- Languages: English, German, French, Russian, Japanese, Spanish, and
+  Simplified Chinese, picked automatically from the game client's language. Other clients fall back to
+  English.
 - No automation, botting, or gameplay automation is included. All features are
   read-only information or UI shortcuts.
 

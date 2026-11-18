@@ -49,7 +49,7 @@ each one exists because the shortcut it forbids shipped a defect.
 - **Strings:** add to `en.lua`, then run
   `python _tools\translate_kpui_lang.py --all` and
   `python _tools\translate_kpui_lang.py --check --all`. Read the new lines in
-  `de.lua`, `fr.lua` and `ru.lua`: machine translation turned "characters" into
+  the other locale files: machine translation turned "characters" into
   "letters" and dropped trailing spaces. Pin a wrong translation in `OVERRIDES`
   in the script, and keep spacing and punctuation that matters in code, not at
   the end of a string. Strings read as `GetString("KELA_PREFIX", n)` need the
@@ -160,9 +160,12 @@ each one exists because the shortcut it forbids shipped a defect.
   write `kpuiSavedVariables` directly.
 - User-facing text must use `KELA_*` IDs in `kpui_lang/en.lua`. That file is the
   English source and must stay UTF-8 without BOM; localized files
-  (`kpui_lang/de.lua`, `fr.lua`, `ru.lua`, loaded through
-  `kpui_lang/$(language).lua`) may use non-Latin scripts such as Cyrillic. Read
-  strings with the numeric constant, `GetString(KELA_FOO)`; a quoted name
+  (`kpui_lang/de.lua`, `fr.lua`, `ru.lua`, `jp.lua`, `es.lua`, `zh.lua`, loaded
+  through `kpui_lang/$(language).lua`) may use non-Latin scripts such as
+  Cyrillic, Japanese, or Chinese. ESO names locales by client code (`jp`, not `ja`); the translator
+  maps client codes to translation-service codes in `BACKEND_CODES`. Prefer the
+  game's own wording for game terms: check
+  `esoui-sourcecode\esoui\lang\<code>_client.lua`. Read strings with the numeric constant, `GetString(KELA_FOO)`; a quoted name
   (`GetString("KELA_FOO")`) silently returns nothing. See
   `docs/DEVELOPMENT_NOTES.md`. The audit reports undefined or unused KELA IDs.
 - Keep the KELAPADUI main-menu entry directly below Options; do not reindex
