@@ -24,8 +24,9 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | --- | --- |
 | `KelaPadUI.lua` | Add-on bootstrap, scene fragments, and feature initialization. |
 | `KelaPadUIEnhanced.txt` | Manifest and load order. |
-| `kpui_core/` | Settings, constants, utilities, add-on dialogs (`kpui_dialogs.lua`), tooltip styles, and gamepad tooltip code. |
-| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, the main menu, and trading house. |
+| `kpui_core/` | Settings, constants, utilities, add-on dialogs (`kpui_dialogs.lua`), the gamepad data browser (`kpui_gamepad_browser.lua`), tooltip styles, and gamepad tooltip code. |
+| `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, Character Knowledge, the main menu, and trading house. |
+| `kpui_features/journals/` | The gamepad Extended Journal: reads any LibExtendedJournal tab as a gamepad browser source. |
 | `kpui_features/fixes/` | Base-game fixes: the group menu panel leak and the U51 battleground fixes. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |

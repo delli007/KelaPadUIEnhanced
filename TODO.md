@@ -14,7 +14,6 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
 
 ## Candidate enhancements
 
-- Add support for the Extended Journal: place in the KelaPadUI menu and in the journal menu at the end of the list.
 - Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.
 
 ## Enhancement Notes

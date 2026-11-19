@@ -28,6 +28,8 @@ Optional integrations are detected at runtime. Missing libraries only disable th
   [*] [b]USPF:[/b] The Skill Points row on the dashboard.
   [*] [b]LibDebugLogger:[/b] Optional diagnostic logging.
   [*] [b]PersonalAssistant:[/b] Permanent-junk marking actions in the gamepad inventory.
+  [*] [b]LibExtendedJournal:[/b] The gamepad Extended Journal (bundled with Loot Log, Collectibles Tracker, and others).
+  [*] [b]LibCharacterKnowledge:[/b] The Character Knowledge browser and other characters in Trait Research.
 [/list]
 
 The trading features need at least one of TTC or ATT. Either provider works alone, and both are used together when installed.
@@ -250,6 +252,25 @@ Appears below the matrix in four station columns, with each research line, trait
 
 Use the right stick to scroll the right pane when its contents do not fit on screen.
 
+[size=2][b][color=#C49A45]Extended Journal[/color][/b][/size]
+
+[list]
+  [*] A gamepad screen for Extended Journal, the shared window used by Loot Log, Item Set Browser, Character Knowledge, Collectibles Tracker, Raidificator, and other add-ons. Open it from the KelaPadUI² menu or the end of the gamepad Journal menu.
+  [*] L1 and R1 switch between the journals. Each journal's filters (search first, then dropdowns and checkboxes) are on the left and its table, with the same columns as the keyboard window, fills the right.
+  [*] Right on the D-pad moves into the table. Up from the first row selects the column headers; A sorts by the selected column, and again reverses it. LT and RT jump to the first and last row. B returns to the filters.
+  [*] A runs the entry's action (or lists them when there are several), and R3 shows or hides the entry's tooltip.
+  [*] Works with any add-on built on Extended Journal, read as it runs, so new journals and changes to them appear without an update. The entries appear only when one is installed.
+  [*] Opening Extended Journal from the keyboard main menu or its keybind still shows the keyboard window, with a Back button added for the controller.
+[/list]
+
+[size=2][b][color=#C49A45]Character Knowledge[/color][/b][/size]
+
+[list]
+  [*] A gamepad browser for LibCharacterKnowledge, the library that Character Knowledge and other add-ons use to record what each character knows. Open it from the KelaPadUI² menu; it appears when the library is installed.
+  [*] Filters on the left: a search, Server, Character, Type (Recipe, Furnishing Plan, Motif, Scribing), Quality, and Known. The filters in use show above the table.
+  [*] The table lists each item with its icon, type, quality, level, how many characters know it, and whether the selected character does. Every column sorts from its header, and the item's tooltip shows on the right.
+[/list]
+
 [size=2][b][color=#C49A45]PersonalAssistant junk integration[/color][/b][/size]
 
 [list]
@@ -281,7 +302,7 @@ Use the right stick to scroll the right pane when its contents do not fit on scr
 All settings live in the KelaPadUI section of the gamepad settings menu. They are stored account-wide in [font=Courier New][color=#4682B4]kpuiSavedVariables[/color][/font].
 
 [list]
-  [*] Feature toggles for companion info, dungeon finder, chat tools, map rally, additional gamepad filters, antiquity lead details, main-menu quick access, the dashboard, PersonalAssistant junk marking, and the PS5 button map.
+  [*] Feature toggles for companion info, dungeon finder, chat tools, map rally, additional gamepad filters, antiquity lead details, main-menu quick access, the dashboard, Extended Journal, Character Knowledge, PersonalAssistant junk marking, and the PS5 button map.
   [*] Fixes and Patches toggles for the group menu fix and the U51 battleground fixes.
   [*] Sets interface toggle.
   [*] Trading master toggle, ATT analysis period, and per-surface tooltip toggles for the guild store, bank, vendors, and crafting stations.

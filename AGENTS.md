@@ -124,6 +124,9 @@ each one exists because the shortcut it forbids shipped a defect.
   identity, ignoring link style), `KelaLocalizedFormatNumber`,
   `KelaApplyTextStyle` / `KelaApplyEntryTextStyle`, `KelaRegisterGamepadDialog`
   and `KelaParametricSelectBackButtons` (`kpui_core/kpui_dialogs.lua`),
+  `KelaGamepadBrowser` (`kpui_core/kpui_gamepad_browser.lua`: filters on the
+  left and a sortable core gamepad table on the right for any data source; the
+  Extended Journal and Character Knowledge screens use it),
   `KelaGetDailyResetBoundary` and `KelaGetPledgeDungeon` (dashboard), and the
   trading-house helpers exported on `KPUI_TRADINGHOUSE` in
   `kpui_tradinghouse_shared.lua`.
@@ -217,6 +220,11 @@ each one exists because the shortcut it forbids shipped a defect.
   names unique per parent.
 - Optional add-ons can load after us even when listed in `OptionalDependsOn`;
   guard every use of their globals and never `assert` on them.
+- Use only a library's public table. LibExtendedJournal sets
+  `LibExtendedJournalInternal = nil` right after it loads, so code reading it
+  saw no tabs and hid its menu entries. Load order is neither alphabetical nor
+  controllable; check the real order in `SavedVariables\LibDebugLogger.lua`
+  before relying on hooking another add-on's registration.
 - Gamepad UI has no readable chat history. Use `LibDebugLogger` for diagnostics;
   keep `CHAT_SYSTEM:AddMessage` for deliberate user output only.
 - Do not own globals the game defines (`ZO_*`, `SI_*`, style tables). Keep the

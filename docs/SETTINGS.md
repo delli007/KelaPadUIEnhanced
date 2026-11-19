@@ -61,7 +61,7 @@ to be unique within this add-on and stable across releases.
 Allocate the lowest free number in the block that owns the feature. IDs are
 never reused after a public release; add a retired ID to
 `KELA_RETIRED_SETTING_IDS` in `kpui_core/kpui_settings_gamepad.lua`, and the
-audit will reject it. The unused feature IDs `7405` and `7407` and the unused
+audit will reject it. The unused feature ID `7405` and the unused
 trading ID `7503` are free; remove a number from `KELA_LEGACY_SETTING_IDS` before
 assigning it.
 
@@ -94,13 +94,17 @@ in light red on every open.
 | `7403` | `KELA_SETTING_PANEL_FEATURES_CHAT_TOOLS` | `true` |
 | `7404` | `KELA_SETTING_PANEL_FEATURES_MAP_RALLY` | `true` |
 | `7406` | `KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS` | `true` |
+| `7407` | `KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL` | `true` |
 | `7408` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS` | `true` |
 | `7409` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD` | `true` |
 | `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
 | `7411` | `KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS` | `false` |
 | `7412` | `KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS` | `true` |
+| `7414` | `KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE` | `true` |
 
-All Features toggles except the PS5 button map are reload-gated. The PS5 button
+All Features toggles except the PS5 button map, Extended Journal, and
+Character Knowledge are reload-gated; those menu entries check the setting each
+time the menu is built. The PS5 button
 map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
 and the bootstrap also applies the saved value during `KelaPadUI_OnLoaded()`.
 Leaving the KelaPadUI Enhanced options after changing a reload-gated toggle shows a

@@ -76,6 +76,7 @@ OVERRIDES = {
     ",": {"de": ".", "fr": " ", "ru": " ", "jp": ",", "es": ".", "zh": ","},
     # "character" means a player character here, not a letter.
     "<<1[$d character/$d characters]>>": {"de": "<<1[$d Charakter/$d Charaktere]>>", "fr": "<<1[$d personnage/$d personnages]>>", "ru": "<<1[$d персонаж/$d персонажей]>>", "jp": "<<1[$dキャラクター/$dキャラクター]>>", "es": "<<1[$d personaje/$d personajes]>>", "zh": "<<1[$d个角色/$d个角色]>>"},
+    "<<1[$d entry/$d entries]>>": {"de": "<<1[$d Eintrag/$d Einträge]>>", "fr": "<<1[$d entrée/$d entrées]>>", "ru": "<<1[$d запись/$d записей]>>", "jp": "<<1[$d件/$d件]>>", "es": "<<1[$d entrada/$d entradas]>>", "zh": "<<1[$d 条/$d 条]>>"},
     "Idle": {"ru": "Простаивает", "jp": "待機中", "zh": "空闲"},
     # Japanese: match the client's stat wording (SI_DERIVEDSTATS*).
     "Critical": {"jp": "クリティカル", "zh": "暴击"},
@@ -93,6 +94,13 @@ OVERRIDES = {
     "Summary": {"zh": "总览"},
     "Sets": {"zh": "套装"},
     "<<1>> active - <<2>>": {"zh": "<<1>> 项进行中 - <<2>>"},
+    # Character Knowledge: game terms from <code>_client.lua; machine
+    # translation left these in English or picked the wrong sense.
+    "Server": {"fr": "Serveur", "ru": "Сервер", "jp": "サーバー", "es": "Servidor", "zh": "服务器"},
+    "Known": {"de": "Bekannt", "jp": "習得済み"},
+    "Quality": {"jp": "品質"},
+    "Characters": {"zh": "角色"},
+    "Adds Character Knowledge to the KelaPadUI² menu when LibCharacterKnowledge is installed: which recipes, furnishing plans, motifs, and scribing items each character knows, with filters and the item tooltip.": {"de": "Fügt dem KelaPadUI²-Menü Character Knowledge hinzu, wenn LibCharacterKnowledge installiert ist: welche Rezepte, Einrichtungspläne, Stile und Schriftlehre-Gegenstände jeder Charakter kennt, mit Filtern und dem Gegenstands-Tooltip.", "fr": "Ajoute Character Knowledge au menu KelaPadUI² quand LibCharacterKnowledge est installé : les recettes, plans d'ameublement, styles et objets d'écriture que connaît chaque personnage, avec des filtres et l'infobulle de l'objet.", "ru": "Добавляет Character Knowledge в меню KelaPadUI², если установлена LibCharacterKnowledge: какие рецепты, инструкции для предметов обстановки, ремесленные мотивы и предметы чарописи знает каждый персонаж, с фильтрами и подсказкой предмета.", "jp": "LibCharacterKnowledgeがインストールされている場合、KelaPadUI²メニューにCharacter Knowledgeを追加します。各キャラクターが習得しているレシピ、家具の設計図、モチーフ、書記アイテムを、フィルターとアイテムのツールチップ付きで表示します。", "es": "Añade Character Knowledge al menú KelaPadUI² cuando LibCharacterKnowledge está instalado: qué recetas, planos de mobiliario, motivos y objetos de escribanía conoce cada personaje, con filtros y la descripción del objeto.", "zh": "安装LibCharacterKnowledge后，在KelaPadUI²菜单中添加Character Knowledge：显示每个角色已学会的配方、装饰品图纸、样式书和篆刻物品，并提供筛选和物品提示。"},
 }
 
 
