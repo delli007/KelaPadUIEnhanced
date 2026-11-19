@@ -73,9 +73,10 @@ defined by `KELA_SETTINGS_CATEGORY_ORDER` in
 
 1. Features (`7400`)
 2. Fixes and Patches (`7600`)
-3. Trait research (`7302`)
-4. Item sets (`7300`)
-5. Trading Interface (`7500`)
+3. Account-Wide Settings (`7700`)
+4. Trait research (`7302`)
+5. Item sets (`7300`)
+6. Trading Interface (`7500`)
 
 `Kela_GamepadOptions:RefreshOptionsList()` clears the list and calls
 `AddSettingGroup(panelId, categoryHeader)` for each category. The first visible
@@ -110,8 +111,35 @@ The Fixes and Patches category follows it:
 | Group menu fix | on |
 | U51 BG fixes | on |
 
-The PS5 button map is the exception: it is not reload-gated, and its settings
-checkbox applies or reverses the texture redirects immediately.
+The Account-Wide Settings category follows it:
+
+| Setting | Default |
+| --- | --- |
+| Share Camera settings with all characters | off |
+| Share Interface settings with all characters | off |
+| Share Nameplates settings with all characters | off |
+| Share Social settings with all characters | off |
+| Share Combat settings with all characters | off |
+
+The PS5 button map and the Account-Wide Settings toggles are the exceptions:
+they are not reload-gated. The PS5 checkbox applies or reverses the texture
+redirects immediately; an account-wide toggle copies the current character's
+values when turned on (see `docs/SETTINGS.md`).
+
+In-game check for account-wide settings (repeat per category):
+
+1. On character A, set distinctive options in the category: for Combat, action
+   bar Always and one buff option off; for Camera, a field of view; for
+   Interface, the quest tracker off and one chat bubble channel off; for
+   Nameplates, an enemy nameplate choice and a glow intensity; for Social, a
+   chat color and the duel auto-decline. Turn the toggle on, leave the menu,
+   run `/reloadui`, and confirm A is unchanged.
+2. Log in to character B: its panel matches A. LibDebugLogger lists each
+   setting that was written, plus a warning for any that did not take.
+3. On B, change one option (for Combat, also one HUD-editor option), log back
+   to A, and confirm it arrived.
+4. Turn the toggle off on A, change an option, and confirm B keeps the shared
+   value at its next login.
 
 `KelaPadUI_OnLoaded()` checks these settings before calling the corresponding
 setup function. Changing a toggle therefore requires `/reload`; the setting

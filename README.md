@@ -272,6 +272,16 @@ for any character on the server you are playing.
   Activity Finder Battleground entry as soon as its data loads. These mirror the
   ZOS fixes expected in U52.
 
+### Account-wide settings
+
+- **Share settings with all characters** - Keeps the game's Camera,
+  Interface, Nameplates, Social, or Combat options the same on every character,
+  with one toggle per panel. Turning a toggle on copies the current character's
+  options; after that, a change on any character reaches the others at their
+  next login. Off by default; applies without a reload.
+- Options the game already keeps for the whole PC (camera inversion and
+  sensitivity, for example) and the text language are left alone.
+
 ## Settings
 
 All settings live in the KelaPadUI section of the gamepad settings menu. They are
@@ -283,6 +293,8 @@ stored account-wide in `kpuiSavedVariables`.
   marking, and the PS5 button map.
 - Fixes and Patches toggles for the group menu fix and the U51 battleground
   fixes.
+- Account-wide sharing of the game's Camera, Interface, Nameplates, Social, and
+  Combat options.
 - Sets interface toggle.
 - Trading master toggle, ATT analysis period, and per-surface tooltip toggles for
   the guild store, bank, vendors, and crafting stations.

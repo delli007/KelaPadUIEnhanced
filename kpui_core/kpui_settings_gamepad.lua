@@ -18,8 +18,9 @@ KELA_SETTINGS_DIRTY_DEFAULT = 2
 --   7300-7399  core panels
 --   7400-7499  feature toggles
 --   7500-7599  trading
---   7600-7699  next module family
---   7700-7999  reserve
+--   7600-7699  fixes and patches
+--   7700-7799  account-wide game settings
+--   7800-7999  reserve
 SETTING_TYPE_KELA = 7000
 
 -- SETS
@@ -48,6 +49,13 @@ KELA_SETTING_PANEL_FIXES_GROUP_MENU 			= 7601
 -- 7413 keeps the number it shipped with so saved values survive the move from
 -- the Features panel into Fixes and Patches.
 KELA_SETTING_PANEL_FIXES_BG_U51 				= 7413
+-- ACCOUNT-WIDE GAME SETTINGS
+KELA_SETTING_PANEL_ACCOUNT 						= 7700
+KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT 				= 7701
+KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA 				= 7702
+KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE 			= 7703
+KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES 			= 7704
+KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL 				= 7705
 -- TRADING
 KELA_SETTING_PANEL_TRADE 						= 7500 
 KELA_SETTING_PANEL_TRADE_ENABLED 				= 7501
@@ -176,6 +184,15 @@ KELA_SETTINGS_DATA =
             settingId = KELA_SETTING_PANEL_FIXES_BG_U51,
         },
     },
+	-- ACCOUNT-WIDE GAME SETTINGS
+    [KELA_SETTING_PANEL_ACCOUNT] =
+    {
+        { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA },
+        { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE },
+        { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES },
+        { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL },
+        { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT },
+    },
 	-- TRAIT RESEARCH
     [KELA_SETTING_PANEL_TRAIT_RESEARCH] =
     {
@@ -264,6 +281,33 @@ KELA_SETTINGS_DATA =
 
 }
 
+
+-- One "share this Options panel" checkbox. It applies without a reload: the
+-- account settings module acts on the toggle event. The label and tooltip use
+-- the game's own panel name.
+local function KelaAccountSyncRow(settingId, gamePanel)
+	local function PanelName()
+		return GetString("SI_SETTINGSYSTEMPANEL", gamePanel)
+	end
+	return
+	{
+		controlType = OPTIONS_CHECKBOX,
+		system = SETTING_TYPE_KELA,
+		panel = KELA_SETTING_PANEL_ACCOUNT,
+		settingId = settingId,
+		text = function()
+			return zo_strformat(GetString(KELA_SETTINGS_ACCOUNT_SYNC_CATEGORY), PanelName())
+		end,
+		tooltipText = function()
+			return zo_strformat(GetString(KELA_SETTINGS_ACCOUNT_SYNC_TOOLTIP), PanelName())
+		end,
+		events =
+		{
+			[true] = "KELA_ACCOUNT_SETTINGS_TOGGLED",
+			[false] = "KELA_ACCOUNT_SETTINGS_TOGGLED",
+		},
+	}
+end
 
 -- control data table for the auto-list
 kela_SettingsData = 
@@ -453,6 +497,17 @@ kela_SettingsData =
 			},
 		},
 	},
+    [KELA_SETTING_PANEL_ACCOUNT] =
+    {
+		[SETTING_TYPE_KELA] =
+		{
+			[KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA] = KelaAccountSyncRow(KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA, SETTING_PANEL_CAMERA),
+			[KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE] = KelaAccountSyncRow(KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE, SETTING_PANEL_INTERFACE),
+			[KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES] = KelaAccountSyncRow(KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES, SETTING_PANEL_NAMEPLATES),
+			[KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL] = KelaAccountSyncRow(KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL, SETTING_PANEL_SOCIAL),
+			[KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT] = KelaAccountSyncRow(KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT, SETTING_PANEL_COMBAT),
+		},
+	},
     [KELA_SETTING_PANEL_TRADE] =
     {
 		[SETTING_TYPE_KELA] =
@@ -640,6 +695,12 @@ KELA_SETTINGS_DEFAULTS =
 		-- FIXES AND PATCHES
 		[KELA_SETTING_PANEL_FIXES_GROUP_MENU] 			= "true",
 		[KELA_SETTING_PANEL_FIXES_BG_U51] 				= "true",
+		-- ACCOUNT-WIDE GAME SETTINGS
+		[KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT] 				= "false",
+		[KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA] 				= "false",
+		[KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE] 			= "false",
+		[KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES] 			= "false",
+		[KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL] 				= "false",
 		-- TRADING
 		[KELA_SETTING_PANEL_TRADE_ENABLED] 				= "true",
 		[KELA_SETTING_PANEL_TRADE_ATT_PERIOD] 			= "15",
@@ -1216,6 +1277,8 @@ do
         local tooltipText
         if type(data.tooltipText) == "number" then
             tooltipText = GetString(data.tooltipText)
+        elseif type(data.tooltipText) == "function" then
+            tooltipText = data.tooltipText(data)
         else
             tooltipText = data.tooltipText
         end
@@ -1394,6 +1457,7 @@ local KELA_SETTINGS_CATEGORY_ORDER =
 {
     KELA_SETTING_PANEL_FEATURES,
     KELA_SETTING_PANEL_FIXES,
+    KELA_SETTING_PANEL_ACCOUNT,
     KELA_SETTING_PANEL_TRAIT_RESEARCH,
     KELA_SETTING_PANEL_SETS,
     KELA_SETTING_PANEL_TRADE,

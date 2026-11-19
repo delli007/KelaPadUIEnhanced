@@ -71,6 +71,8 @@ BRAND_TOKENS = ("KelaPadUI Enhanced", "KelaPadUI", "ESO+", "USPF")
 # Hand-checked text. Applies to any string, per language, before machine
 # translation; entries that are also ESO client strings need every language.
 OVERRIDES = {
+    # Settings labels read as a setting, not a command to the reader.
+    "Share <<1>> settings with all characters": {"de": "<<1>>-Einstellungen mit allen Charakteren teilen", "ru": "Общие настройки «<<1>>» для всех персонажей", "es": "Compartir la configuración de <<1>> con todos los personajes"},
     "Undaunted": {"de": "Unerschrockene", "fr": "Indomptables", "ru": "Неустрашимые"},
     # KELA_THOUSANDS_SEPARATOR: machine translation returns the English comma.
     ",": {"de": ".", "fr": " ", "ru": " ", "jp": ",", "es": ".", "zh": ","},

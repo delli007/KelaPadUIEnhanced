@@ -130,8 +130,9 @@ SETTING_BLOCKS = (
     (7300, 7399, "core"),
     (7400, 7499, "features"),
     (7500, 7599, "trading"),
-    (7600, 7699, "next module family"),
-    (7700, 7999, "reserve"),
+    (7600, 7699, "fixes and patches"),
+    (7700, 7799, "account-wide settings"),
+    (7800, 7999, "reserve"),
 )
 # Legacy XML files, grandfathered. New UI is built in Lua; this allowlist exists
 # so the set can only shrink. Adding a file here is a deliberate exception to

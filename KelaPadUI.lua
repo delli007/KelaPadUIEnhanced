@@ -208,6 +208,8 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	KelaSetupExtendedJournal()
 	-- Always set up: the menu entry checks the setting whenever it is built.
 	KelaSetupCharacterKnowledge()
+	-- Always set up: each category checks its setting, so the toggle needs no reload.
+	KelaSetupAccountSettings()
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_PA_JUNK) then
 		KelaSetupPAJunk()
 	end

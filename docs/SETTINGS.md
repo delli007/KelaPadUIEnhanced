@@ -56,7 +56,8 @@ to be unique within this add-on and stable across releases.
 | `7400`-`7499` | Feature toggles |
 | `7500`-`7599` | Trading house |
 | `7600`-`7699` | Fixes and Patches panel |
-| `7700`-`7999` | Reserve |
+| `7700`-`7799` | Account-wide game settings panel |
+| `7800`-`7999` | Reserve |
 
 Allocate the lowest free number in the block that owns the feature. IDs are
 never reused after a public release; add a retired ID to
@@ -152,6 +153,65 @@ saved values survive the move. The constant was renamed from
 `KELA_SETTINGS_FEATURES_BASE_GAME_FIXES*` string IDs so the generated
 translations continue to apply.
 
+### Account-wide game settings
+
+| ID | Constant | Default |
+| --- | --- | --- |
+| `7700` | `KELA_SETTING_PANEL_ACCOUNT` (panel) | - |
+| `7701` | `KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT` | `false` |
+| `7702` | `KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA` | `false` |
+| `7703` | `KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE` | `false` |
+| `7704` | `KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES` | `false` |
+| `7705` | `KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL` | `false` |
+
+The rows are listed in the game's Options order (Camera, Interface, Nameplates,
+Social, Combat) and built by `KelaAccountSyncRow`, which labels each one with the
+game's own panel name.
+
+This panel sits below Fixes and Patches. Its toggles are not reload-gated: each
+checkbox fires `KELA_ACCOUNT_SETTINGS_TOGGLED` through its `events` table, and
+`kpui_features/kpui_account_settings.lua` acts on the change. That module is the
+only code that calls the base-game `GetSetting`/`SetSetting` API, and only with
+base-game setting constants, never with Kela IDs. Social and Interface also use
+the chat APIs `Get`/`SetChatCategoryColor`, `IsChatBubbleCategoryEnabled` /
+`SetChatBubbleCategoryEnabled`, and `Get`/`SetGamepadChatFontSize`.
+
+What each category leaves out, and why:
+
+- **Camera:** inversion, sensitivity, assassination camera, screen shake, and
+  siege camera are saved in the client's `UserSettings.txt`, so every character
+  on the PC already shares them.
+- **Interface:** the text language is a client setting that needs a UI reload.
+- **Social:** the keyboard chat text size and minimum opacity are stored per
+  chat window by the keyboard chat, and restricted communication is an account
+  control.
+
+Each toggle shares one base-game Options category across every character on
+the account (last change wins):
+
+- Turning it on copies the current character's values into
+  `kpuiSavedVariables.accountGameSettings.categories[<key>].values`.
+- At the first `EVENT_PLAYER_ACTIVATED` of a session, values that differ are
+  written with `SetSetting`, then `SendAllCachedSettingMessages()` is called.
+- The shared copy is re-read when the gamepad Options scenes hide, on
+  `EVENT_INTERFACE_SETTING_CHANGED` for the UI, BUFFS, NAMEPLATES, IN_WORLD,
+  CAMERA, and CHAT_BUBBLE systems (which covers the HUD editor), and on `EVENT_PLAYER_DEACTIVATED`. Nothing is re-read before
+  the login apply has run, so a new character never overwrites the shared copy
+  with its old values.
+- Saved keys are the constant names (`SETTING_TYPE_UI|UI_SETTING_SHOW_ACTION_BAR`),
+  resolved through `_G` at runtime; chat options use `CHAT_COLOR|<category>`,
+  `CHAT_BUBBLE|<category>`, and `GAMEPAD_CHAT_FONT_SIZE`. Values are `"1"`/`"0"`
+  for booleans, integer strings for lists, formatted numbers for sliders
+  (`%.2f` unless the entry sets a format), and `"r,g,b"` for colors. The data is account-wide and shared across NA, EU,
+  and PTS.
+
+To add a category, add a `CATEGORIES` entry and its key to `CATEGORY_ORDER` in
+that module, allocate the next `77xx` ID with a `KelaAccountSyncRow` row, and list
+the settings from the base game's `optionspanel_*_shared.lua`. Skip settings that
+use `GetSettingOverride`/`SetSettingOverride`, settings already stored in the
+client's `UserSettings.txt` (shared by every character already), and settings
+that are per character on purpose (Gameplay appearance options).
+
 The Companion information toggle (`7401`) also gates the extra details in the
 gamepad Collections > Allies > Companions tooltip
 (`kpui_features/companion/kpui_companion_collections.lua`). That module stores build
@@ -190,6 +250,8 @@ category list and no `kela_options_panel` scene.
 local KELA_SETTINGS_CATEGORY_ORDER =
 {
     KELA_SETTING_PANEL_FEATURES,
+    KELA_SETTING_PANEL_FIXES,
+    KELA_SETTING_PANEL_ACCOUNT,
     KELA_SETTING_PANEL_TRAIT_RESEARCH,
     KELA_SETTING_PANEL_SETS,
     KELA_SETTING_PANEL_TRADE,
@@ -298,7 +360,7 @@ state is true.
 
 ## Testing checklist
 
-- Open KelaPadUI Enhanced, then Settings, and confirm all four category headings are
+- Open KelaPadUI Enhanced, then Settings, and confirm all six category headings are
   visible in one scrollable list.
 - Confirm `Sets` is visible or hidden according to the Item sets setting,
   `Trait Research` according to the Trait research setting, and that Settings

@@ -12,6 +12,10 @@ This file tracks open and deferred work. Keep it updated after each refactor pha
   `kpui_features/mainmenu/kpui_main_menu_dashboard.lua`).
 
 
+- Account-wide settings: the Gameplay panel is not shared. If it is added,
+  leave out its appearance options (hide helm, costume, mount), which are per
+  character on purpose (`kpui_features/kpui_account_settings.lua`).
+
 ## Candidate enhancements
 
 - Additional price providers: optional Master Merchant, LibPrice or ESO-Hub adapters behind capability checks and source labels.

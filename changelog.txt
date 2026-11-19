@@ -1,3 +1,7 @@
+2.9.1 - 11/19/2026
+- New Account-Wide Settings: set your game options once and every character follows. One toggle each for Camera, Interface, Nameplates, Social, and Combat, so you share just the panels you want. Turning one on copies your current character's options, and after that a change on any character reaches the rest at their next login. Off by default, no reload needed.
+- Chat colors, nameplate choices, the compass and quest tracker, combat text, buffs and debuffs, field of view, and more now stay the same across your alts.
+
 2.9.0 - 11/18/2026
 - Extended Journal comes to the gamepad! Loot Log, Collectibles Tracker, and every other journal get filters on the left and a sortable table on the right. L1/R1 flips between journals. Find it in the KelaPadUI² menu or at the bottom of the Journal menu.
 - New Character Knowledge browser: see which recipes, furnishing plans, motifs, and scribing items each character knows, with search, quality, and type filters, and how many of your characters know each one. Needs LibCharacterKnowledge.
