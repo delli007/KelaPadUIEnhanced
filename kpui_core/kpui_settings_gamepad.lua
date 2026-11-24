@@ -37,13 +37,17 @@ KELA_SETTING_PANEL_FEATURES_DUNGEON_FINDER 		= 7402
 KELA_SETTING_PANEL_FEATURES_CHAT_TOOLS 			= 7403
 KELA_SETTING_PANEL_FEATURES_MAP_RALLY 			= 7404
 KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS 	= 7406
-KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL = 7407
+-- 7407 (Extended Journal) is retired; Loot Log, Collectibles Tracker, and
+-- Raidificator each have their own toggle.
 KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS = 7408
 KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD = 7409
 KELA_SETTING_PANEL_FEATURES_PA_JUNK = 7410
 KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS = 7411
 KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS = 7412
 KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE = 7414
+KELA_SETTING_PANEL_FEATURES_LOOT_LOG = 7415
+KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER = 7416
+KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR = 7417
 -- FIXES AND PATCHES
 KELA_SETTING_PANEL_FIXES 						= 7600
 KELA_SETTING_PANEL_FIXES_GROUP_MENU 			= 7601
@@ -88,6 +92,7 @@ KELA_RETIRED_SETTING_IDS =
 {
 	7300, -- Item sets panel, merged into Journals and Browsers
 	7302, -- Trait research panel, merged into Journals and Browsers
+	7407, -- Extended Journal, replaced by one screen per add-on (7415-7417)
 }
 
 -- Other add-ons that settings depend on. `name` is the add-on's own title and
@@ -95,7 +100,9 @@ KELA_RETIRED_SETTING_IDS =
 local KELA_ADDONS =
 {
 	LCK = { name = "LibCharacterKnowledge", isLoaded = function() return LibCharacterKnowledge ~= nil end },
-	LEJ = { name = "LibExtendedJournal", isLoaded = function() return LibExtendedJournal ~= nil end },
+	LL = { name = "Loot Log", isLoaded = function() return LootLog ~= nil end },
+	CT = { name = "Collectibles Tracker", isLoaded = function() return CollectiblesTracker ~= nil end },
+	RCR = { name = "Raidificator", isLoaded = function() return Raidificator ~= nil end },
 	PA = { name = "PersonalAssistant", isLoaded = function() return PersonalAssistant ~= nil end },
 	TTC = { name = "Tamriel Trade Centre", isLoaded = function() return TamrielTradeCentre ~= nil end },
 	ATT = { name = "Arkadius Trade Tools", isLoaded = function() return ArkadiusTradeTools ~= nil end },
@@ -237,7 +244,9 @@ KELA_SETTINGS_DATA =
         { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_SETS_ENABLED },
         { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED },
         { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE },
-        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_LOOT_LOG },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR },
     },
 	-- TRADING
     [KELA_SETTING_PANEL_TRADE] =
@@ -374,15 +383,35 @@ kela_SettingsData =
 				tooltipText = KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE_TOOLTIP,
 				addons = { required = { KELA_ADDONS.LCK } },
 			},
-			[KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL] =
+			[KELA_SETTING_PANEL_FEATURES_LOOT_LOG] =
 			{
 				controlType = OPTIONS_CHECKBOX,
 				system = SETTING_TYPE_KELA,
 				panel = KELA_SETTING_PANEL_JOURNALS,
-				settingId = KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL,
-				text = KELA_SETTINGS_FEATURES_EXTENDED_JOURNAL,
-				tooltipText = KELA_SETTINGS_FEATURES_EXTENDED_JOURNAL_TOOLTIP,
-				addons = { required = { KELA_ADDONS.LEJ } },
+				settingId = KELA_SETTING_PANEL_FEATURES_LOOT_LOG,
+				text = KELA_SETTINGS_FEATURES_LOOT_LOG,
+				tooltipText = KELA_SETTINGS_FEATURES_LOOT_LOG_TOOLTIP,
+				addons = { required = { KELA_ADDONS.LL } },
+			},
+			[KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER,
+				text = KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER,
+				tooltipText = KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP,
+				addons = { required = { KELA_ADDONS.CT } },
+			},
+			[KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR,
+				text = KELA_SETTINGS_FEATURES_RAIDIFICATOR,
+				tooltipText = KELA_SETTINGS_FEATURES_RAIDIFICATOR_TOOLTIP,
+				addons = { required = { KELA_ADDONS.RCR } },
 			},
 		},
 	},
@@ -844,8 +873,10 @@ KELA_SETTINGS_DEFAULTS =
 		[KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS] 	= "true",
 		[KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS] = "true",
 		[KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD] = "true",
-		[KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL] 	= "true",
 		[KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE] = "true",
+		[KELA_SETTING_PANEL_FEATURES_LOOT_LOG] 			= "true",
+		[KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER] = "true",
+		[KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR] 		= "true",
 		[KELA_SETTING_PANEL_FEATURES_PA_JUNK] 			= "true",
 		[KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS] 		= "false",
 		-- FIXES AND PATCHES

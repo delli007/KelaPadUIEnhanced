@@ -1,11 +1,13 @@
 2.9.1 - 11/19/2026
+- Added direct and more filterable interfaces to Loot Log, Collectibles Tracker, and Raidificator.
+- Removed support for LibExtendedJournal since the author has no plans to allow external add-on access and its filter options were lacking.
 - New Account-Wide Settings: set your game options once and every character follows. One toggle each for Camera, Interface, Nameplates, Social, and Combat, so you share just the panels you want. Turning one on copies your current character's options, and after that a change on any character reaches the rest at their next login. Off by default, no reload needed.
 - Chat colors, nameplate choices, the compass and quest tracker, combat text, buffs and debuffs, field of view, and more now stay the same across your alts.
 - Ability bar upgrades for gamepad: stack counts on both bars (yes, even Seething Fury and Crux), with a timer when the stacks expire, a back row that turns red just before an effect runs out, and a taller back row so you can tell your skills apart. Show the timer as a bar, as numbers, or both, raise the back row as far as you like, or keep the whole back row visible all the time.
 - Slide your Magicka and Stamina bars in toward your health bar with one slider.
 - Your ability and attribute bars now show behind the KelaPadUI settings, so you can watch them change as you adjust them.
 - Settings that work with other add-ons now show which ones they need, and whether each one is installed, right in the help text.
-- The sets browser, trait research matrix, Character Knowledge, and Extended Journal settings now share one Journals and Browsers section.
+- The sets browser, trait research matrix, Character Knowledge, Loot Log, Collectibles Tracker, and Raidificator settings now share one Journals and Browsers section.
 
 2.9.0 - 11/18/2026
 - Extended Journal comes to the gamepad! Loot Log, Collectibles Tracker, and every other journal get filters on the left and a sortable table on the right. L1/R1 flips between journals. Find it in the KelaPadUI² menu or at the bottom of the Journal menu.

@@ -28,7 +28,9 @@ Optional integrations are detected at runtime. Missing libraries only disable th
   [*] [b]USPF:[/b] The Skill Points row on the dashboard.
   [*] [b]LibDebugLogger:[/b] Optional diagnostic logging.
   [*] [b]PersonalAssistant:[/b] Permanent-junk marking actions in the gamepad inventory.
-  [*] [b]LibExtendedJournal:[/b] The gamepad Extended Journal (bundled with Loot Log, Collectibles Tracker, and others).
+  [*] [b]Loot Log:[/b] The Loot Log screen in the KelaPadUI² menu.
+  [*] [b]Collectibles Tracker:[/b] The Collectibles Tracker screen in the KelaPadUI² menu.
+  [*] [b]Raidificator:[/b] The Raidificator screen in the KelaPadUI² menu.
   [*] [b]LibCharacterKnowledge:[/b] The Character Knowledge browser and other characters in Trait Research.
 [/list]
 
@@ -252,15 +254,16 @@ Appears below the matrix in four station columns, with each research line, trait
 
 Use the right stick to scroll the right pane when its contents do not fit on screen.
 
-[size=2][b][color=#C49A45]Extended Journal[/color][/b][/size]
+[size=2][b][color=#C49A45]Loot Log, Collectibles Tracker, and Raidificator[/color][/b][/size]
 
 [list]
-  [*] A gamepad screen for Extended Journal, the shared window used by Loot Log, Item Set Browser, Character Knowledge, Collectibles Tracker, Raidificator, and other add-ons. Open it from the KelaPadUI² menu or the end of the gamepad Journal menu.
-  [*] L1 and R1 switch between the journals. Each journal's filters (search first, then dropdowns and checkboxes) are on the left and its table, with the same columns as the keyboard window, fills the right.
+  [*] Three gamepad screens, one for each add-on, in the KelaPadUI² menu. Each appears only while its add-on is installed. L1 and R1 switch between an add-on's pages. The filters (search first) are on the left and the table fills the right.
   [*] Right on the D-pad moves into the table. Up from the first row selects the column headers; A sorts by the selected column, and again reverses it. LT and RT jump to the first and last row. B returns to the filters.
   [*] A runs the entry's action (or lists them when there are several), and R3 shows or hides the entry's tooltip.
-  [*] Works with any add-on built on Extended Journal, read as it runs, so new journals and changes to them appear without an update. The entries appear only when one is installed.
-  [*] Opening Extended Journal from the keyboard main menu or its keybind still shows the keyboard window, with a Back button added for the controller.
+  [*] Loot Log has Loot History and Materials pages. Filter the history by who looted it (you, others, or one player), category, quality, time range, set items, notable loot, and uncollected items. Materials shows what you looted and how many you own, filtered by type, quality, and stock.
+  [*] Collectibles Tracker has Collectibles and Event Collectibles pages. Filter by source, status (collected, not collected, in progress), category, and whether to show Premium Tome items and manually hidden ones (both off by default); hide or unhide an entry with A, which also hides it in the keyboard window.
+  [*] Raidificator has Achievements and Score History pages. Filter the history by content, account, character, server, and time range, or show only each character's best clear. Filter achievements by category, progress, and the type you are still missing (clear, hard mode, speed run, no death, trifecta); X links a zone's cleared achievements in chat and Y the uncleared ones. Multi-account data is not shown.
+  [*] These read each add-on's own saved data, since none offers an API, and only read it. Opening the add-ons from their keybinds still shows the keyboard window.
 [/list]
 
 [size=2][b][color=#C49A45]Character Knowledge[/color][/b][/size]
@@ -326,7 +329,7 @@ All settings live in the KelaPadUI section of the gamepad settings menu. They ar
   [*] Fixes and Patches toggles for the group menu fix and the U51 battleground fixes.
   [*] Account-wide sharing of the game's Camera, Interface, Nameplates, Social, and Combat options.
   [*] Ability bar enhancements (stack counts, expiry warning, back row height and timer style) and the attribute bar shift.
-  [*] Journals and Browsers toggles for the sets browser, the trait research matrix, Character Knowledge, and Extended Journal.
+  [*] Journals and Browsers toggles for the sets browser, the trait research matrix, Character Knowledge, Loot Log, Collectibles Tracker, and Raidificator.
   [*] Settings that work with other add-ons list them in their help text, each marked found or not found (or, for add-ons that turn a feature off, loaded or not loaded).
   [*] Trading master toggle, ATT analysis period, and per-surface tooltip toggles for the guild store, bank, vendors, and crafting stations.
   [*] Guild statistics, ATT price information, listing rows, quality rows, production rows, and crafting-component rows.

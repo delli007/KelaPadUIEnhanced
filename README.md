@@ -30,7 +30,9 @@ the features that use them:
 | `USPF` | The Skill Points row on the dashboard. |
 | `LibDebugLogger` | Optional diagnostic logging. |
 | `PersonalAssistant` | Permanent-junk marking actions in the gamepad inventory. |
-| `LibExtendedJournal` | The gamepad Extended Journal (bundled with Loot Log, Collectibles Tracker, and others). |
+| `Loot Log` | The Loot Log screen in the KelaPadUI² menu. |
+| `Collectibles Tracker` | The Collectibles Tracker screen in the KelaPadUI² menu. |
+| `Raidificator` | The Raidificator screen in the KelaPadUI² menu. |
 | `LibCharacterKnowledge` | The Character Knowledge browser and other characters in Trait Research. |
 
 The trading features need at least one of TTC or ATT. Either provider works
@@ -216,25 +218,35 @@ for any character on the server you are playing.
   research line, trait, and countdown. Use the right stick to scroll the right
   pane when its contents do not fit on screen.
 
-### Extended Journal
+### Loot Log, Collectibles Tracker, and Raidificator
 
-- A gamepad screen for Extended Journal, the shared window used by Loot Log,
-  Item Set Browser, Character Knowledge, Collectibles Tracker, Raidificator, and
-  other add-ons. Open it from the KelaPadUI² menu or the end of the gamepad
-  Journal menu.
-- L1 and R1 switch between the journals. Each journal's filters (search
-  first, then dropdowns and checkboxes) are on the left and its table, with
-  the same columns as the keyboard window, fills the right.
+- Three gamepad screens, one for each add-on, in the KelaPadUI² menu. Each
+  appears only while its add-on is installed. L1 and R1 switch between an
+  add-on's pages. The filters (search first) are on the left and the table
+  fills the right.
 - Right on the D-pad moves into the table. Up from the first row selects the
   column headers; A sorts by the selected column, and again reverses it. LT
   and RT jump to the first and last row. B returns to the filters.
 - A runs the entry's action (or lists them when there are several), and R3
   shows or hides the entry's tooltip.
-- Works with any add-on built on Extended Journal, read as it runs, so new
-  journals and changes to them appear without an update. The entries appear
-  only when one is installed.
-- Opening Extended Journal from the keyboard main menu or its keybind still
-  shows the keyboard window, with a Back button added for the controller.
+- Loot Log has Loot History and Materials pages. Filter the history by who
+  looted it (you, others, or one player), category, quality, time range, set
+  items, notable loot, and uncollected items. Materials shows what you looted
+  and how many you own, filtered by type, quality, and stock.
+- Collectibles Tracker has Collectibles and Event Collectibles pages. Filter
+  by source, status (collected, not collected, in progress), category, and
+  whether to show Premium Tome items and manually hidden ones (both off by
+  default); hide or unhide an entry with A, which also hides it in the
+  keyboard window.
+- Raidificator has Achievements and Score History pages. Filter the history by
+  content, account, character, server, and time range, or show only each
+  character's best clear. Filter achievements by category, progress, and the
+  type you are still missing (clear, hard mode, speed run, no death,
+  trifecta); X links a zone's cleared achievements in chat and Y the uncleared ones. Multi-account
+  data is not shown.
+- These read each add-on's own saved data, since none offers an API, and only
+  read it. Opening the add-ons from their keybinds still shows the keyboard
+  window.
 
 ### Character Knowledge
 
@@ -315,7 +327,7 @@ stored account-wide in `kpuiSavedVariables`.
 - Ability bar enhancements (stack counts, expiry warning, back row height and
   timer style) and the attribute bar shift.
 - Journals and Browsers toggles for the sets browser, the trait research
-  matrix, Character Knowledge, and Extended Journal.
+  matrix, Character Knowledge, Loot Log, Collectibles Tracker, and Raidificator.
 - Settings that work with other add-ons list them in their help text, each
   marked found or not found (or, for add-ons that turn a feature off, loaded or
   not loaded).

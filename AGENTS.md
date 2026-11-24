@@ -125,8 +125,9 @@ each one exists because the shortcut it forbids shipped a defect.
   `KelaApplyTextStyle` / `KelaApplyEntryTextStyle`, `KelaRegisterGamepadDialog`
   and `KelaParametricSelectBackButtons` (`kpui_core/kpui_dialogs.lua`),
   `KelaGamepadBrowser` (`kpui_core/kpui_gamepad_browser.lua`: filters on the
-  left and a sortable core gamepad table on the right for any data source; the
-  Extended Journal and Character Knowledge screens use it),
+  left and a sortable core gamepad table on the right for any data source,
+  with `SearchFilter` / `ChoiceFilter` / `ToggleFilter` builders; the Loot Log,
+  Collectibles Tracker, Raidificator, and Character Knowledge screens use it),
   `KelaGetDailyResetBoundary` and `KelaGetPledgeDungeon` (dashboard), and the
   trading-house helpers exported on `KPUI_TRADINGHOUSE` in
   `kpui_tradinghouse_shared.lua`.
@@ -220,6 +221,12 @@ each one exists because the shortcut it forbids shipped a defect.
   names unique per parent.
 - Optional add-ons can load after us even when listed in `OptionalDependsOn`;
   guard every use of their globals and never `assert` on them.
+- Loot Log, Collectibles Tracker, and Raidificator publish no API, so their
+  screens read each add-on's own global tables (`LootLog.history`,
+  `CollectiblesTracker.data`, `Raidificator.history`). Treat every field as
+  untrusted: check types, guard with the availability function, and only read
+  (hiding a collectible writes Collectibles Tracker's own hide list, as its
+  window does). Never reintroduce LibExtendedJournal: it has no data API.
 - Use only a library's public table. LibExtendedJournal sets
   `LibExtendedJournalInternal = nil` right after it loads, so code reading it
   saw no tabs and hid its menu entries. Load order is neither alphabetical nor

@@ -26,7 +26,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `KelaPadUIEnhanced.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, add-on dialogs (`kpui_dialogs.lua`), the gamepad data browser (`kpui_gamepad_browser.lua`), tooltip styles, and gamepad tooltip code. |
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, Character Knowledge, the main menu, and trading house. |
-| `kpui_features/journals/` | The gamepad Extended Journal: reads any LibExtendedJournal tab as a gamepad browser source. |
+| `kpui_features/journals/` | The Loot Log, Collectibles Tracker, and Raidificator screens: each reads its add-on's own tables as gamepad browser sources. |
 | `kpui_features/fixes/` | Base-game fixes: the group menu panel leak and the U51 battleground fixes. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
@@ -112,7 +112,9 @@ built:
 | Sets interface | on |
 | Trait research matrix | on |
 | Character Knowledge | on |
-| Extended Journal | on |
+| Loot Log | on |
+| Collectibles Tracker | on |
+| Raidificator | on |
 
 Settings that depend on another add-on list it in their help text with a live
 status (see `addons` in `docs/SETTINGS.md`). To check it, open the help for
@@ -443,6 +445,11 @@ Manual in-game checks are still required for:
   without affecting character navigation, including at 1080p;
 - starting, cancelling and completing research while the page is open, checking
   countdown refreshes and that empty or unavailable data is not shown as active;
+- opening Loot Log, Collectibles Tracker, and Raidificator from the KelaPadUI²
+  menu with each add-on installed and then disabled (the entry hides when its
+  add-on is missing); paging with L1/R1; trying each filter and sorting each
+  column; looting an item with Loot Log open and confirming the row appears;
+  hiding and unhiding a collectible and confirming the keyboard window agrees;
 - at a transmute station, search for set names (including Cyrodiil sets), test
   mixed case, no matches, clearing and leaving/re-entering; confirm existing
   locked-item filters and reconstruction selection and Back navigation work;

@@ -159,6 +159,12 @@ OVERRIDES = {
     "Quality": {"jp": "品質"},
     "Characters": {"zh": "角色"},
     "Adds Character Knowledge to the KelaPadUI² menu when LibCharacterKnowledge is installed: which recipes, furnishing plans, motifs, and scribing items each character knows, with filters and the item tooltip.": {"de": "Fügt dem KelaPadUI²-Menü Character Knowledge hinzu, wenn LibCharacterKnowledge installiert ist: welche Rezepte, Einrichtungspläne, Stile und Schriftlehre-Gegenstände jeder Charakter kennt, mit Filtern und dem Gegenstands-Tooltip.", "fr": "Ajoute Character Knowledge au menu KelaPadUI² quand LibCharacterKnowledge est installé : les recettes, plans d'ameublement, styles et objets d'écriture que connaît chaque personnage, avec des filtres et l'infobulle de l'objet.", "ru": "Добавляет Character Knowledge в меню KelaPadUI², если установлена LibCharacterKnowledge: какие рецепты, инструкции для предметов обстановки, ремесленные мотивы и предметы чарописи знает каждый персонаж, с фильтрами и подсказкой предмета.", "jp": "LibCharacterKnowledgeがインストールされている場合、KelaPadUI²メニューにCharacter Knowledgeを追加します。各キャラクターが習得しているレシピ、家具の設計図、モチーフ、書記アイテムを、フィルターとアイテムのツールチップ付きで表示します。", "es": "Añade Character Knowledge al menú KelaPadUI² cuando LibCharacterKnowledge está instalado: qué recetas, planos de mobiliario, motivos y objetos de escribanía conoce cada personaje, con filtros y la descripción del objeto.", "zh": "安装LibCharacterKnowledge后，在KelaPadUI²菜单中添加Character Knowledge：显示每个角色已学会的配方、装饰品图纸、样式书和篆刻物品，并提供筛选和物品提示。"},
+    # Browser screens: "Shown" is a filter state, not "as shown".
+    # "Cleared" means completed here, not wiped.
+    "Link Cleared": {"de": "Erledigte verlinken", "fr": "Lier les terminés", "ru": "Ссылки на выполненные", "jp": "達成済みをリンク", "es": "Enlazar completados", "zh": "链接已完成"},
+    "Link Uncleared": {"de": "Offene verlinken", "fr": "Lier les restants", "ru": "Ссылки на невыполненные", "jp": "未達成をリンク", "es": "Enlazar pendientes", "zh": "链接未完成"},
+    "Shown": {"de": "Angezeigt", "fr": "Affichés", "ru": "Показаны", "jp": "表示", "es": "Visibles", "zh": "显示"},
+    "Hide Arc 1 (Infinite Archive)": {"de": "Arc 1 ausblenden (Infinite Archive)", "fr": "Masquer l'Arc 1 (Archive Infinie)", "ru": "Скрыть Арку 1 (Бесконечный архив)", "jp": "アーク1を非表示 (無限アーカイブ)", "es": "Ocultar el Arco 1 (Archivo Infinito)", "zh": "隐藏弧线 1（无限存档）"},
 }
 
 

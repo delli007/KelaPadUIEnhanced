@@ -75,16 +75,20 @@ assigning it.
 | `7301` | `KELA_SETTING_PANEL_SETS_ENABLED` | `true` |
 | `7303` | `KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED` | `true` |
 | `7414` | `KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE` | `true` |
-| `7407` | `KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL` | `true` |
+| `7415` | `KELA_SETTING_PANEL_FEATURES_LOOT_LOG` | `true` |
+| `7416` | `KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER` | `true` |
+| `7417` | `KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR` | `true` |
 
 - One panel for the menu screens: the sets browser, the trait research matrix,
-  Character Knowledge, and Extended Journal.
-- Each toggle keeps the ID it shipped with, so saved values carry over. Extended
-  Journal and Character Knowledge keep their Features-block numbers.
+  Character Knowledge, Loot Log, Collectibles Tracker, and Raidificator.
+- Each toggle keeps the ID it shipped with, so saved values carry over.
+  Character Knowledge keeps its Features-block number.
 - The old one-row panels, `7300` (Item sets) and `7302` (Trait research), are
-  retired in `KELA_RETIRED_SETTING_IDS`.
-- The trait research matrix is reload-gated. The sets browser, Extended Journal,
-  and Character Knowledge check their setting whenever the menu is built.
+  retired in `KELA_RETIRED_SETTING_IDS`, and so is `7407` (Extended Journal),
+  which the three add-on toggles replaced.
+- The trait research matrix is reload-gated. The sets browser, Character
+  Knowledge, Loot Log, Collectibles Tracker, and Raidificator check their
+  setting whenever the menu is built.
 
 ### Features
 
