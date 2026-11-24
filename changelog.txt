@@ -5,7 +5,7 @@
 - New Account-Wide Settings: set your game options once and every character follows. One toggle each for Camera, Interface, Nameplates, Social, and Combat, so you share just the panels you want. Turning one on copies your current character's options, and after that a change on any character reaches the rest at their next login. Off by default, no reload needed.
 - Chat colors, nameplate choices, the compass and quest tracker, combat text, buffs and debuffs, field of view, and more now stay the same across your alts.
 - Ability bar upgrades for gamepad: stack counts on both bars (yes, even Seething Fury and Crux), with a timer when the stacks expire, a back row that turns red just before an effect runs out, and a taller back row so you can tell your skills apart. Show the timer as a bar, as numbers, or both, raise the back row as far as you like, or keep the whole back row visible all the time.
-- Slide your Magicka and Stamina bars in toward your health bar with one slider.
+- Slide your Magicka and Stamina bars in toward your health bar with one slider, and raise or lower the health bar with another. Both play nicely with the game's Edit HUD.
 - Your ability and attribute bars now show behind the KelaPadUI settings, so you can watch them change as you adjust them.
 - Settings that work with other add-ons now show which ones they need, and whether each one is installed, right in the help text.
 - The sets browser, trait research matrix, Character Knowledge, Loot Log, Collectibles Tracker, and Raidificator settings now share one Journals and Browsers section.

@@ -376,6 +376,8 @@ do
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS, "Chiffres de la rangée arrière", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP, "Affiche un compte à rebours en secondes sur les compétences de la rangée arrière dont l'effet est actif. Fonctionne avec ou sans la barre de progression.", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT, "Décaler les barres", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE, "Hauteur de la barre de santé", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE_TOOLTIP, "Déplace la barre de santé vers le haut d'autant de pixels. Les valeurs négatives le font descendre. La Magie et l'Endurance restent là où elles sont. Une barre de santé que vous avez déplacée avec <<1>> conserve sa position.", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP, "Déplace les barres de Magie et d'Endurance d'autant de pixels vers la barre de santé. Les valeurs négatives les déplacent vers l’extérieur. Une barre que vous avez déplacée avec <<1>> conserve sa position. Des valeurs élevées peuvent toucher la barre de santé sur les écrans étroits.", 0)
 	Add(KELA_SETTINGSYSTEMPANEL7304, "Journaux et catalogues", 0)
 	Add(KELA_SETTINGS_SETS_ENABLED, "Définit l'interface", 0)

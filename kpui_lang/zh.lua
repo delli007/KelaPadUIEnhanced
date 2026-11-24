@@ -376,6 +376,8 @@ do
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS, "后排计时数字", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP, "为带有生效中效果的后排技能显示倒计时秒数。无论是否显示进度条都可使用。", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT, "属性条位移", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE, "生命条高度", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE_TOOLTIP, "将生命条向上移动这么多像素。负值会将其向下移动。 Magicka 和 Stamina 留在原地。您使用 <<1>> 移动的生命条保持其位置。", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP, "将魔法条和耐力条向生命条移动这么多像素。负值使它们向外移动。您使用 <<1>> 移动的条保持其位置。大的值可以触摸窄屏幕上的健康栏。", 0)
 	Add(KELA_SETTINGSYSTEMPANEL7304, "日志与浏览器", 0)
 	Add(KELA_SETTINGS_SETS_ENABLED, "设置接口", 0)

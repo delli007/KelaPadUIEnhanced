@@ -309,6 +309,8 @@ for any character on the server you are playing.
   only the ones with a running effect.
 - **Attribute bar shift** - Moves the Magicka and Stamina bars toward the
   health bar.
+- **Health bar height** - Raises or lowers the health bar. Both bar settings
+  work with the game's Edit HUD: a bar you moved there keeps its position.
 - Off by default (the shift is 0). The enhancements stay off while Fancy
   Action Bar+ or Action Duration Reminder is loaded.
 

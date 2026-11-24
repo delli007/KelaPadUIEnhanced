@@ -376,6 +376,8 @@ do
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS, "後列タイマーの数字", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP, "効果が発動中の後列スキルに、残り秒数のカウントダウンを表示します。進行バーの有無にかかわらず使えます。", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT, "能力バーの位置調整", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE, "ヘルスバーの高さ", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE_TOOLTIP, "ヘルスバーをこのピクセル数だけ上に移動します。負の値を指定すると下に移動します。マジカとスタミナはそのまま残ります。 <<1>> で移動したヘルスバーはその位置を維持します。", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP, "マジカ バーとスタミナ バーを体力バーの方向にこのピクセル数だけ移動します。負の値を指定すると、外側に移動します。 <<1>> で移動したバーはその位置を維持します。値を大きくすると、狭い画面ではヘルス バーに触れる可能性があります。", 0)
 	Add(KELA_SETTINGSYSTEMPANEL7304, "日記とブラウザー", 0)
 	Add(KELA_SETTINGS_SETS_ENABLED, "インターフェースを設定します", 0)

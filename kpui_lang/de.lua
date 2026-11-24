@@ -376,6 +376,8 @@ do
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS, "Alternative Leiste: Zahlen", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP, "Zeigt für Fertigkeiten der Alternativleiste mit aktivem Effekt einen Countdown in Sekunden an. Funktioniert mit oder ohne Fortschrittsbalken.", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT, "Attributsbalken verschieben", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE, "Höhe des Gesundheitsbalkens", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE_TOOLTIP, "Verschiebt den Gesundheitsbalken um diese viele Pixel nach oben. Negative Werte verschieben es nach unten. Magicka und Ausdauer bleiben, wo sie sind. Ein Gesundheitsbalken, den Sie mit <<1>> verschoben haben, behält seine Position.", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP, "Verschiebt die Magicka- und Ausdauerbalken um diese viele Pixel in Richtung des Gesundheitsbalkens. Negative Werte verschieben sie nach außen. Ein Balken, den Sie mit <<1>> verschoben haben, behält seine Position. Große Werte können auf schmalen Bildschirmen die Gesundheitsleiste berühren.", 0)
 	Add(KELA_SETTINGSYSTEMPANEL7304, "Tagebücher und Übersichten", 0)
 	Add(KELA_SETTINGS_SETS_ENABLED, "Legt die Schnittstelle fest", 0)

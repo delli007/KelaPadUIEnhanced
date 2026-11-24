@@ -195,6 +195,11 @@ disabled.
    measured widths and the font that was picked.
 5. Set Attribute bar shift to 200. Magicka and Stamina move toward the health
    bar, and stay there after a screen-mode change and `/reloadui`.
+   Set Health bar height to 40: the health bar rises (and the siege or shield
+   bar under it follows) and stays after the same checks. Then open Edit HUD,
+   drag the whole bar group: the health bar keeps its raise relative to the
+   group. Uncheck Combined Resources, move only the health bar: it keeps your
+   drag position and ignores the slider until you reset it.
 6. With the KelaPadUI settings open, the ability bar and attribute bars show
    behind the menu, and moving the raise and shift sliders moves them right
    away.

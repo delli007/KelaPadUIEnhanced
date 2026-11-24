@@ -376,6 +376,8 @@ do
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS, "Números de la fila secundaria", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP, "Muestra una cuenta atrás en segundos en las habilidades de la fila secundaria con un efecto activo. Funciona con o sin la barra de progreso.", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT, "Desplazar barras de atributos", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE, "Altura de la barra de salud", 0)
+	Add(KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE_TOOLTIP, "Mueve la barra de salud hacia arriba tantos píxeles. Los valores negativos lo mueven hacia abajo. Magicka y Stamina permanecen donde están. Una barra de salud que moviste con <<1>> mantiene su posición.", 0)
 	Add(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP, "Mueve las barras Magicka y Stamina esta cantidad de píxeles hacia la barra de salud. Los valores negativos los mueven hacia afuera. Una barra que moviste con <<1>> mantiene su posición. Los valores grandes pueden tocar la barra de salud en pantallas estrechas.", 0)
 	Add(KELA_SETTINGSYSTEMPANEL7304, "Diarios y catálogos", 0)
 	Add(KELA_SETTINGS_SETS_ENABLED, "Establece la interfaz", 0)

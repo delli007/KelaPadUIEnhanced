@@ -255,6 +255,7 @@ separate setting.
 | `7806` | `KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT` | `0` (pixels) |
 | `7807` | `KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW` | `false` |
 | `7808` | `KELA_SETTING_PANEL_ACTIONBAR_BAR` (timer progress bar) | `true` |
+| `7809` | `KELA_SETTING_PANEL_ACTIONBAR_HEALTH_RAISE` | `0` (pixels, -100 to 200) |
 
 The panel sits below Account-Wide Settings.
 
@@ -366,6 +367,16 @@ The panel sits below Account-Wide Settings.
 - It re-applies after the base-game HUD manager resets anchors (the
   `"PropagateSettings"` and `"OffsetsChanged"` callbacks).
 - A bar the player moved in Edit HUD keeps that position.
+
+**`7809` (health bar height)**
+- Independent of `7801`; handled by the same module as `7806`.
+- It raises `ZO_PlayerAttributeHealth` by the slider value (a negative value lowers it). The
+  siege and shield bars are anchored to the health bar, so they follow; Magicka and Stamina
+  are anchored to the group and stay put.
+- It only changes the health bar's own anchor offset, so it composes with Edit HUD: moving the
+  whole group moves the parent and the offset stays relative to it, and a health bar the player
+  moved on its own (after unchecking Combined Resources) keeps its position.
+- It re-applies on the same HUD manager callbacks as `7806`.
 
 ## Screen structure
 

@@ -372,6 +372,8 @@ do
 	Add("KELA_SETTINGS_ACTIONBAR_SECONDS",			"Back row timer numbers")
 	Add("KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP",	"Shows a countdown in seconds on back row skills with a running effect. Works with or without the progress bar.")
 	Add("KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT",	"Attribute bar shift")
+	Add("KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE",	"Health bar height")
+	Add("KELA_SETTINGS_ACTIONBAR_HEALTH_RAISE_TOOLTIP",	"Moves the health bar up this many pixels. Negative values move it down. Magicka and Stamina stay where they are. A health bar you moved with <<1>> keeps its position.")
 	Add("KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP",	"Moves the Magicka and Stamina bars this many pixels toward the health bar. Negative values move them outward. A bar you moved with <<1>> keeps its position. Large values can touch the health bar on narrow screens.")
 	Add("KELA_SETTINGSYSTEMPANEL7304",				"Journals and Browsers")
 	Add("KELA_SETTINGS_SETS_ENABLED",				"Sets interface")
