@@ -235,7 +235,7 @@ do
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG, "战利品日志", 0)
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG_TOOLTIP, "安装战利品日志插件后，将战利品日志添加到 KelaPadUI² 菜单：您和您的团队掠夺的物品，以及掠夺者、类别、质量、套装、值得注意和未收集物品的过滤器，以及您收集的材料。 L1和R1切换页面。", 0)
 	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER, "收藏品追踪器", 0)
-	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "安装收藏品跟踪器附加组件后，将收藏品跟踪器添加到 KelaPadUI² 菜单：它跟踪的收藏品和事件收藏品，以及源、收藏状态、类别和隐藏条目的过滤器。 L1和R1切换页面。", 0)
+	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "安装收藏品跟踪器附加组件后，将收藏品跟踪器添加到 KelaPadUI² 菜单：它跟踪的收藏品和事件收藏品，以及来源、收藏状态、类别和 Premium Tome 或手动隐藏项目的过滤器。 L1和R1切换页面。", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR, "袭击者", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR_TOOLTIP, "安装 Raidificator 附加组件后，将 Raidificator 添加到 KelaPadUI² 菜单：您的分数历史记录和地下城、审判和竞技场成就，以及内容、角色、时间和您仍然缺少的内容的过滤器。 L1和R1切换页面。", 0)
 	Add(KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE, "人物知识", 0)
@@ -252,6 +252,9 @@ do
 	Add(KELA_BROWSER_ACTIONS, "动作", 0)
 	Add(KELA_BROWSER_NO_RESULTS, "没有任何内容与这些过滤器匹配。", 0)
 	Add(KELA_BROWSER_COUNT, "<<1[$d 条/$d 条]>>", 0)
+	Add(KELA_PRICE_LISTINGS, "挂单", 0)
+	Add(KELA_PRICE_SALES, "销售量", 0)
+	Add(KELA_TOOLTIP_AVERAGE, "平均", 0)
 	Add(KELA_BROWSER_QUALITY, "质量", 0)
 
 	-- Loot Log screen

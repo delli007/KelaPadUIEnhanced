@@ -5,15 +5,17 @@ history, settings, and the areas that need re-testing after an ESO update.
 
 ## Dependencies and startup gate
 
-Trading features use either or both of these optional data providers:
+Trading features use any of these optional data providers:
 
 - `Tamriel Trade Centre` (TTC) for TTC price data;
-- `Arkadius Trade Tools` (ATT) for ATT sales data and guild colors.
+- `Arkadius Trade Tools` (ATT) for ATT sales data and guild colors;
+- `Master Merchant` (MM) for its sales average (and price range when it has
+  cached the item's graph).
 
 `KelaPadUI_OnLoaded()` checks for at least one provider and the master setting:
 
 ```lua
-local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
+local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil or MasterMerchant ~= nil
 if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
     KelaInitializeTradingHistory()
     KelaSetupTradingHouse()
@@ -21,7 +23,7 @@ if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) the
 end
 ```
 
-TTC-only and ATT-only modes are supported. The trading settings panel enables
+TTC-only, ATT-only, and MM-only modes are supported. The trading settings panel enables
 the master checkbox when at least one provider is installed, and hides the
 trading rows (and provider-specific rows) when their provider is absent. The
 saved value is never forced off, so installing a provider later turns trading
@@ -32,14 +34,39 @@ the optional `LibItemLink` library to build those links; the call is guarded, an
 the rows are skipped when the library is not installed. `LibItemLink` is listed
 in `OptionalDependsOn` so it loads before KelaPadUI Enhanced when present.
 
-When only one provider is available, that provider supplies the recommended
-price and deal rating. When both are available, the recommended price uses their
-average where both have data. Tooltip columns for a missing provider show `N/A`.
+When only one provider has a price, that provider supplies the recommended
+price and deal rating. When two or three do, the recommended price is their
+average (`Combine` in `KelaGetEffectOfDeal`). Table columns for a provider
+without data show `N/A`.
 ATT-only features such as the sales graph and guild statistics require ATT; with
 TTC only, they are hidden and the core guild-selection dialog remains in use.
 The `KPUI_Graph` control is a plain custom template that creates an ATT graph
 child at runtime only when ATT is present, so the XML does not depend on ATT's
 templates at load time.
+
+### Price providers
+
+The item tooltip reads prices through `PRICE_PROVIDERS` in `kpui_tradinghouse_data.lua`
+(`KelaGetPriceSummary`): TTC, Master Merchant (MM), and ATT each return the same
+shape, so a new source is one more entry. The tooltip's first line holds the
+base-game value and the recommended price; each provider gets a line below it.
+
+Master Merchant is read through `GetMasterMerchantStats`, which calls
+`MasterMerchant:GetTooltipStats(link, true, false)` (the call LibPrice makes;
+`itemStats` is an alias of it). It returns `avgPrice`, `numSales`, `numItems`
+and, when Master Merchant has cached the graph, `graphInfo.low` / `.high`. Its
+`numDays` is the age of the oldest sale in the whole history, so it is not shown.
+
+The guild-store tables use `KelaGetPriceInfoTTCATT`, which returns the TTC and
+ATT tables as before plus a fifth value (any provider has a price). The Master
+Merchant table rides on both as `.Providers.MM`, so the many call sites that
+pass TTC and ATT along need no new argument. `KelaGetEffectOfDeal` returns the
+Master Merchant suggested prices after its old values (positions 15-17).
+
+The main table (`KPUI_MainInfo`) gets an MM column built in Lua
+(`GetMMColumn` in `kpui_tradinghouse_controls.lua`), left of ATT, so the frozen
+XML is unchanged. The per-quality rows, raw production rows, crafting-component
+rows, and the graph are still TTC/ATT only.
 
 ## Main modules
 

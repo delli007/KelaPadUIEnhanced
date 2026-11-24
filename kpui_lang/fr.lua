@@ -235,7 +235,7 @@ do
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG, "Journal de butin", 0)
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG_TOOLTIP, "Ajoute le journal de butin au menu KelaPadUI² lorsque le module complémentaire Loot Log est installé : ce que vous et votre groupe avez pillé, avec des filtres pour savoir qui l'a pillé, la catégorie, la qualité, l'ensemble, les objets notables et non collectés, ainsi que les matériaux que vous avez collectés. L1 et R1 changent de page.", 0)
 	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER, "Suivi des objets de collection", 0)
-	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "Ajoute Collectibles Tracker au menu KelaPadUI² lorsque le module complémentaire Collectibles Tracker est installé : les objets de collection et les objets de collection d'événements qu'il suit, avec des filtres pour la source, l'état de la collection, la catégorie et les entrées masquées. L1 et R1 changent de page.", 0)
+	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "Ajoute Collectibles Tracker au menu KelaPadUI² lorsque le module complémentaire Collectibles Tracker est installé : les objets de collection et les objets de collection d'événements qu'il suit, avec des filtres pour la source, l'état de la collection, la catégorie et le tome Premium ou les objets masqués manuellement. L1 et R1 changent de page.", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR, "Raidificateur", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR_TOOLTIP, "Ajoute Raidificator au menu KelaPadUI² lorsque le module complémentaire Raidificator est installé : votre historique de score et vos réalisations de donjon, d'épreuve et d'arène, avec des filtres pour le contenu, le personnage, le temps et ce qui vous manque encore. L1 et R1 changent de page.", 0)
 	Add(KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE, "Connaissance du personnage", 0)
@@ -252,6 +252,9 @@ do
 	Add(KELA_BROWSER_ACTIONS, "Actions", 0)
 	Add(KELA_BROWSER_NO_RESULTS, "Rien ne correspond à ces filtres.", 0)
 	Add(KELA_BROWSER_COUNT, "<<1[$d entrée/$d entrées]>>", 0)
+	Add(KELA_PRICE_LISTINGS, "Mises en vente", 0)
+	Add(KELA_PRICE_SALES, "Ventes", 0)
+	Add(KELA_TOOLTIP_AVERAGE, "Moyenne", 0)
 	Add(KELA_BROWSER_QUALITY, "Qualité", 0)
 
 	-- Loot Log screen

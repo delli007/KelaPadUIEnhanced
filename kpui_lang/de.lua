@@ -252,6 +252,9 @@ do
 	Add(KELA_BROWSER_ACTIONS, "Aktionen", 0)
 	Add(KELA_BROWSER_NO_RESULTS, "Nichts entspricht diesen Filtern.", 0)
 	Add(KELA_BROWSER_COUNT, "<<1[$d Eintrag/$d Einträge]>>", 0)
+	Add(KELA_PRICE_LISTINGS, "Angebote", 0)
+	Add(KELA_PRICE_SALES, "Verkäufe", 0)
+	Add(KELA_TOOLTIP_AVERAGE, "Durchschnitt", 0)
 	Add(KELA_BROWSER_QUALITY, "Qualität", 0)
 
 	-- Loot Log screen

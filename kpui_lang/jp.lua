@@ -235,7 +235,7 @@ do
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG, "戦利品ログ", 0)
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG_TOOLTIP, "戦利品ログ アドオンがインストールされている場合、KelaPadUI² メニューに戦利品ログが追加されます。これには、あなたとあなたのグループが略奪したもの、誰が略奪したのか、カテゴリ、品質、セット、注目すべきアイテム、未収集のアイテム、および収集した素材のフィルターが含まれます。 L1 と R1 でページが切り替わります。", 0)
 	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER, "収集品トラッカー", 0)
-	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "Collectibles Tracker アドオンがインストールされている場合、Collectibles Tracker を KelaPadUI² メニューに追加します。ソース、コレクション状態、カテゴリ、および非表示のエントリのフィルターを使用して追跡する収集品とイベント収集品です。 L1 と R1 でページが切り替わります。", 0)
+	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "Collectibles Tracker アドオンがインストールされている場合、Collectibles Tracker を KelaPadUI² メニューに追加します。ソース、コレクション状態、カテゴリ、プレミアム ブックまたは手動で非表示にしたアイテムのフィルターを使用して追跡する収集品とイベント収集品です。 L1 と R1 でページが切り替わります。", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR, "レイディフィケーター", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR_TOOLTIP, "Raidificator アドオンがインストールされている場合、Raidificator を KelaPadUI² メニューに追加します。スコア履歴、ダンジョン、トライアル、アリーナの実績、コンテンツ、キャラクター、時間、まだ不足しているもののフィルターが含まれます。 L1 と R1 でページが切り替わります。", 0)
 	Add(KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE, "キャラクターの知識", 0)
@@ -252,6 +252,9 @@ do
 	Add(KELA_BROWSER_ACTIONS, "アクション", 0)
 	Add(KELA_BROWSER_NO_RESULTS, "これらのフィルターに一致するものはありません。", 0)
 	Add(KELA_BROWSER_COUNT, "<<1[$d件/$d件]>>", 0)
+	Add(KELA_PRICE_LISTINGS, "出品", 0)
+	Add(KELA_PRICE_SALES, "販売", 0)
+	Add(KELA_TOOLTIP_AVERAGE, "平均", 0)
 	Add(KELA_BROWSER_QUALITY, "品質", 0)
 
 	-- Loot Log screen

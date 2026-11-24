@@ -235,7 +235,7 @@ do
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG, "Registro de botín", 0)
 	Add(KELA_SETTINGS_FEATURES_LOOT_LOG_TOOLTIP, "Agrega Loot Log al menú KelaPadUI² cuando el complemento Loot Log está instalado: lo que tú y tu grupo saquearon, con filtros para quién lo saqueó, categoría, calidad, conjunto, elementos notables y no recolectados, además de los materiales que reunió. L1 y R1 cambian de página.", 0)
 	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER, "Rastreador de coleccionables", 0)
-	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "Agrega Collectibles Tracker al menú KelaPadUI² cuando se instala el complemento Collectibles Tracker: los coleccionables y eventos coleccionables que rastrea, con filtros de fuente, estado de colección, categoría y entradas ocultas. L1 y R1 cambian de página.", 0)
+	Add(KELA_SETTINGS_FEATURES_COLLECTIBLES_TRACKER_TOOLTIP, "Agrega Collectibles Tracker al menú KelaPadUI² cuando se instala el complemento Collectibles Tracker: los coleccionables y eventos coleccionables que rastrea, con filtros de fuente, estado de colección, categoría y tomo premium o elementos ocultos manualmente. L1 y R1 cambian de página.", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR, "Raidificador", 0)
 	Add(KELA_SETTINGS_FEATURES_RAIDIFICATOR_TOOLTIP, "Agrega Raidificator al menú KelaPadUI² cuando el complemento Raidificator está instalado: tu historial de puntuación y tus logros de mazmorra, prueba y arena, con filtros de contenido, personaje, tiempo y lo que aún te falta. L1 y R1 cambian de página.", 0)
 	Add(KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE, "Conocimiento del personaje", 0)
@@ -252,6 +252,9 @@ do
 	Add(KELA_BROWSER_ACTIONS, "Acciones", 0)
 	Add(KELA_BROWSER_NO_RESULTS, "Nada coincide con estos filtros.", 0)
 	Add(KELA_BROWSER_COUNT, "<<1[$d entrada/$d entradas]>>", 0)
+	Add(KELA_PRICE_LISTINGS, "Anuncios", 0)
+	Add(KELA_PRICE_SALES, "Ventas", 0)
+	Add(KELA_TOOLTIP_AVERAGE, "Promedio", 0)
 	Add(KELA_BROWSER_QUALITY, "Calidad", 0)
 
 	-- Loot Log screen

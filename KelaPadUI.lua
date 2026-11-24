@@ -175,7 +175,7 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 
 	KELA_SETS_LIST:SetMasterSetsList()
 
-	local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
+	local hasTradingProvider = TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil or MasterMerchant ~= nil
 	if hasTradingProvider and IsFeatureEnabled(KELA_SETTING_PANEL_TRADE_ENABLED) then
 		KelaInitializeTradingHistory()
 		KelaSetupTradingHouse()

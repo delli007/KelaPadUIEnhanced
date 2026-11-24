@@ -106,6 +106,7 @@ local KELA_ADDONS =
 	PA = { name = "PersonalAssistant", isLoaded = function() return PersonalAssistant ~= nil end },
 	TTC = { name = "Tamriel Trade Centre", isLoaded = function() return TamrielTradeCentre ~= nil end },
 	ATT = { name = "Arkadius Trade Tools", isLoaded = function() return ArkadiusTradeTools ~= nil end },
+	MM = { name = "Master Merchant", isLoaded = function() return MasterMerchant ~= nil end },
 	LIL = { name = "LibItemLink", isLoaded = function() return LIB_ITEM_LINK ~= nil end },
 	LCM = { name = "LibCustomMenu", isLoaded = function() return LibCustomMenu ~= nil end },
 	USPF = { name = "Urich's Skill Point Finder", isLoaded = function() return USPF ~= nil end },
@@ -125,9 +126,9 @@ end
 
 -- Trading rows show only while a price provider is installed and the trading
 -- feature is on; the provider check keeps a saved "on" from exposing rows when
--- neither TTC nor ATT is loaded.
+-- none of TTC, ATT or Master Merchant is loaded.
 local function KelaHasTradeProvider()
-	return TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil
+	return TamrielTradeCentre ~= nil or ArkadiusTradeTools ~= nil or MasterMerchant ~= nil
 end
 
 local function KelaTradeShown()
@@ -703,7 +704,7 @@ kela_SettingsData =
 				text = KELA_SETTINGS_TRADE_ENABLED,
 				tooltipText = KELA_SETTINGS_TRADE_ENABLED_TOOLTIP,
 				gamepadHasEnabledDependencies = true,
-				addons = { oneOf = { KELA_ADDONS.TTC, KELA_ADDONS.ATT } },
+				addons = { oneOf = { KELA_ADDONS.TTC, KELA_ADDONS.ATT, KELA_ADDONS.MM } },
 			},
 			[KELA_SETTING_PANEL_TRADE_ATT_PERIOD] =
 			{
