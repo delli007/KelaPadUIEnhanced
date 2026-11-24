@@ -71,6 +71,9 @@ kpui_features/kpui_map_rally.lua
 kpui_features/fixes/kpui_basegame_fixes.lua
 kpui_features/fixes/kpui_group_menu_fix.lua
 kpui_features/kpui_account_settings.lua
+kpui_features/hud/kpui_action_bar.lua
+kpui_features/hud/kpui_resource_bars.lua
+kpui_features/hud/kpui_hud_preview.lua
 kpui_features/kpui_controller_buttons.lua
 
 KelaPadUI.lua

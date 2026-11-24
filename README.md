@@ -282,6 +282,24 @@ for any character on the server you are playing.
 - Options the game already keeps for the whole PC (camera inversion and
   sensitivity, for example) and the text language are left alone.
 
+### Ability bar
+
+- **Stack counts on both rows** - Shows stack counts on the active bar and on
+  the back row, including stacks the game only shows as a glow (Seething Fury
+  on Molten Whip, Crux on Arcanist skills). When those stacks expire, the time
+  left shows as a timer on the skill.
+- **Expiry warning** - The back row's timer turns red a few seconds before an
+  effect ends.
+- **Taller back row** - Raises the back row so more of each skill icon shows.
+  The timer's progress bar and a seconds countdown can each be turned on or
+  off.
+- **Always show back row** - Keeps every skill on your other bar visible, not
+  only the ones with a running effect.
+- **Attribute bar shift** - Moves the Magicka and Stamina bars toward the
+  health bar.
+- Off by default (the shift is 0). The enhancements stay off while Fancy
+  Action Bar+ or Action Duration Reminder is loaded.
+
 ## Settings
 
 All settings live in the KelaPadUI section of the gamepad settings menu. They are
@@ -289,13 +307,18 @@ stored account-wide in `kpuiSavedVariables`.
 
 - Feature toggles for companion info, dungeon finder, chat tools, map rally,
   additional gamepad filters, antiquity lead details, main-menu quick access, the
-  dashboard, Extended Journal, Character Knowledge, PersonalAssistant junk
-  marking, and the PS5 button map.
+  dashboard, PersonalAssistant junk marking, and the PS5 button map.
 - Fixes and Patches toggles for the group menu fix and the U51 battleground
   fixes.
 - Account-wide sharing of the game's Camera, Interface, Nameplates, Social, and
   Combat options.
-- Sets interface toggle.
+- Ability bar enhancements (stack counts, expiry warning, back row height and
+  timer style) and the attribute bar shift.
+- Journals and Browsers toggles for the sets browser, the trait research
+  matrix, Character Knowledge, and Extended Journal.
+- Settings that work with other add-ons list them in their help text, each
+  marked found or not found (or, for add-ons that turn a feature off, loaded or
+  not loaded).
 - Trading master toggle, ATT analysis period, and per-surface tooltip toggles for
   the guild store, bank, vendors, and crafting stations.
 - Guild statistics, ATT price information, listing rows, quality rows,

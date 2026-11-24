@@ -210,6 +210,12 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	KelaSetupCharacterKnowledge()
 	-- Always set up: each category checks its setting, so the toggle needs no reload.
 	KelaSetupAccountSettings()
+	if IsFeatureEnabled(KELA_SETTING_PANEL_ACTIONBAR_ENABLED) then
+		KelaSetupActionBar()
+	end
+	-- Always set up: it does nothing while the shift is 0.
+	KelaSetupResourceBars()
+	KelaSetupHudPreview()
 	if IsFeatureEnabled(KELA_SETTING_PANEL_FEATURES_PA_JUNK) then
 		KelaSetupPAJunk()
 	end

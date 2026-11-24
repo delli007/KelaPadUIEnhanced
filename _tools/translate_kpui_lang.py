@@ -71,6 +71,62 @@ BRAND_TOKENS = ("KelaPadUI Enhanced", "KelaPadUI", "ESO+", "USPF")
 # Hand-checked text. Applies to any string, per language, before machine
 # translation; entries that are also ESO client strings need every language.
 OVERRIDES = {
+    # Ability bar labels: game terms from <code>_client.lua
+    # (SI_INTERFACE_OPTIONS_ACTION_BAR*, SI_INTERFACE_OPTIONS_RESOURCE_BARS), kept short.
+    "Ability Bar": {"de": "Fähigkeitenleiste", "fr": "Barre de compétences", "ru": "Панель способностей", "jp": "アビリティバー", "es": "Barra de habilidades", "zh": "技能栏"},
+    "Ability bar enhancements": {"de": "Erweiterte Fähigkeitenleiste", "fr": "Barre de compétences améliorée", "ru": "Улучшенная панель способностей", "jp": "アビリティバー拡張", "es": "Barra de habilidades mejorada", "zh": "技能栏增强"},
+    "Show stack counts": {"de": "Stapel anzeigen", "fr": "Afficher les cumuls", "ru": "Показывать стаки", "jp": "スタック数を表示", "es": "Mostrar acumulaciones", "zh": "显示层数"},
+    "Expiry warning": {"de": "Ablaufwarnung", "fr": "Alerte d'expiration", "ru": "Предупреждение об окончании", "jp": "終了警告", "es": "Aviso de fin", "zh": "到期警告"},
+    "Always show back row": {"de": "Alternative Leiste immer anzeigen", "fr": "Toujours afficher la rangée arrière", "ru": "Всегда показывать второй ряд", "jp": "後列を常に表示", "es": "Mostrar siempre la fila secundaria", "zh": "始终显示后排"},
+    "Shows the back row for every skill on your other bar, not only while an effect is running on it. Your ultimate is left out. Needs the game's <<1>> and <<2>> options.": {
+        "de": "Zeigt die hintere Reihe für jede Fertigkeit Ihrer anderen Leiste an, nicht nur, während ein Effekt läuft. Ihre ultimative Fähigkeit bleibt außen vor. Benötigt die Spieloptionen <<1>> und <<2>>.",
+        "fr": "Affiche la rangée arrière pour chaque compétence de votre autre barre, pas seulement lorsqu'un effet est en cours. Votre ultime est exclu. Nécessite les options <<1>> et <<2>> du jeu.",
+        "ru": "Показывает второй ряд для каждого навыка на другой панели, а не только пока на нём действует эффект. Суперспособность не включается. Требуются опции игры <<1>> и <<2>>.",
+        "jp": "もう一方のバーのすべてのスキルについて、効果が発動している間だけでなく、常に後列を表示します。アルティメットは対象外です。ゲームの<<1>>と<<2>>の設定が必要です。",
+        "es": "Muestra la fila secundaria para cada habilidad de tu otra barra, no solo mientras hay un efecto activo. Tu habilidad máxima queda fuera. Necesita las opciones <<1>> y <<2>> del juego.",
+        "zh": "为另一栏的每项技能显示后排，而不仅仅是在其效果运行期间。终极技能不包括在内。需要开启游戏的“<<1>>”和“<<2>>”选项。",
+    },
+    "Raise back row": {"de": "Alternative Leiste anheben", "fr": "Rehausser la rangée arrière", "ru": "Поднять второй ряд", "jp": "後列を上げる", "es": "Subir fila secundaria", "zh": "抬高后排"},
+    "Shows the thin progress bar on the back row's timer. Turn it off to remove the bar and its empty groove.": {
+        "de": "Zeigt den dünnen Fortschrittsbalken am Timer der Alternativleiste an. Deaktivieren Sie ihn, um den Balken samt leerer Rille zu entfernen.",
+        "fr": "Affiche la fine barre de progression du minuteur de la rangée arrière. Désactivez-la pour retirer la barre et sa rainure vide.",
+        "ru": "Показывает тонкую полосу прогресса на таймере второго ряда. Выключите, чтобы убрать полосу вместе с пустым желобком.",
+        "jp": "後列のタイマーに細い進行バーを表示します。オフにすると、バーと空の溝がなくなります。",
+        "es": "Muestra la delgada barra de progreso del temporizador de la fila secundaria. Desactívala para quitar la barra y su ranura vacía.",
+        "zh": "显示后排计时器上的细进度条。关闭后将移除进度条及其空凹槽。",
+    },
+    "Shows a countdown in seconds on back row skills with a running effect. Works with or without the progress bar.": {
+        "de": "Zeigt für Fertigkeiten der Alternativleiste mit aktivem Effekt einen Countdown in Sekunden an. Funktioniert mit oder ohne Fortschrittsbalken.",
+        "fr": "Affiche un compte à rebours en secondes sur les compétences de la rangée arrière dont l'effet est actif. Fonctionne avec ou sans la barre de progression.",
+        "ru": "Показывает обратный отсчёт в секундах для навыков второго ряда с действующим эффектом. Работает с полосой прогресса и без неё.",
+        "jp": "効果が発動中の後列スキルに、残り秒数のカウントダウンを表示します。進行バーの有無にかかわらず使えます。",
+        "es": "Muestra una cuenta atrás en segundos en las habilidades de la fila secundaria con un efecto activo. Funciona con o sin la barra de progreso.",
+        "zh": "为带有生效中效果的后排技能显示倒计时秒数。无论是否显示进度条都可使用。",
+    },
+    "Back row timer numbers": {"de": "Alternative Leiste: Zahlen", "fr": "Chiffres de la rangée arrière", "ru": "Цифры таймера второго ряда", "jp": "後列タイマーの数字", "es": "Números de la fila secundaria", "zh": "后排计时数字"},
+    "Back row progress bar": {"de": "Alternative Leiste: Balken", "fr": "Barre de la rangée arrière", "ru": "Полоса таймера второго ряда", "jp": "後列の進行バー", "es": "Barra de la fila secundaria", "zh": "后排进度条"},
+    "Attribute bar shift": {"de": "Attributsbalken verschieben", "fr": "Décaler les barres", "ru": "Сдвиг шкал характеристик", "jp": "能力バーの位置調整", "es": "Desplazar barras de atributos", "zh": "属性条位移"},
+    # Ability bar master switch: machine translation drops it to English in jp/zh.
+    "Adds stack counts, an expiry warning, and a taller back row to the gamepad ability bar. The back row needs the game's <<1>> and <<2>> options under <<3>>. Stays off while <<4>> or <<5>> is loaded. Requires a UI reload.": {
+        "jp": "ゲームパッドのアビリティバーにスタック数、終了警告、高くした後列を追加します。後列を表示するには、「<<1>>」と「<<2>>」（<<3>>）をオンにする必要があります。<<4>>または<<5>>が読み込まれている間はオフのままです。UIの再読み込みが必要です。",
+        "zh": "为手柄技能栏添加层数、到期警告和更高的后排。后排需要开启“<<1>>”和“<<2>>”（<<3>>）。加载<<4>>或<<5>>时保持关闭。需要重新加载界面。",
+    },
+    "Shows stack counts on both rows, including stacks the game only shows as a glow, such as <<1>> on <<2>>. When a stacking effect has an expiry, it shows as a timer.": {
+        "de": "Zeigt Stapelanzahlen in beiden Reihen an, auch für Stapel, die das Spiel nur als Leuchten zeigt, etwa <<1>> bei <<2>>. Hat ein stapelnder Effekt eine Ablaufzeit, wird sie als Timer angezeigt.",
+        "fr": "Affiche le nombre de cumuls sur les deux rangées, y compris ceux que le jeu ne montre que par une lueur, comme <<1>> sur <<2>>. Quand un effet cumulable a une durée, elle s'affiche comme un minuteur.",
+        "ru": "Показывает число стаков в обоих рядах, в том числе тех, что игра отмечает лишь свечением, например «<<1>>» у «<<2>>». Если у накапливаемого эффекта есть срок действия, он показывается как таймер.",
+        "jp": "両方の列にスタック数を表示します。<<1>>（<<2>>）のように、ゲームでは光るだけのスタックも含みます。スタック効果に期限がある場合は、タイマーとして表示します。",
+        "es": "Muestra las acumulaciones en ambas filas, incluidas las que el juego solo indica con un brillo, como <<1>> en <<2>>. Si un efecto acumulable tiene vencimiento, se muestra como un temporizador.",
+        "zh": "在两排技能上显示层数，包括游戏只用发光提示的层数，例如<<1>>（<<2>>）。叠加效果带有时限时，会显示为计时器。",
+    },
+    # Add-on status lines in setting tooltips ("Requires:", "LibX: found").
+    "Requires one of": {"fr": "Nécessite l'un de", "jp": "いずれかが必要"},
+    "Uses if installed": {"de": "Nutzt, falls installiert", "ru": "Использует, если установлен", "jp": "インストール時に使用", "es": "Usa si está instalado", "zh": "安装后使用"},
+    "Stays off while loaded": {"de": "Bleibt aus, wenn geladen", "fr": "Désactivé si chargé", "ru": "Отключается, если загружен", "jp": "読み込まれているとオフ", "es": "Se desactiva si está cargado", "zh": "以下插件加载时关闭"},
+    "found": {"ru": "найден", "jp": "検出", "es": "encontrado", "zh": "已找到"},
+    "not found": {"fr": "introuvable", "ru": "не найден", "jp": "未検出", "es": "no encontrado"},
+    # Panel title: "Journal" is the game's SI_MAIN_MENU_JOURNAL; "browsers" are the sets and knowledge screens.
+    "Journals and Browsers": {"de": "Tagebücher und Übersichten", "fr": "Journaux et catalogues", "ru": "Журналы и каталоги", "jp": "日記とブラウザー", "es": "Diarios y catálogos", "zh": "日志与浏览器"},
     # Settings labels read as a setting, not a command to the reader.
     "Share <<1>> settings with all characters": {"de": "<<1>>-Einstellungen mit allen Charakteren teilen", "ru": "Общие настройки «<<1>>» для всех персонажей", "es": "Compartir la configuración de <<1>> con todos los personajes"},
     "Undaunted": {"de": "Unerschrockene", "fr": "Indomptables", "ru": "Неустрашимые"},

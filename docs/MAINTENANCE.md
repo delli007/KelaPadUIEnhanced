@@ -74,8 +74,8 @@ defined by `KELA_SETTINGS_CATEGORY_ORDER` in
 1. Features (`7400`)
 2. Fixes and Patches (`7600`)
 3. Account-Wide Settings (`7700`)
-4. Trait research (`7302`)
-5. Item sets (`7300`)
+4. Ability Bar (`7800`)
+5. Journals and Browsers (`7304`)
 6. Trading Interface (`7500`)
 
 `Kela_GamepadOptions:RefreshOptionsList()` clears the list and calls
@@ -100,9 +100,24 @@ The Features category contains reload-gated toggles:
 | Antiquity lead details | on |
 | Main-menu quick access | on |
 | Main-menu daily dashboard | on |
-| Trait research matrix | on |
 | PersonalAssistant junk integration | on |
 | PS5 button map | off |
+
+The Journals and Browsers category groups the menu screens. Only the trait
+research matrix is reload-gated; the others are checked whenever the menu is
+built:
+
+| Setting | Default |
+| --- | --- |
+| Sets interface | on |
+| Trait research matrix | on |
+| Character Knowledge | on |
+| Extended Journal | on |
+
+Settings that depend on another add-on list it in their help text with a live
+status (see `addons` in `docs/SETTINGS.md`). To check it, open the help for
+Character Knowledge with LibCharacterKnowledge disabled (red "not found"), and
+for Ability bar enhancements with Fancy Action Bar+ enabled (red "loaded").
 
 The Fixes and Patches category follows it:
 
@@ -140,6 +155,47 @@ In-game check for account-wide settings (repeat per category):
    to A, and confirm it arrived.
 4. Turn the toggle off on A, change an option, and confirm B keeps the shared
    value at its next login.
+
+In-game check for the Ability Bar panel. Use gamepad mode with the game's
+Ability Bar Timers and Ability Bar Back Row options on, and Fancy Action Bar+
+disabled.
+
+1. Turn on Ability bar enhancements and `/reloadui`. The back row sits about
+   10 px higher. Swap bars: the animation lands in the same place, and nothing
+   overlaps the health bar.
+2. Slot Molten Whip and cast Ardent Flame skills. The whip shows 1-3 on the
+   front bar, and the count shows above it on the back row after a swap.
+   Try a skill whose own effect stacks (Bound Armaments): there should be only
+   one number.
+   Also check the timer: with Seething Fury (Molten Whip) or Crux (an Arcanist
+   skill) stacked, while the buff has stacks, the front button shows a countdown like a skill's own
+   effect, and the back row shows the bar and numbers. Gaining another stack
+   (refresh) restarts it; spending the stacks clears it. A skill with its own
+   timer (Bound Armaments) keeps that timer instead.
+3. Let a back-row effect run out. Its timer turns red at the Expiry warning
+   value; 0 turns that off.
+   Turn on Always show back row: every skill on the other bar stays visible
+   above the front buttons, with an empty bar when nothing is running. Swap
+   bars, change a skill, and empty a slot: the back row follows, and an empty
+   slot stays hidden, and so does the ultimate while nothing runs on it. Turn it
+   off and idle slots disappear again.
+4. Turn off Back row progress bar and turn on Back row timer numbers. The thin
+   bar and its empty groove are gone, and a countdown shows above the front
+   button, turning red near the end. Swap bars a few times: the slots keep the
+   raise and the trim. With the bar off, the back row sits about 9 px higher
+   than with it on. Turn the bar back on with the numbers still on: both
+   show. Turn the numbers off: only the bar. Set Raise back row to 40 and check
+   the slots still look right.
+   The back row stack count should sit inside the icon's right edge, not past
+   it, and be easy to read. With a stack count and a countdown on the same slot,
+   they should not touch, including when the countdown shows tenths under 2 s
+   ("1.6"). Read the `Action bar: back row text` line in LibDebugLogger for the
+   measured widths and the font that was picked.
+5. Set Attribute bar shift to 200. Magicka and Stamina move toward the health
+   bar, and stay there after a screen-mode change and `/reloadui`.
+6. With the KelaPadUI settings open, the ability bar and attribute bars show
+   behind the menu, and moving the raise and shift sliders moves them right
+   away.
 
 `KelaPadUI_OnLoaded()` checks these settings before calling the corresponding
 setup function. Changing a toggle therefore requires `/reload`; the setting

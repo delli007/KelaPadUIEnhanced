@@ -20,14 +20,15 @@ KELA_SETTINGS_DIRTY_DEFAULT = 2
 --   7500-7599  trading
 --   7600-7699  fixes and patches
 --   7700-7799  account-wide game settings
---   7800-7999  reserve
+--   7800-7899  action bar
+--   7900-7999  reserve
 SETTING_TYPE_KELA = 7000
 
--- SETS
-KELA_SETTING_PANEL_SETS 						= 7300 
+-- JOURNALS AND BROWSERS
+-- One panel for the menu screens. The sets and trait research toggles keep the
+-- IDs they shipped with; their old one-row panels (7300, 7302) are retired.
+KELA_SETTING_PANEL_JOURNALS 					= 7304
 KELA_SETTING_PANEL_SETS_ENABLED 				= 7301
--- TRAIT RESEARCH
-KELA_SETTING_PANEL_TRAIT_RESEARCH 				= 7302
 KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED 		= 7303
 -- FEATURES
 KELA_SETTING_PANEL_FEATURES 					= 7400
@@ -56,6 +57,16 @@ KELA_SETTING_PANEL_ACCOUNT_SYNC_CAMERA 				= 7702
 KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE 			= 7703
 KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES 			= 7704
 KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL 				= 7705
+-- ACTION BAR
+KELA_SETTING_PANEL_ACTIONBAR 						= 7800
+KELA_SETTING_PANEL_ACTIONBAR_ENABLED 				= 7801
+KELA_SETTING_PANEL_ACTIONBAR_STACKS 				= 7802
+KELA_SETTING_PANEL_ACTIONBAR_EXPIRY_WARNING 		= 7803
+KELA_SETTING_PANEL_ACTIONBAR_RAISE 					= 7804
+KELA_SETTING_PANEL_ACTIONBAR_SECONDS 				= 7805
+KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT 		= 7806
+KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW 			= 7807
+KELA_SETTING_PANEL_ACTIONBAR_BAR 					= 7808
 -- TRADING
 KELA_SETTING_PANEL_TRADE 						= 7500 
 KELA_SETTING_PANEL_TRADE_ENABLED 				= 7501
@@ -73,7 +84,27 @@ KELA_SETTING_PANEL_TRADE_TOOLTIP_COMPONENTS		= 7513
 
 -- IDs that appeared in a public release must never be reused. The audit
 -- rejects any live setting ID listed here.
-KELA_RETIRED_SETTING_IDS = {}
+KELA_RETIRED_SETTING_IDS =
+{
+	7300, -- Item sets panel, merged into Journals and Browsers
+	7302, -- Trait research panel, merged into Journals and Browsers
+}
+
+-- Other add-ons that settings depend on. `name` is the add-on's own title and
+-- is not translated; `isLoaded` checks the global the feature itself reads.
+local KELA_ADDONS =
+{
+	LCK = { name = "LibCharacterKnowledge", isLoaded = function() return LibCharacterKnowledge ~= nil end },
+	LEJ = { name = "LibExtendedJournal", isLoaded = function() return LibExtendedJournal ~= nil end },
+	PA = { name = "PersonalAssistant", isLoaded = function() return PersonalAssistant ~= nil end },
+	TTC = { name = "Tamriel Trade Centre", isLoaded = function() return TamrielTradeCentre ~= nil end },
+	ATT = { name = "Arkadius Trade Tools", isLoaded = function() return ArkadiusTradeTools ~= nil end },
+	LIL = { name = "LibItemLink", isLoaded = function() return LIB_ITEM_LINK ~= nil end },
+	LCM = { name = "LibCustomMenu", isLoaded = function() return LibCustomMenu ~= nil end },
+	USPF = { name = "Urich's Skill Point Finder", isLoaded = function() return USPF ~= nil end },
+	FAB = { name = "Fancy Action Bar+", isLoaded = function() return FancyActionBar ~= nil end },
+	ADR = { name = "Action Duration Reminder", isLoaded = function() return ActionDurationReminder ~= nil end },
+}
 
 -- A row's `enabled` is either a value or a function that returns one; only an
 -- explicit false disables it.
@@ -94,6 +125,11 @@ end
 
 local function KelaTradeShown()
 	return KelaHasTradeProvider() and KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_TRADE_ENABLED)
+end
+
+-- Action bar sub-options show while the master switch is on.
+local function KelaActionBarShown()
+	return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_ACTIONBAR_ENABLED)
 end
 
 local function KelaAnyTradeTooltipShown()
@@ -152,16 +188,6 @@ KELA_SETTINGS_DATA =
         {
             panel = KELA_SETTING_PANEL_FEATURES,
             system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL,
-        },
-        {
-            panel = KELA_SETTING_PANEL_FEATURES,
-            system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE,
-        },
-        {
-            panel = KELA_SETTING_PANEL_FEATURES,
-            system = SETTING_TYPE_KELA,
             settingId = KELA_SETTING_PANEL_FEATURES_PA_JUNK,
         },
         {
@@ -193,23 +219,25 @@ KELA_SETTINGS_DATA =
         { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL },
         { panel = KELA_SETTING_PANEL_ACCOUNT, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT },
     },
-	-- TRAIT RESEARCH
-    [KELA_SETTING_PANEL_TRAIT_RESEARCH] =
+	-- ACTION BAR
+    [KELA_SETTING_PANEL_ACTIONBAR] =
     {
-        {
-            panel = KELA_SETTING_PANEL_TRAIT_RESEARCH,
-            system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED,
-        },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_ENABLED },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_STACKS },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_EXPIRY_WARNING },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_RAISE },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_BAR },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_SECONDS },
+        { panel = KELA_SETTING_PANEL_ACTIONBAR, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT },
     },
-	-- SETS
-    [KELA_SETTING_PANEL_SETS] =
+	-- JOURNALS AND BROWSERS
+    [KELA_SETTING_PANEL_JOURNALS] =
     {
-        {
-            panel = KELA_SETTING_PANEL_SETS,
-            system = SETTING_TYPE_KELA,
-            settingId = KELA_SETTING_PANEL_SETS_ENABLED,
-        },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_SETS_ENABLED },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL },
     },
 	-- TRADING
     [KELA_SETTING_PANEL_TRADE] =
@@ -312,23 +340,7 @@ end
 -- control data table for the auto-list
 kela_SettingsData = 
 {
-    [KELA_SETTING_PANEL_TRAIT_RESEARCH] =
-    {
-		[SETTING_TYPE_KELA] =
-		{
-			[KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED] =
-			{
-				controlType = OPTIONS_CHECKBOX,
-				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_TRAIT_RESEARCH,
-				settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED,
-				text = KELA_SETTINGS_TRAIT_RESEARCH_ENABLED,
-				tooltipText = KELA_SETTINGS_TRAIT_RESEARCH_ENABLED_TOOLTIP,
-				requiresReload = true,
-			},
-		},
-	},
-    [KELA_SETTING_PANEL_SETS] =
+    [KELA_SETTING_PANEL_JOURNALS] =
     {
 		[SETTING_TYPE_KELA] =
 		{
@@ -336,10 +348,41 @@ kela_SettingsData =
 			{
 				controlType = OPTIONS_CHECKBOX,
 				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_SETS,
+				panel = KELA_SETTING_PANEL_JOURNALS,
 				settingId = KELA_SETTING_PANEL_SETS_ENABLED,
 				text = KELA_SETTINGS_SETS_ENABLED,
 				tooltipText = KELA_SETTINGS_SETS_ENABLED_TOOLTIP,
+			},
+			[KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED,
+				text = KELA_SETTINGS_TRAIT_RESEARCH_ENABLED,
+				tooltipText = KELA_SETTINGS_TRAIT_RESEARCH_ENABLED_TOOLTIP,
+				requiresReload = true,
+				addons = { optional = { KELA_ADDONS.LCK } },
+			},
+			[KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE,
+				text = KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE,
+				tooltipText = KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE_TOOLTIP,
+				addons = { required = { KELA_ADDONS.LCK } },
+			},
+			[KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL,
+				text = KELA_SETTINGS_FEATURES_EXTENDED_JOURNAL,
+				tooltipText = KELA_SETTINGS_FEATURES_EXTENDED_JOURNAL_TOOLTIP,
+				addons = { required = { KELA_ADDONS.LEJ } },
 			},
 		},
 	},
@@ -376,6 +419,8 @@ kela_SettingsData =
 				text = KELA_SETTINGS_FEATURES_CHAT_TOOLS,
 				tooltipText = KELA_SETTINGS_FEATURES_CHAT_TOOLS_TOOLTIP,
 				requiresReload = true,
+				-- The player context-menu actions need it; the slash commands do not.
+				addons = { optional = { KELA_ADDONS.LCM } },
 			},
 			[KELA_SETTING_PANEL_FEATURES_MAP_RALLY] =
 			{
@@ -426,24 +471,8 @@ kela_SettingsData =
 				text = KELA_SETTINGS_FEATURES_MAIN_MENU_DASHBOARD,
 				tooltipText = KELA_SETTINGS_FEATURES_MAIN_MENU_DASHBOARD_TOOLTIP,
 				requiresReload = true,
-			},
-			[KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL] =
-			{
-				controlType = OPTIONS_CHECKBOX,
-				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_FEATURES,
-				settingId = KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL,
-				text = KELA_SETTINGS_FEATURES_EXTENDED_JOURNAL,
-				tooltipText = KELA_SETTINGS_FEATURES_EXTENDED_JOURNAL_TOOLTIP,
-			},
-			[KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE] =
-			{
-				controlType = OPTIONS_CHECKBOX,
-				system = SETTING_TYPE_KELA,
-				panel = KELA_SETTING_PANEL_FEATURES,
-				settingId = KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE,
-				text = KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE,
-				tooltipText = KELA_SETTINGS_FEATURES_CHARACTER_KNOWLEDGE_TOOLTIP,
+				-- Supplies the skill point totals.
+				addons = { optional = { KELA_ADDONS.USPF } },
 			},
 			[KELA_SETTING_PANEL_FEATURES_PA_JUNK] =
 			{
@@ -454,6 +483,7 @@ kela_SettingsData =
 				text = KELA_SETTINGS_FEATURES_PA_JUNK,
 				tooltipText = KELA_SETTINGS_FEATURES_PA_JUNK_TOOLTIP,
 				requiresReload = true,
+				addons = { required = { KELA_ADDONS.PA } },
 			},
 			[KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS] =
 			{
@@ -508,6 +538,127 @@ kela_SettingsData =
 			[KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT] = KelaAccountSyncRow(KELA_SETTING_PANEL_ACCOUNT_SYNC_COMBAT, SETTING_PANEL_COMBAT),
 		},
 	},
+    [KELA_SETTING_PANEL_ACTIONBAR] =
+    {
+		[SETTING_TYPE_KELA] =
+		{
+			-- Installs the action bar hooks at load; the options below apply live.
+			[KELA_SETTING_PANEL_ACTIONBAR_ENABLED] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_ENABLED,
+				text = KELA_SETTINGS_ACTIONBAR_ENABLED,
+				tooltipText = function()
+					return zo_strformat(GetString(KELA_SETTINGS_ACTIONBAR_ENABLED_TOOLTIP), GetString(SI_INTERFACE_OPTIONS_ACTION_BAR_TIMERS), GetString(SI_INTERFACE_OPTIONS_ACTION_BAR_BACK_ROW), GetString("SI_SETTINGSYSTEMPANEL", SETTING_PANEL_COMBAT), KELA_ADDONS.FAB.name, KELA_ADDONS.ADR.name)
+				end,
+				requiresReload = true,
+				gamepadHasEnabledDependencies = true,
+				-- Both replace the back row; kpui_action_bar.lua stays off while either is loaded.
+				addons = { conflicts = { KELA_ADDONS.FAB, KELA_ADDONS.ADR } },
+			},
+			[KELA_SETTING_PANEL_ACTIONBAR_STACKS] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_STACKS,
+				text = KELA_SETTINGS_ACTIONBAR_STACKS,
+				events = { [true] = "KELA_ACTIONBAR_SETTINGS_CHANGED", [false] = "KELA_ACTIONBAR_SETTINGS_CHANGED" },
+				tooltipText = function()
+					-- Seething Fury (122658) on Molten Whip (20805), named in the client's language.
+					return zo_strformat(GetString(KELA_SETTINGS_ACTIONBAR_STACKS_TOOLTIP), GetAbilityName(122658), GetAbilityName(20805))
+				end,
+				visible = KelaActionBarShown,
+			},
+			[KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW,
+				text = KELA_SETTINGS_ACTIONBAR_ALWAYS_SHOW,
+				events = { [true] = "KELA_ACTIONBAR_SETTINGS_CHANGED", [false] = "KELA_ACTIONBAR_SETTINGS_CHANGED" },
+				tooltipText = function()
+					return zo_strformat(GetString(KELA_SETTINGS_ACTIONBAR_ALWAYS_SHOW_TOOLTIP), GetString(SI_INTERFACE_OPTIONS_ACTION_BAR_TIMERS), GetString(SI_INTERFACE_OPTIONS_ACTION_BAR_BACK_ROW))
+				end,
+				visible = KelaActionBarShown,
+			},
+			[KELA_SETTING_PANEL_ACTIONBAR_EXPIRY_WARNING] =
+			{
+				controlType = OPTIONS_SLIDER,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_EXPIRY_WARNING,
+				text = KELA_SETTINGS_ACTIONBAR_EXPIRY_WARNING,
+				changedEvent = "KELA_ACTIONBAR_SETTINGS_CHANGED",
+				tooltipText = KELA_SETTINGS_ACTIONBAR_EXPIRY_WARNING_TOOLTIP,
+				valueFormat = "%d",
+				minValue = 0,
+				maxValue = 5,
+				gamepadValueStep = 1,
+				showValue = true,
+				visible = KelaActionBarShown,
+			},
+			[KELA_SETTING_PANEL_ACTIONBAR_RAISE] =
+			{
+				controlType = OPTIONS_SLIDER,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_RAISE,
+				text = KELA_SETTINGS_ACTIONBAR_RAISE,
+				changedEvent = "KELA_ACTIONBAR_SETTINGS_CHANGED",
+				tooltipText = KELA_SETTINGS_ACTIONBAR_RAISE_TOOLTIP,
+				valueFormat = "%d",
+				minValue = 0,
+				maxValue = 40,
+				gamepadValueStep = 1,
+				showValue = true,
+				visible = KelaActionBarShown,
+			},
+			[KELA_SETTING_PANEL_ACTIONBAR_BAR] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_BAR,
+				text = KELA_SETTINGS_ACTIONBAR_BAR,
+				events = { [true] = "KELA_ACTIONBAR_SETTINGS_CHANGED", [false] = "KELA_ACTIONBAR_SETTINGS_CHANGED" },
+				tooltipText = KELA_SETTINGS_ACTIONBAR_BAR_TOOLTIP,
+				visible = KelaActionBarShown,
+			},
+			[KELA_SETTING_PANEL_ACTIONBAR_SECONDS] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_SECONDS,
+				text = KELA_SETTINGS_ACTIONBAR_SECONDS,
+				events = { [true] = "KELA_ACTIONBAR_SETTINGS_CHANGED", [false] = "KELA_ACTIONBAR_SETTINGS_CHANGED" },
+				tooltipText = KELA_SETTINGS_ACTIONBAR_SECONDS_TOOLTIP,
+				visible = KelaActionBarShown,
+			},
+			-- Independent of the master switch; applies live.
+			[KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT] =
+			{
+				controlType = OPTIONS_SLIDER,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_ACTIONBAR,
+				settingId = KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT,
+				text = KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT,
+				changedEvent = "KELA_ACTIONBAR_SETTINGS_CHANGED",
+				tooltipText = function()
+					return zo_strformat(GetString(KELA_SETTINGS_ACTIONBAR_RESOURCE_SHIFT_TOOLTIP), GetString(SI_GAME_MENU_EDIT_HUD))
+				end,
+				valueFormat = "%d",
+				minValue = -100,
+				maxValue = 400,
+				gamepadValueStep = 5,
+				showValue = true,
+			},
+		},
+	},
     [KELA_SETTING_PANEL_TRADE] =
     {
 		[SETTING_TYPE_KELA] =
@@ -522,7 +673,8 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_TRADE_ENABLED,
 				text = KELA_SETTINGS_TRADE_ENABLED,
 				tooltipText = KELA_SETTINGS_TRADE_ENABLED_TOOLTIP,
-				gamepadHasEnabledDependencies = true,			
+				gamepadHasEnabledDependencies = true,
+				addons = { oneOf = { KELA_ADDONS.TTC, KELA_ADDONS.ATT } },
 			},
 			[KELA_SETTING_PANEL_TRADE_ATT_PERIOD] =
 			{
@@ -532,6 +684,7 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_TRADE_ATT_PERIOD,
 				text = KELA_SETTINGS_TRADE_ATTGRAPH_PERIOD,
 				tooltipText = KELA_SETTINGS_TRADE_ATTGRAPH_PERIOD_TOOLTIP,
+				addons = { required = { KELA_ADDONS.ATT } },
 				valueFormat = "%d",
 				minValue = 1,
 				maxValue = 30,
@@ -601,6 +754,7 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_TRADE_TOOLTIP_GUILDSTAT,
 				text = KELA_SETTING_TRADE_TOOLTIP_GUILDSTAT,
 				tooltipText = KELA_SETTING_TRADE_TOOLTIP_GUILDSTAT_TOOLTIP,
+				addons = { required = { KELA_ADDONS.ATT } },
 				visible  = function()
                     return ArkadiusTradeTools ~= nil and KelaAnyTradeTooltipShown()
                 end,
@@ -613,6 +767,7 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_TRADE_TOOLTIP_ATTINFO,
 				text = KELA_SETTING_TRADE_TOOLTIP_ATTINFO,
 				tooltipText = KELA_SETTING_TRADE_TOOLTIP_ATTINFO_TOOLTIP,
+				addons = { required = { KELA_ADDONS.ATT } },
 				visible  = function()
                     return ArkadiusTradeTools ~= nil and KelaAnyTradeTooltipShown()
                 end,
@@ -637,6 +792,7 @@ kela_SettingsData =
 				settingId = KELA_SETTING_PANEL_TRADE_TOOLTIP_QUALITY,
 				text = KELA_SETTING_TRADE_TOOLTIP_QUALITY,
 				tooltipText = KELA_SETTING_TRADE_TOOLTIP_QUALITY_TOOLTIP,
+				addons = { required = { KELA_ADDONS.LIL } },
 				visible  = function()
                     return KelaAnyTradeTooltipShown()
                 end,
@@ -701,6 +857,15 @@ KELA_SETTINGS_DEFAULTS =
 		[KELA_SETTING_PANEL_ACCOUNT_SYNC_INTERFACE] 			= "false",
 		[KELA_SETTING_PANEL_ACCOUNT_SYNC_NAMEPLATES] 			= "false",
 		[KELA_SETTING_PANEL_ACCOUNT_SYNC_SOCIAL] 				= "false",
+		-- ACTION BAR
+		[KELA_SETTING_PANEL_ACTIONBAR_ENABLED] 				= "false",
+		[KELA_SETTING_PANEL_ACTIONBAR_STACKS] 				= "true",
+		[KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW] 			= "false",
+		[KELA_SETTING_PANEL_ACTIONBAR_EXPIRY_WARNING] 		= "3",
+		[KELA_SETTING_PANEL_ACTIONBAR_RAISE] 				= "10",
+		[KELA_SETTING_PANEL_ACTIONBAR_BAR] 					= "true",
+		[KELA_SETTING_PANEL_ACTIONBAR_SECONDS] 				= "false",
+		[KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT] 		= "0",
 		-- TRADING
 		[KELA_SETTING_PANEL_TRADE_ENABLED] 				= "true",
 		[KELA_SETTING_PANEL_TRADE_ATT_PERIOD] 			= "15",
@@ -926,6 +1091,11 @@ local function OptionsSlider_SelectChoice(control, value, eventReason)
     local data = control.data
     local oldValueString, formattedValueString, formattedValue = GetSliderOptionValues(control, value)
     KelaSetSettingFromControl(control, formattedValueString)
+    -- A slider's `changedEvent` fires whenever its value actually changes, so a
+    -- feature can preview the change while the menu is open.
+    if data.changedEvent and tonumber(oldValueString) ~= formattedValue then
+        CALLBACK_MANAGER:FireCallbacks(data.changedEvent)
+    end
 
 
 	local valueLabelControl = GetControl(control, "Name")
@@ -1220,8 +1390,64 @@ do
         return zo_strformat(GetString(KELA_SETTING_INFO_DEFAULT), defaultText)
     end
 
+    -- Each group lists its add-ons under a heading, with a colored status that is
+    -- read every time the tooltip is drawn. `good` is the status that lets the
+    -- setting work: installed, or (for a conflict) not loaded.
+    local ADDON_GROUPS =
+    {
+        { key = "required", header = KELA_SETTING_ADDON_REQUIRES, missingColor = kpuiConst.Colors.COLOR_LIGHT_RED },
+        { key = "oneOf", header = KELA_SETTING_ADDON_REQUIRES_ONE },
+        { key = "optional", header = KELA_SETTING_ADDON_OPTIONAL, missingColor = kpuiConst.Colors.COLOR_OFF_WHITE },
+        { key = "conflicts", header = KELA_SETTING_ADDON_CONFLICTS, isConflict = true },
+    }
+
+    local function GetAddOnStatusText(addons)
+        local lines = {}
+        for _, group in ipairs(ADDON_GROUPS) do
+            local list = addons[group.key]
+            if list and #list > 0 then
+                local missingColor = group.missingColor
+                if group.key == "oneOf" then
+                    -- Missing entries are fine while another one is loaded.
+                    local anyLoaded = false
+                    for _, addon in ipairs(list) do
+                        anyLoaded = anyLoaded or addon.isLoaded()
+                    end
+                    missingColor = anyLoaded and kpuiConst.Colors.COLOR_OFF_WHITE or kpuiConst.Colors.COLOR_LIGHT_RED
+                end
+                lines[#lines + 1] = GetString(group.header) .. ":"
+                for _, addon in ipairs(list) do
+                    local isLoaded = addon.isLoaded()
+                    local statusText
+                    if group.isConflict then
+                        statusText = isLoaded
+                            and kpuiConst.Colors.COLOR_LIGHT_RED:Colorize(GetString(KELA_SETTING_ADDON_LOADED))
+                            or kpuiConst.Colors.COLOR_LIGHT_GREEN:Colorize(GetString(KELA_SETTING_ADDON_NOT_LOADED))
+                    elseif isLoaded then
+                        statusText = kpuiConst.Colors.COLOR_LIGHT_GREEN:Colorize(GetString(KELA_SETTING_ADDON_FOUND))
+                    else
+                        statusText = missingColor:Colorize(GetString(KELA_SETTING_ADDON_NOT_FOUND))
+                    end
+                    lines[#lines + 1] = addon.name .. ": " .. statusText
+                end
+            end
+        end
+        if #lines == 0 then
+            return nil
+        end
+        return table.concat(lines, "\n")
+    end
+
     local function GetSettingInfoText(data)
         local lines = {}
+
+        if data.addons then
+            local addonText = GetAddOnStatusText(data.addons)
+            if addonText then
+                lines[#lines + 1] = addonText
+                lines[#lines + 1] = ""
+            end
+        end
 
         local defaultText = FormatSettingDefault(data)
         if defaultText then
@@ -1458,36 +1684,13 @@ local KELA_SETTINGS_CATEGORY_ORDER =
     KELA_SETTING_PANEL_FEATURES,
     KELA_SETTING_PANEL_FIXES,
     KELA_SETTING_PANEL_ACCOUNT,
-    KELA_SETTING_PANEL_TRAIT_RESEARCH,
-    KELA_SETTING_PANEL_SETS,
+    KELA_SETTING_PANEL_ACTIONBAR,
+    KELA_SETTING_PANEL_JOURNALS,
     KELA_SETTING_PANEL_TRADE,
 }
 
--- The trait research help text names LibCharacterKnowledge and reports whether
--- the library was found.  It is rebuilt on every list refresh so the status is
--- accurate without restarting the add-on.
-local function KelaTraitResearchTooltip()
-    local statusText
-    if LibCharacterKnowledge ~= nil then
-        statusText = kpuiConst.Colors.COLOR_LIGHT_GREEN:Colorize(GetString(KELA_SETTINGS_TRAIT_RESEARCH_LCK_AVAILABLE))
-    else
-        statusText = kpuiConst.Colors.COLOR_LIGHT_RED:Colorize(GetString(KELA_SETTINGS_TRAIT_RESEARCH_LCK_NOTFOUND))
-    end
-
-    return GetString(KELA_SETTINGS_TRAIT_RESEARCH_ENABLED_TOOLTIP)
-        .. "\n\n"
-        .. GetString(KELA_SETTINGS_TRAIT_RESEARCH_LCK_STATUS) .. ": " .. statusText
-end
-
 function Kela_GamepadOptions:RefreshOptionsList()
     self.optionsList:Clear()
-    local traitResearchData = kela_SettingsData[KELA_SETTING_PANEL_TRAIT_RESEARCH]
-    if traitResearchData then
-        local data = traitResearchData[SETTING_TYPE_KELA][KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED]
-        if data then
-            data.tooltipText = KelaTraitResearchTooltip()
-        end
-    end
     for _, panelId in ipairs(KELA_SETTINGS_CATEGORY_ORDER) do
         self:AddSettingGroup(panelId, GetString("KELA_SETTINGSYSTEMPANEL", panelId))
     end

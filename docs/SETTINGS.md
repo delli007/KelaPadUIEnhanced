@@ -52,12 +52,13 @@ to be unique within this add-on and stable across releases.
 | --- | --- |
 | `7000` | `SETTING_TYPE_KELA` (system id, not a setting) |
 | `7001`-`7299` | Reserved buffer; do not allocate |
-| `7300`-`7399` | Core panels (Item sets, Trait research) |
+| `7300`-`7399` | Core panels (Journals and Browsers) |
 | `7400`-`7499` | Feature toggles |
 | `7500`-`7599` | Trading house |
 | `7600`-`7699` | Fixes and Patches panel |
 | `7700`-`7799` | Account-wide game settings panel |
-| `7800`-`7999` | Reserve |
+| `7800`-`7899` | Ability Bar panel |
+| `7900`-`7999` | Reserve |
 
 Allocate the lowest free number in the block that owns the feature. IDs are
 never reused after a public release; add a retired ID to
@@ -66,24 +67,24 @@ audit will reject it. The unused feature ID `7405` and the unused
 trading ID `7503` are free; remove a number from `KELA_LEGACY_SETTING_IDS` before
 assigning it.
 
-### Item sets
+### Journals and Browsers
 
 | ID | Constant | Default |
 | --- | --- | --- |
-| `7300` | `KELA_SETTING_PANEL_SETS` (panel) | - |
+| `7304` | `KELA_SETTING_PANEL_JOURNALS` (panel) | - |
 | `7301` | `KELA_SETTING_PANEL_SETS_ENABLED` | `true` |
-
-### Trait research
-
-| ID | Constant | Default |
-| --- | --- | --- |
-| `7302` | `KELA_SETTING_PANEL_TRAIT_RESEARCH` (panel) | - |
 | `7303` | `KELA_SETTING_PANEL_TRAIT_RESEARCH_ENABLED` | `true` |
+| `7414` | `KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE` | `true` |
+| `7407` | `KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL` | `true` |
 
-The trait research matrix is reload-gated. Its help text is built in
-`RefreshOptionsList()` (not from the static metadata) so the
-`LibCharacterKnowledge` line reports "available" in light green or "not found"
-in light red on every open.
+- One panel for the menu screens: the sets browser, the trait research matrix,
+  Character Knowledge, and Extended Journal.
+- Each toggle keeps the ID it shipped with, so saved values carry over. Extended
+  Journal and Character Knowledge keep their Features-block numbers.
+- The old one-row panels, `7300` (Item sets) and `7302` (Trait research), are
+  retired in `KELA_RETIRED_SETTING_IDS`.
+- The trait research matrix is reload-gated. The sets browser, Extended Journal,
+  and Character Knowledge check their setting whenever the menu is built.
 
 ### Features
 
@@ -95,17 +96,16 @@ in light red on every open.
 | `7403` | `KELA_SETTING_PANEL_FEATURES_CHAT_TOOLS` | `true` |
 | `7404` | `KELA_SETTING_PANEL_FEATURES_MAP_RALLY` | `true` |
 | `7406` | `KELA_SETTING_PANEL_FEATURES_ANTIQUITY_LEADS` | `true` |
-| `7407` | `KELA_SETTING_PANEL_FEATURES_EXTENDED_JOURNAL` | `true` |
 | `7408` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_SHORTCUTS` | `true` |
 | `7409` | `KELA_SETTING_PANEL_FEATURES_MAIN_MENU_DASHBOARD` | `true` |
 | `7410` | `KELA_SETTING_PANEL_FEATURES_PA_JUNK` | `true` |
 | `7411` | `KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS` | `false` |
 | `7412` | `KELA_SETTING_PANEL_FEATURES_GAMEPAD_FILTERS` | `true` |
-| `7414` | `KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE` | `true` |
 
-All Features toggles except the PS5 button map, Extended Journal, and
-Character Knowledge are reload-gated; those menu entries check the setting each
-time the menu is built. The PS5 button
+`7407` and `7414` are in the Features block but show in the Journals and
+Browsers panel.
+
+All Features toggles except the PS5 button map are reload-gated. The PS5 button
 map applies immediately: its checkbox events call `kpuiPS5ButtonMap:SetEnabled`,
 and the bootstrap also applies the saved value during `KelaPadUI_OnLoaded()`.
 Leaving the KelaPadUI Enhanced options after changing a reload-gated toggle shows a
@@ -238,6 +238,131 @@ separate setting.
 | `7512` | `KELA_SETTING_PANEL_TRADE_TOOLTIP_PRODUCTION` | `true` |
 | `7513` | `KELA_SETTING_PANEL_TRADE_TOOLTIP_COMPONENTS` | `true` |
 
+### Ability Bar
+
+| ID | Constant | Default |
+| --- | --- | --- |
+| `7800` | `KELA_SETTING_PANEL_ACTIONBAR` (panel) | - |
+| `7801` | `KELA_SETTING_PANEL_ACTIONBAR_ENABLED` | `false` |
+| `7802` | `KELA_SETTING_PANEL_ACTIONBAR_STACKS` | `true` |
+| `7803` | `KELA_SETTING_PANEL_ACTIONBAR_EXPIRY_WARNING` | `3` (seconds, 0 = off) |
+| `7804` | `KELA_SETTING_PANEL_ACTIONBAR_RAISE` | `10` (pixels, 0-40) |
+| `7805` | `KELA_SETTING_PANEL_ACTIONBAR_SECONDS` (timer numbers) | `false` |
+| `7806` | `KELA_SETTING_PANEL_ACTIONBAR_RESOURCE_SHIFT` | `0` (pixels) |
+| `7807` | `KELA_SETTING_PANEL_ACTIONBAR_ALWAYS_SHOW` | `false` |
+| `7808` | `KELA_SETTING_PANEL_ACTIONBAR_BAR` (timer progress bar) | `true` |
+
+The panel sits below Account-Wide Settings.
+
+**`7801` (master switch)**
+- Reload-gated. It gates `kpui_features/hud/kpui_action_bar.lua`
+  (`KelaSetupActionBar`).
+- That module decorates the game's own ability bar; it does not replace it.
+  - It adds stack labels on the front buttons (`KelaFrontStack<slot>`) and
+    above them for the back row (`KelaBackBarStack<slot>`).
+  - It post-hooks `ZO_ActionBarTimer.ApplyAnchor` (raise),
+    `ZO_ActionBarTimer.ApplyStyle` (timer mode) and
+    `ZO_ActionBarTimer.UpdateFillBar` (expiry color and seconds label).
+- The module stays off when Fancy Action Bar+ (`FancyActionBar`) or Action
+  Duration Reminder is loaded, since both replace the back row.
+
+**`7802`–`7805`, `7807` and `7808`**
+- Shown only while `7801` is on.
+- Apply as soon as they change. These rows and `7806` fire
+  `KELA_ACTIONBAR_SETTINGS_CHANGED` (checkbox `events`, slider `changedEvent`),
+  and both HUD modules refresh on it.
+- While the KelaPadUI settings are open, `kpui_features/hud/kpui_hud_preview.lua`
+  shows the ability bar and attribute bars behind them, through
+  `ZO_ContextualActionBar_AddReference` and `PLAYER_ATTRIBUTE_BARS:ForceShow`.
+  The game's "Never" choice for the ability bar still hides it.
+- The timer progress bar (`7808`) and the timer numbers (`7805`, still named
+  `..._SECONDS`) are independent. The numbers show on a slot with a running
+  effect, with or without the bar; with both on they share the strip above the
+  front button, so raise the back row a little. The countdown sits at the left
+  of the slot and the stack count at the right, at the same height: both hang
+  from the front button's top edge (`BACK_LABEL_DROP`, `BACK_TIMER_INSET_X`,
+  `BACK_STACK_INSET_X`). The countdown is lifted by `BACK_TIMER_LIFT` (2 px) so its
+  smaller text lines up with the count by eye.
+- The countdown is formatted like the front bar's timer
+  (`ZO_FormatTimeShowUnitOverThresholdShowDecimalUnderThreshold`): whole seconds,
+  tenths under 2 s ("1.6"). The text is rebuilt only when the shown value would
+  change: each second, then each tenth.
+- The stack count font is chosen by measurement, once, from `STACK_FONTS_BACK`
+  (largest first): the widest countdown ("8.8") and one digit must fit in the
+  slot's width minus both insets and a 3 px gap. The pick and the measured
+  widths are logged at Info level (`Action bar: back row text: ...`), so a
+  different font or smaller list can be checked from the log.
+- Turning the bar off also moves the back row up by the freed space: the slot
+  is positioned so the redrawn 3 px border stays where the top edge was with the
+  bar, which lifts the icon by 9 px (`GetRaisedOffsetY`).
+- Turning the bar off trims the back slot's top 12 px (the timer bar's groove in the
+  frame art): the slot and frame get shorter, the frame textures skip those
+  rows, and the icon anchors to the top. The frame's 3 px top border is the
+  first rows of the same texture, so it is redrawn as its own texture above the
+  trimmed frame. The game's `ApplyStyle` undoes the trim; the module re-trims
+  after it.
+- The raise also survives bar swaps: each swap resets the slide animation to
+  the default offset (`PlayBackBarSwapAnimation`), so a post-hook on
+  `ZO_ActionBarTimer.ApplySwapAnimationStyle` points it back at the raised one.
+
+**Stack refresh cost**
+- Stack labels refresh from events that can arrive many times a second in a
+  big fight (slot effect updates, tracked-buff changes, slot updates). They are
+  queued and applied at most every 100 ms (`QueueStackRefresh`); settings
+  changes and loading screens refresh at once.
+- The tracked-buff handler ignores anything that is not a tracked buff on the
+  player or whose count did not change, even if its event filter were dropped.
+
+**Timers for stacking skills**
+- A tracked buff's expiry (`timeEnding` from `GetUnitBuffInfo` and
+  `EVENT_EFFECT_CHANGED`, in `GetFrameTimeSeconds` time; 0 length means no
+  expiry) is stored in `buffEnds` / `buffDurationsMS`.
+- For a slot whose skill is linked to the buff and has no timer of its own
+  (`GetActionSlotEffectTimeRemaining` under the game's 1000 ms minimum), the
+  remaining time is fed into the game's own timers: `ActionButton:SetTimer` on
+  the front button (its text, with the dimming overlay hidden) and
+  `ZO_ActionBarTimer:SetFillBar` on the back row. So the front text, the back
+  row bar, numbers, expiry warning, and Always show back row all treat it like
+  any other timer.
+- The game sets these to 0 whenever a slot's own effect is gone, on swaps, and
+  on slot changes; post-hooks on `SetTimer` and `SetFillBar` put the linked
+  timer back when called with 0. `kelaLinkedTimer` marks a timer that is ours,
+  so a fade only clears ours. Calls that set a time are ignored, which keeps the
+  hooks from calling themselves.
+- It follows `Show stack counts` (`7802`): off, and the linked timers go away.
+- Syncing runs with the stack refresh (at most every 100 ms), not per frame.
+
+**Stack sources**
+- The slot's own effect: `GetActionSlotEffectStackCount`. The game shows this
+  itself on the front bar when Ability Bar Timers is on.
+- Player buffs listed in `STACK_BUFFS` in the module
+  (`[buff ID] = { slotted skill IDs }`), such as Seething Fury for Molten Whip
+  and Crux for Arcanist skills.
+  - Each buff has its own `EVENT_EFFECT_CHANGED` registration, filtered by
+    ability ID and the player unit.
+  - A debug-level log line names each tracked buff the first time it gains
+    stacks, which helps confirm or add IDs.
+
+**`7807` (always show back row)**
+- The game shows a back slot only while an effect runs on it. It hides the slot
+  in `ZO_ActionBarTimer:ApplyStyle`, `SetupBackRowSlot`, and `UpdateFillBar`
+  (when the timer ends). Post-hooks on all three call `ShowIdleSlot`, which
+  shows the slot again when it holds a skill. The ultimate slot is left out:
+  it only shows while its own effect is running.
+- The game's own state still decides whether a slot can show: `timer.active`
+  (false on hotbars without a back row), `timer.showBackRowSlot` (the game's
+  Ability Bar Timers and Back Row options), and gamepad mode.
+- Turning it off hides each idle slot again (`HasValidDuration` is false).
+
+**`7806` (attribute bar shift)**
+- Independent of `7801`. It is handled by
+  `kpui_features/hud/kpui_resource_bars.lua` (`KelaSetupResourceBars`).
+- It moves `ZO_PlayerAttributeMagicka` right and `ZO_PlayerAttributeStamina`
+  left by the same amount.
+- It re-applies after the base-game HUD manager resets anchors (the
+  `"PropagateSettings"` and `"OffsetsChanged"` callbacks).
+- A bar the player moved in Edit HUD keeps that position.
+
 ## Screen structure
 
 The settings scene is `kela_options_root`. It contains one gamepad parametric
@@ -252,8 +377,8 @@ local KELA_SETTINGS_CATEGORY_ORDER =
     KELA_SETTING_PANEL_FEATURES,
     KELA_SETTING_PANEL_FIXES,
     KELA_SETTING_PANEL_ACCOUNT,
-    KELA_SETTING_PANEL_TRAIT_RESEARCH,
-    KELA_SETTING_PANEL_SETS,
+    KELA_SETTING_PANEL_ACTIONBAR,
+    KELA_SETTING_PANEL_JOURNALS,
     KELA_SETTING_PANEL_TRADE,
 }
 ```
@@ -293,8 +418,8 @@ checkboxes, opens color pickers, or invokes callbacks.
    - `controlType`;
    - `system`, `panel`, and `settingId`;
    - `text` and `tooltipText`;
-   - optional `visible`, `enabled`, `requiresReload`, `requiresText`, and
-     dependency flags.
+   - optional `visible`, `enabled`, `requiresReload`, `requiresText`,
+     `addons`, and dependency flags.
 4. **Add a default.** Add the value to `KELA_SETTINGS_DEFAULTS` as a string.
 5. **Add English text.** Add every new `KELA_*` string to `kpui_lang/en.lua`;
    it is the add-on's only locale file.
@@ -327,6 +452,8 @@ Sliders use `OPTIONS_SLIDER` and must define `minValue` and `maxValue`. Use
 `gamepadValueStep` for an absolute step or `gamepadValueStepPercent` for a
 percentage step. `showValue` appends the current value to the label.
 `valueFormat` controls the displayed value; the ATT period uses `"%d"`.
+Sliders do not support `events`; set `changedEvent` to a callback name instead,
+and it fires (with no arguments) whenever the slider's value changes.
 
 Read the ATT analysis period through `KelaGetATTAnalysisPeriod()`. It falls back
 to the default of 15 days and clamps the result to the supported 1-30 range, so
@@ -342,9 +469,21 @@ old or malformed saved values cannot produce an invalid ATT query window.
   after the checkbox changes, revealing or hiding dependent controls.
 - `requiresText` adds a custom requirement line to the tooltip. It can be a
   string or a localization ID.
+- `addons` lists the other add-ons a setting depends on, using entries from
+  `KELA_ADDONS` (each has the add-on's own title and an `isLoaded` check on the
+  global the feature reads). Groups, each optional:
+  - `required`: shows "found" in green or "not found" in red.
+  - `oneOf`: at least one must be loaded (the trading providers). A missing
+    entry is red only when none of them is loaded.
+  - `optional`: the feature works without it; a missing entry is grey.
+  - `conflicts`: the feature stays off while one is loaded; "loaded" is red.
 
-The information tooltip automatically appends the default value, the
-immediate/reload note, and any requirement line.
+  The status is read each time the tooltip is drawn, so it is current without
+  a reload. Add an add-on to `KELA_ADDONS` (and to `## OptionalDependsOn` when
+  the feature reads its globals) before using it here.
+
+The information tooltip automatically appends any add-on status, the default
+value, the immediate/reload note, and any requirement line.
 
 ## Resetting settings
 
