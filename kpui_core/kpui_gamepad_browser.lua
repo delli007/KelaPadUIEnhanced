@@ -111,6 +111,9 @@ local function ShowChoices(title, labels, selectedIndex, onPick)
 	end
 end
 
+-- Shared with the other Kela gamepad screens (Fight Stats filters).
+KelaShowChoiceDialog = ShowChoices
+
 local function RunActions(actions)
 	if #actions == 1 then
 		actions[1].action()

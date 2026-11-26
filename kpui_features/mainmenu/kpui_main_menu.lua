@@ -5,7 +5,8 @@ local KELAPADUI_ENTRIES = {
     LOOT_LOG = 4,
     COLLECTIBLES_TRACKER = 5,
     RAIDIFICATOR = 6,
-    SETTINGS       = 7,
+    FIGHT_STATS = 7,
+    SETTINGS       = 8,
 }
 
 local KELAPADUI_TEXT_COLOR = "|cC64CFF"
@@ -83,6 +84,17 @@ local KELAPADUI_MENU_ENTRY_DATA =
             end,
             activatedCallback = function()
                 if KelaShowRaidificator then KelaShowRaidificator() end
+            end,
+        },
+        [KELAPADUI_ENTRIES.FIGHT_STATS] =
+        {
+            name = GetString(KELA_MAINMENU_FIGHT_STATS),
+            icon = "EsoUI/Art/MenuBar/Gamepad/gp_playerMenu_icon_skills.dds",
+            isVisibleCallback = function()
+                return KelaIsFightStatsAvailable ~= nil and KelaIsFightStatsAvailable()
+            end,
+            activatedCallback = function()
+                if KelaShowFightStats then KelaShowFightStats() end
             end,
         },
         [KELAPADUI_ENTRIES.SETTINGS] =

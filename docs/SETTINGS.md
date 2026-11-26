@@ -78,6 +78,10 @@ assigning it.
 | `7415` | `KELA_SETTING_PANEL_FEATURES_LOOT_LOG` | `true` |
 | `7416` | `KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER` | `true` |
 | `7417` | `KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR` | `true` |
+| `7418` | `KELA_SETTING_PANEL_FEATURES_FIGHT_STATS` | `true` |
+| `7419` | `KELA_SETTING_PANEL_FIGHT_STATS_PVE` | `true` |
+| `7420` | `KELA_SETTING_PANEL_FIGHT_STATS_BATTLEGROUNDS` | `true` |
+| `7421` | `KELA_SETTING_PANEL_FIGHT_STATS_KEPT` | `10` (fights, 1-40) |
 
 - One panel for the menu screens: the sets browser, the trait research matrix,
   Character Knowledge, Loot Log, Collectibles Tracker, and Raidificator.
@@ -86,6 +90,17 @@ assigning it.
 - The old one-row panels, `7300` (Item sets) and `7302` (Trait research), are
   retired in `KELA_RETIRED_SETTING_IDS`, and so is `7407` (Extended Journal),
   which the three add-on toggles replaced.
+- Fight Stats (`7418`-`7421`) lives in `kpui_features/journals/fightstats/` (recording in `kpui_fight_records.lua`).
+  - `7418` is the master toggle and needs LibCombat. The rows below it follow it
+    (`enabled` is a function). All four fire `KELA_FIGHT_STATS_SETTINGS_CHANGED`,
+    so changes apply live, with no reload.
+  - `7419` records PvE fights; `7420` records battlegrounds as one entry per
+    match. Cyrodiil, Imperial City, Vengeance, and Jerall Pass have no setting
+    and are never recorded.
+  - `7421` is the number of entries kept (1-40). It is Fight Stats' own and
+    never reads or writes Combat Metrics' `fighthistory`. The slider help shows
+    an estimate of the memory Fight Stats uses at the current value
+    (`BYTES_PER_ENTRY`, about 40 KB per entry).
 - The trait research matrix is reload-gated. The sets browser, Character
   Knowledge, Loot Log, Collectibles Tracker, and Raidificator check their
   setting whenever the menu is built.

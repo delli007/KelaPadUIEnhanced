@@ -26,7 +26,7 @@ update. For the compact maintenance checklist and recurring pitfalls, see
 | `KelaPadUIEnhanced.txt` | Manifest and load order. |
 | `kpui_core/` | Settings, constants, utilities, add-on dialogs (`kpui_dialogs.lua`), the gamepad data browser (`kpui_gamepad_browser.lua`), tooltip styles, and gamepad tooltip code. |
 | `kpui_features/` | Optional features: companion info, dungeon finder, chat tools, map rally, antiquities, sets, Character Knowledge, the main menu, and trading house. |
-| `kpui_features/journals/` | The Loot Log, Collectibles Tracker, and Raidificator screens: each reads its add-on's own tables as gamepad browser sources. |
+| `kpui_features/journals/` | The Loot Log, Collectibles Tracker, Raidificator, and Fight Stats screens: the first three read their add-on's own tables as gamepad browser sources; Fight Stats lives in `fightstats/`: `kpui_fight_records.lua` records LibCombat's fight summaries, `kpui_fight_tally.lua` adds per-skill damage, casts, buff uptimes, stats, resources and group data from its events, and the Summary, Stats, Group and Loadout pages each have a file, with shared sections in `kpui_fight_ui.lua`. |
 | `kpui_features/fixes/` | Base-game fixes: the group menu panel leak and the U51 battleground fixes. |
 | `kpui_features/filters/` | Additional gamepad set, recipe, and achievement filters. |
 | `kpui_features/mainmenu/` | Main-menu entry, dashboard, and Quick Access. |
@@ -100,7 +100,7 @@ The Features category contains reload-gated toggles:
 | Antiquity lead details | on |
 | Main-menu quick access | on |
 | Main-menu daily dashboard | on |
-| PersonalAssistant junk integration | on |
+| PersonalAssistant integration | on |
 | PS5 button map | off |
 
 The Journals and Browsers category groups the menu screens. Only the trait
@@ -115,6 +115,7 @@ built:
 | Loot Log | on |
 | Collectibles Tracker | on |
 | Raidificator | on |
+| Fight Stats (and PvE, battlegrounds) | on; fights kept 10 |
 
 Settings that depend on another add-on list it in their help text with a live
 status (see `addons` in `docs/SETTINGS.md`). To check it, open the help for
@@ -209,9 +210,15 @@ setup function. Changing a toggle therefore requires `/reload`; the setting
 tooltip communicates this, and leaving the options after a change shows a
 "reload required" dialog with Reload UI and Later. Keep the feature-gating
 checks in the bootstrap when adding a new load-time feature, and add a matching
-default and string. The PersonalAssistant junk toggle depends on the optional
+default and string. The PersonalAssistant toggle depends on the optional
 PersonalAssistant add-on; it is installed regardless of load order and checks PA
-availability per item.
+availability per item. Its banking rule dialog writes
+`PersonalAssistant.Banking.SavedVars.Custom.PAItemIds` in the same shape PA's
+own rule window does (`operator` is the comparison plus five per bag, in PA's
+`PAC.OPERATOR` order), and deletes through PA's exported
+`CustomDialogs.deletePABCustomRule`. In game: add a rule from the gamepad
+inventory, confirm it appears in PA's rules list in keyboard mode with the same
+bag, comparison and quantity, edit it, and delete it.
 
 ### Group menu fix
 
@@ -455,6 +462,32 @@ Manual in-game checks are still required for:
   add-on is missing); paging with L1/R1; trying each filter and sorting each
   column; looting an item with Loot Log open and confirming the row appears;
   hiding and unhiding a collectible and confirming the keyboard window agrees;
+- with Combat Metrics installed: finishing a PvE fight (a target dummy works)
+  and finding it in Fight Stats with the right content type and zone and
+  sensible damage, DPS and HPS, then L1/R1 to the Loadout page and checking the
+  race, class, armor weights, weapons, sets, enchants, skills and champion
+  stars against what you wore, and scrolling with the right stick; on the
+  Stats page, skills with their casts, hits, crit rate and damage share beside
+  the essential buffs and debuffs with sensible uptimes, Major Brutality and
+  Major Sorcery as one row, and the X target filter; the Summary page fitting
+  on one screen without scrolling; in a group, the tank's Major Breach counted
+  on the Stats page and in penetration; with LibGroupCombatStats installed, the
+  Group page listing each member's DPS and HPS (compare with HodorReflexes'
+  list, which reads the same shared figures; members without a sharing add-on
+  show as not shared), the group's damage against Combat Metrics' group tab,
+  the Y member view with their buffs, skill lines and inferred sets, the X
+  target view, and the Loadout page's Y member view; without
+  LibGroupCombatStats, no Group page; on a non-English client, the
+  essential buffs found rather than all marked missing; deleting one fight and
+  all fights with the right stick, each after a confirmation;
+  playing a
+  battleground and confirming exactly one Battleground entry appears after the
+  match (even if you leave straight away), with none while it runs; after
+  `/reloadui` the same fights are still listed (saved account-wide under
+  `fightStatsHistory` in `kpuiSavedVariables`, trimmed to "Fights kept"); fighting in Cyrodiil and confirming nothing is recorded and Combat
+  Metrics' own settings are untouched; moving "Fights kept" and checking the
+  list is trimmed, the help text memory estimate changes, and Combat Metrics'
+  fight history setting does not;
 - at a transmute station, search for set names (including Cyrodiil sets), test
   mixed case, no matches, clearing and leaving/re-entering; confirm existing
   locked-item filters and reconstruction selection and Back navigation work;

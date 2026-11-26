@@ -208,6 +208,7 @@ local function KelaPadUI_OnLoaded(eventType, addonName)
 	KelaSetupCharacterKnowledge()
 	KelaSetupCollectiblesTracker()
 	KelaSetupRaidificator()
+	KelaSetupFightStats()
 	-- Always set up: each category checks its setting, so the toggle needs no reload.
 	KelaSetupAccountSettings()
 	if IsFeatureEnabled(KELA_SETTING_PANEL_ACTIONBAR_ENABLED) then

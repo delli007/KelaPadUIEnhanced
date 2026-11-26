@@ -14,6 +14,12 @@ each one exists because the shortcut it forbids shipped a defect.
 - **The user tests in game; you do not ship.** Edit files in place, run the
   audit, then stop and ask the user to test. Commit or push only when the user
   says so. Split large work into phases and stop after each one.
+- **Release chores wait for the release.** While a version is in development,
+  do not run the translation script, edit the locale files, `changelog.txt`,
+  `README.md`, `README.bbcode`, or the version fields, and do not polish docs
+  for a feature that may still change. Add new strings to `en.lua` only (English
+  loads first, so a locale without them shows English) and keep the audit
+  passing. Do all of that in one pass when the user says it is time to release.
 - **Prove every API exists before using it.** The base-game UI source is at
   `..\..\..\esoui-sourcecode\esoui` (read-only) and the full API list is
   `..\..\..\esoui-sourcecode\ESOUIDocumentation.txt`. Grep both. Things that
@@ -46,7 +52,8 @@ each one exists because the shortcut it forbids shipped a defect.
   `KPUI_SECTION_GAP` in `kpui_tradinghouse_shared.lua`).
 - **Settings rows may use functions.** A row's `enabled` or `visible` can be a
   function; read `enabled` through `KelaIsSettingEnabled(data)`.
-- **Strings:** add to `en.lua`, then run
+- **Strings:** add to `en.lua`. At release time (not before; see "Release
+  chores wait for the release"), run
   `python _tools\translate_kpui_lang.py --all` and
   `python _tools\translate_kpui_lang.py --check --all`. Read the new lines in
   the other locale files: machine translation turned "characters" into
@@ -124,6 +131,9 @@ each one exists because the shortcut it forbids shipped a defect.
   identity, ignoring link style), `KelaLocalizedFormatNumber`,
   `KelaApplyTextStyle` / `KelaApplyEntryTextStyle`, `KelaRegisterGamepadDialog`
   and `KelaParametricSelectBackButtons` (`kpui_core/kpui_dialogs.lua`),
+  `KelaSheet` / `KelaGamepadSheetScreen` (`kpui_core/kpui_gamepad_sheet.lua`: a
+  list on the left and a scrolling character-sheet panel on the right, drawn in
+  Lua with pooled controls; Fight Stats uses it),
   `KelaGamepadBrowser` (`kpui_core/kpui_gamepad_browser.lua`: filters on the
   left and a sortable core gamepad table on the right for any data source,
   with `SearchFilter` / `ChoiceFilter` / `ToggleFilter` builders; the Loot Log,
@@ -227,6 +237,35 @@ each one exists because the shortcut it forbids shipped a defect.
   untrusted: check types, guard with the availability function, and only read
   (hiding a collectible writes Collectibles Tracker's own hide list, as its
   window does). Never reintroduce LibExtendedJournal: it has no data API.
+- Fight Stats listens to LibCombat's public fight-summary callback only (never
+  Combat Metrics' `CMX.lastfights`, and never `fight:CalculateFight`, which is
+  tied to Combat Metrics' report window). LibCombat tracks combat events while
+  anything is registered with it, so the callback is registered only in PvE and
+  battlegrounds and unregistered everywhere else; keep Cyrodiil, Imperial City,
+  Vengeance, and Jerall Pass out unless a setting and a performance check are
+  added. Copy what is needed out of the fight object and drop it.
+  The per-skill, buff, stat, and resource detail comes from LibCombat's own
+  events (`kpui_features/journals/fightstats/kpui_fight_tally.lua`), registered
+  and unregistered together with the summary callback, in battlegrounds too
+  regardless of Combat Metrics' light mode. The callbacks only add into
+  counters; never store a per-event log.
+  The game names the source of a hit only when you are the attacker or the
+  target, so another member's damage and healing cannot be counted from
+  `EVENT_COMBAT_EVENT` (saved trial fights showed every member at 0). The
+  group's total per enemy comes from LibCombat's units (`groupDamageOut`, kept
+  on by a `GROUPRECAP` listener), each member's own DPS and HPS from
+  LibGroupCombatStats (registered once for `SKILLLINES`, `DPS`, `HPS`, which
+  also shares yours), and members' damage taken from `EVENT_COMBAT_EVENT` with a
+  group-target filter. Keep each registration's filters in one
+  `AddFilterForEvent` call, as a second call replaces the first. Enemy debuffs come from both `EFFECTS_OUT` (yours) and
+  `GROUPEFFECTS_OUT` (the group's); an effect is up while any of its effect
+  slots is. Fight Stats never reads or writes Combat Metrics' settings.
+- The buffs and debuffs Fight Stats knows are data in
+  `kpui_data/kpui_fight_effects.lua`. Add an ability id only when it is proven
+  (another add-on's source or the game); otherwise give the English name and the
+  icon file name, which match on every client. Weapon and spell versions of one
+  buff are one entry with two aliases, counted at the higher uptime, as the game
+  counts weapon and spell damage and critical.
 - Use only a library's public table. LibExtendedJournal sets
   `LibExtendedJournalInternal = nil` right after it loads, so code reading it
   saw no tabs and hid its menu entries. Load order is neither alphabetical nor
@@ -251,12 +290,12 @@ each one exists because the shortcut it forbids shipped a defect.
 - Preserve the five tooltip types, `QUAD1*` styles, `getStyleHeaderLine`, the
   `ZO_CRAFTING_TOOLTIP_STYLES` copy, the flattened settings list, and the
   KELAPADUI entry directly below Options.
-- Keep `README.bbcode` in sync with `README.md`; it is the ESOUI listing
+- At release time, keep `README.bbcode` in sync with `README.md`; it is the ESOUI listing
   description. It has no tables and no `[code]` (use
   `[font=Courier New][color=#4682B4]` for inline code), and each `[*]` item sits
   on its own line inside `[list]` / `[/list]`.
-- Update `changelog.txt` (newest first) and affected docs for user-facing
-  changes. Keep `## Version`, `## AddOnVersion`, the top `changelog.txt` version,
+- At release time, update `changelog.txt` (newest first) and affected docs for
+  user-facing changes. Keep `## Version`, `## AddOnVersion`, the top `changelog.txt` version,
   and the release tag (`v<version>`) in sync; the audit checks the first three
   and the release workflow rejects a mismatched tag.
 - `changelog.txt` is also the ESOUI changelog, uploaded in full on every release.

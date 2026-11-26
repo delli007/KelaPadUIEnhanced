@@ -48,6 +48,10 @@ KELA_SETTING_PANEL_FEATURES_CHARACTER_KNOWLEDGE = 7414
 KELA_SETTING_PANEL_FEATURES_LOOT_LOG = 7415
 KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER = 7416
 KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR = 7417
+KELA_SETTING_PANEL_FEATURES_FIGHT_STATS = 7418
+KELA_SETTING_PANEL_FIGHT_STATS_PVE = 7419
+KELA_SETTING_PANEL_FIGHT_STATS_BATTLEGROUNDS = 7420
+KELA_SETTING_PANEL_FIGHT_STATS_KEPT = 7421
 -- FIXES AND PATCHES
 KELA_SETTING_PANEL_FIXES 						= 7600
 KELA_SETTING_PANEL_FIXES_GROUP_MENU 			= 7601
@@ -104,6 +108,7 @@ local KELA_ADDONS =
 	LL = { name = "Loot Log", isLoaded = function() return LootLog ~= nil end },
 	CT = { name = "Collectibles Tracker", isLoaded = function() return CollectiblesTracker ~= nil end },
 	RCR = { name = "Raidificator", isLoaded = function() return Raidificator ~= nil end },
+	LC = { name = "LibCombat", isLoaded = function() return LibCombat ~= nil end },
 	PA = { name = "PersonalAssistant", isLoaded = function() return PersonalAssistant ~= nil end },
 	TTC = { name = "Tamriel Trade Centre", isLoaded = function() return TamrielTradeCentre ~= nil end },
 	ATT = { name = "Arkadius Trade Tools", isLoaded = function() return ArkadiusTradeTools ~= nil end },
@@ -114,6 +119,11 @@ local KELA_ADDONS =
 	FAB = { name = "Fancy Action Bar+", isLoaded = function() return FancyActionBar ~= nil end },
 	ADR = { name = "Action Duration Reminder", isLoaded = function() return ActionDurationReminder ~= nil end },
 }
+
+-- The Fight Stats options follow its master toggle.
+local function KelaFightStatsSettingsEnabled()
+	return KelaGetSetting_Bool(SETTING_TYPE_KELA, KELA_SETTING_PANEL_FEATURES_FIGHT_STATS)
+end
 
 -- A row's `enabled` is either a value or a function that returns one; only an
 -- explicit false disables it.
@@ -250,6 +260,10 @@ KELA_SETTINGS_DATA =
         { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_LOOT_LOG },
         { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER },
         { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FEATURES_FIGHT_STATS },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FIGHT_STATS_PVE },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FIGHT_STATS_BATTLEGROUNDS },
+        { panel = KELA_SETTING_PANEL_JOURNALS, system = SETTING_TYPE_KELA, settingId = KELA_SETTING_PANEL_FIGHT_STATS_KEPT },
     },
 	-- TRADING
     [KELA_SETTING_PANEL_TRADE] =
@@ -415,6 +429,58 @@ kela_SettingsData =
 				text = KELA_SETTINGS_FEATURES_RAIDIFICATOR,
 				tooltipText = KELA_SETTINGS_FEATURES_RAIDIFICATOR_TOOLTIP,
 				addons = { required = { KELA_ADDONS.RCR } },
+			},
+			[KELA_SETTING_PANEL_FEATURES_FIGHT_STATS] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FEATURES_FIGHT_STATS,
+				text = KELA_SETTINGS_FEATURES_FIGHT_STATS,
+				tooltipText = KELA_SETTINGS_FEATURES_FIGHT_STATS_TOOLTIP,
+				events = { [true] = "KELA_FIGHT_STATS_SETTINGS_CHANGED", [false] = "KELA_FIGHT_STATS_SETTINGS_CHANGED" },
+				addons = { required = { KELA_ADDONS.LC } },
+			},
+			[KELA_SETTING_PANEL_FIGHT_STATS_PVE] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FIGHT_STATS_PVE,
+				text = KELA_SETTINGS_FIGHT_STATS_PVE,
+				tooltipText = KELA_SETTINGS_FIGHT_STATS_PVE_TOOLTIP,
+				events = { [true] = "KELA_FIGHT_STATS_SETTINGS_CHANGED", [false] = "KELA_FIGHT_STATS_SETTINGS_CHANGED" },
+				enabled = KelaFightStatsSettingsEnabled,
+			},
+			[KELA_SETTING_PANEL_FIGHT_STATS_BATTLEGROUNDS] =
+			{
+				controlType = OPTIONS_CHECKBOX,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FIGHT_STATS_BATTLEGROUNDS,
+				text = KELA_SETTINGS_FIGHT_STATS_BATTLEGROUNDS,
+				tooltipText = KELA_SETTINGS_FIGHT_STATS_BATTLEGROUNDS_TOOLTIP,
+				events = { [true] = "KELA_FIGHT_STATS_SETTINGS_CHANGED", [false] = "KELA_FIGHT_STATS_SETTINGS_CHANGED" },
+				enabled = KelaFightStatsSettingsEnabled,
+			},
+			[KELA_SETTING_PANEL_FIGHT_STATS_KEPT] =
+			{
+				controlType = OPTIONS_SLIDER,
+				system = SETTING_TYPE_KELA,
+				panel = KELA_SETTING_PANEL_JOURNALS,
+				settingId = KELA_SETTING_PANEL_FIGHT_STATS_KEPT,
+				text = KELA_SETTINGS_FIGHT_STATS_KEPT,
+				changedEvent = "KELA_FIGHT_STATS_SETTINGS_CHANGED",
+				-- Defined with the screen, which loads later; read when the help shows.
+				tooltipText = function()
+					return KelaGetFightStatsKeptTooltip and KelaGetFightStatsKeptTooltip() or ""
+				end,
+				valueFormat = "%d",
+				minValue = 1,
+				maxValue = 40,
+				gamepadValueStep = 1,
+				showValue = true,
+				enabled = KelaFightStatsSettingsEnabled,
 			},
 		},
 	},
@@ -898,6 +964,10 @@ KELA_SETTINGS_DEFAULTS =
 		[KELA_SETTING_PANEL_FEATURES_LOOT_LOG] 			= "true",
 		[KELA_SETTING_PANEL_FEATURES_COLLECTIBLES_TRACKER] = "true",
 		[KELA_SETTING_PANEL_FEATURES_RAIDIFICATOR] 		= "true",
+		[KELA_SETTING_PANEL_FEATURES_FIGHT_STATS] 		= "true",
+		[KELA_SETTING_PANEL_FIGHT_STATS_PVE] 			= "true",
+		[KELA_SETTING_PANEL_FIGHT_STATS_BATTLEGROUNDS] 	= "true",
+		[KELA_SETTING_PANEL_FIGHT_STATS_KEPT] 			= "10",
 		[KELA_SETTING_PANEL_FEATURES_PA_JUNK] 			= "true",
 		[KELA_SETTING_PANEL_FEATURES_PS5_BUTTONS] 		= "false",
 		-- FIXES AND PATCHES
